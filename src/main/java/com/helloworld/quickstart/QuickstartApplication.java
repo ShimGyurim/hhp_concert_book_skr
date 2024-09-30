@@ -1,12 +1,13 @@
 package com.helloworld.quickstart;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@MapperScan("com.helloworld.quickstart.mapper")
+//@EnableJpaRepositories
+//@ComponentScan("com.helloworld.quickstart.repository")
 public class QuickstartApplication {
 
 	public static void main(String[] args) {

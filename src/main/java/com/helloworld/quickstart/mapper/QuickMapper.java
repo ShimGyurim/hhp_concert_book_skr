@@ -10,4 +10,7 @@ import java.util.HashMap;
 public interface QuickMapper {
 //    @Select("SELECT ID, NAME FROM ITEM WHERE id = #{id}")
     HashMap<String, Object> findById(HashMap<String, Object> paramMap);
+
+    void registerItem(HashMap<String, Object> paramMap);
+
 }

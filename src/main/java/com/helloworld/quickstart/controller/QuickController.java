@@ -38,11 +38,11 @@ public class QuickController {
         return "ok";
     }
 
-    @PostMapping("/item")
+    @PostMapping("/item") //등록
     public ResponseDto registerItem(@RequestBody ItemDto item) { //post는 requestBody 로 body 를 보내서 함
         log.info("item: {}",item);
 
-        QuickService quickService = new QuickService();
+//        QuickService quickService = new QuickService();
         boolean b = quickService.registerItem(item);
 
         if(b==true) {
@@ -59,6 +59,7 @@ public class QuickController {
     @GetMapping("/item")
     public ItemDto getItem(@RequestParam("id") String id) {
         ItemDto res = quickService.getItemById(id);
+        log.info("id: {}",res);
         return res;
     }
 

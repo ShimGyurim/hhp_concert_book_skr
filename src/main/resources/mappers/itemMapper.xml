@@ -12,5 +12,8 @@
             ID = #{id}
     </select>
 
-
+    <insert id="registerItem" parameterType="hashmap">
+        INSERT INTO ITEM ( ID, NAME )
+            VALUES ( #{id}, #{name} )
+    </insert>
 </mapper>
