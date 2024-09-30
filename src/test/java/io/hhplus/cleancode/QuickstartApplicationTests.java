@@ -1,4 +1,4 @@
-package com.helloworld.quickstart;
+package io.hhplus.cleancode;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

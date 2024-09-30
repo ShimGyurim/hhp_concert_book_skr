@@ -1,6 +1,6 @@
-package com.helloworld.quickstart.repository;
+package io.hhplus.cleancode.repository;
 
-import com.helloworld.quickstart.entity.ItemEntity;
+import io.hhplus.cleancode.entity.ItemEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

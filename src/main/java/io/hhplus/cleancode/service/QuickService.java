@@ -1,10 +1,10 @@
-package com.helloworld.quickstart.service;
+package io.hhplus.cleancode.service;
 
-import com.helloworld.quickstart.dto.ItemDto;
+import io.hhplus.cleancode.dto.ItemDto;
 
-import com.helloworld.quickstart.entity.ItemEntity;
-import com.helloworld.quickstart.mapper.QuickMapper;
-import com.helloworld.quickstart.repository.ItemRepository;
+import io.hhplus.cleancode.entity.ItemEntity;
+import io.hhplus.cleancode.mapper.QuickMapper;
+import io.hhplus.cleancode.repository.ItemRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

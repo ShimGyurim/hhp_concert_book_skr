@@ -1,4 +1,4 @@
-package com.helloworld.quickstart.dto;
+package io.hhplus.cleancode.dto;
 
 public class ItemDto {
     private String id;

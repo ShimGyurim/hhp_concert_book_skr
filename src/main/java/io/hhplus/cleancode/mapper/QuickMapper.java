@@ -1,4 +1,4 @@
-package com.helloworld.quickstart.mapper;
+package io.hhplus.cleancode.mapper;
 
 
 import org.apache.ibatis.annotations.Mapper;

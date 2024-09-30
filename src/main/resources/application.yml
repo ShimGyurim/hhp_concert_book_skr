@@ -1,6 +1,6 @@
 spring:
   application:
-    name: quickstart
+    name: cleancode
   h2:
     console:
       enabled: true

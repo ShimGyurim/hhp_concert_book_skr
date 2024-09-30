@@ -1,4 +1,4 @@
-package com.helloworld.quickstart.entity;
+package io.hhplus.cleancode.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

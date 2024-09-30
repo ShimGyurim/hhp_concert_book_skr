@@ -1,9 +1,9 @@
-package com.helloworld.quickstart.controller;
+package io.hhplus.cleancode.controller;
 
 
-import com.helloworld.quickstart.dto.ItemDto;
-import com.helloworld.quickstart.dto.ResponseDto;
-import com.helloworld.quickstart.service.QuickService;
+import io.hhplus.cleancode.dto.ItemDto;
+import io.hhplus.cleancode.dto.ResponseDto;
+import io.hhplus.cleancode.service.QuickService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
