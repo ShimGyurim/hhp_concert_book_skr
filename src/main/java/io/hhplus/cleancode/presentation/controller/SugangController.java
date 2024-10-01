@@ -2,6 +2,7 @@ package io.hhplus.cleancode.presentation.controller;
 
 
 import io.hhplus.cleancode.application.dto.SugangInsertDto;
+import io.hhplus.cleancode.application.dto.SugangSelectDto;
 import io.hhplus.cleancode.domain.service.SugangService;
 import io.hhplus.cleancode.infrastructure.entity.SugangSchedule;
 import lombok.extern.slf4j.Slf4j;
@@ -37,13 +38,13 @@ public class SugangController {
     }
 
     @GetMapping("/getClassAvail/{classDate}")
-    public List<SugangInsertDto> getClassAvail(@PathVariable("classDate") String classDate) {
-
-        return null;
+    public List<SugangSelectDto> getClassAvail(@PathVariable("classDate") String classDate) {
+        List<SugangSelectDto> sugangInsertDtoList = sugangService.getClassAvail(new SugangInsertDto(0L,0L,0L,classDate,""));
+        return sugangInsertDtoList ;
     }
 
     @GetMapping("/getUserClassApply/{studentId}")
-    public List<SugangInsertDto> getUserClassApply(@PathVariable("studentId") String studentId) {
+    public List<SugangSelectDto> getUserClassApply(@PathVariable("studentId") String studentId) {
         return null;
     }
 //    @Autowired

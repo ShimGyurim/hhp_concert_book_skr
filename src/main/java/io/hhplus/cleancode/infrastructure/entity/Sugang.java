@@ -12,6 +12,13 @@ public class Sugang {
 
     private String className;
 
+    public Sugang() {
+    }
+
+    public Sugang(Long sugangId) {
+        this.sugangId = sugangId;
+    }
+
     public Long getSugangId() {
         return sugangId;
     }
@@ -27,6 +34,8 @@ public class Sugang {
     public void setClassName(String className) {
         this.className = className;
     }
+
+
 
     @Override
     public String toString() {

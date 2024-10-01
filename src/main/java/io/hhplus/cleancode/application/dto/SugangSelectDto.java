@@ -16,6 +16,18 @@ public class SugangSelectDto {
     public String getClassDate() {
         return classDate;
     }
+
+    public void setSugangId(long sugangId) {
+        this.sugangId = sugangId;
+    }
+
+    public void setStudentId(long studentId) {
+        this.studentId = studentId;
+    }
+
+    public void setClassDate(String classDate) {
+        this.classDate = classDate;
+    }
 }
 
 

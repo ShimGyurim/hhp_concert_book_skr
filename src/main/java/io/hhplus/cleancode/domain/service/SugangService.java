@@ -1,6 +1,7 @@
 package io.hhplus.cleancode.domain.service;
 
 import io.hhplus.cleancode.application.dto.SugangInsertDto;
+import io.hhplus.cleancode.application.dto.SugangSelectDto;
 import io.hhplus.cleancode.infrastructure.entity.Student;
 import io.hhplus.cleancode.infrastructure.entity.Sugang;
 import io.hhplus.cleancode.infrastructure.entity.SugangHistory;
@@ -17,6 +18,7 @@ import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -115,6 +117,8 @@ public class SugangService {
 //            } catch (OptimisticLockingFailureException e) {
 //                // 동시성 충돌 발생 시 처리 로직
 //                return "fail";
+            }catch (Exception e){
+                e.getStackTrace();
             }
             return "success";
         } else {
@@ -122,6 +126,12 @@ public class SugangService {
         }
     }
 
+    public List<SugangSelectDto> getClassAvail(SugangInsertDto sugangInsertDto) {
+        //schedule 에서 findByClassDate
+        List<SugangSchedule> sugangScheduleList = sugangScheduleRepository.findAllByClassDate(sugangInsertDto.getClassDate());
+
+        return SugangMapper.toSugangSelectDtoMapper(sugangScheduleList);
+    }
 
 }
 
