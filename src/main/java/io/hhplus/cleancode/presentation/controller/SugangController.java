@@ -1,8 +1,11 @@
 package io.hhplus.cleancode.presentation.controller;
 
 
-import io.hhplus.cleancode.application.dto.SugangRecordDto;
+import io.hhplus.cleancode.application.dto.SugangInsertDto;
+import io.hhplus.cleancode.domain.service.SugangService;
+import io.hhplus.cleancode.infrastructure.entity.SugangSchedule;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,28 +15,44 @@ import java.util.List;
 @RequestMapping("/sugang")
 public class SugangController {
 
-    @GetMapping("/apply/{userId}/{classId}")
-    public String apply(@PathVariable("userId") String userId,
-                        @PathVariable("classId") String classId) {
+    @Autowired
+    SugangService sugangService;
+
+    @GetMapping("/insert/{studentId}/{sugangId}/{availNum}/{sugangName}/{classDate}")
+    public String insert(@PathVariable("studentId") Long studentId,
+                        @PathVariable("sugangId") Long sugangId,
+                         @PathVariable("availNum") Long availNum,
+                        @PathVariable("sugangName") String sugangName,
+                        @PathVariable("classDate") String classDate) {
+        sugangService.insert(new SugangInsertDto(sugangId,studentId,availNum,classDate,sugangName));
+        return null;
+    }
+
+    @GetMapping("/apply/{studentId}/{sugangId}/{classDate}")
+    public String apply(@PathVariable("studentId") Long studentId,
+                        @PathVariable("sugangId") Long sugangId,
+                        @PathVariable("classDate") String classDate) {
+        sugangService.apply(new SugangInsertDto(sugangId,studentId,0,classDate,null));
         return null;
     }
 
     @GetMapping("/getClassAvail/{classDate}")
-    public List<SugangRecordDto> getClassAvail(@PathVariable("classDate") String classDate) {
+    public List<SugangInsertDto> getClassAvail(@PathVariable("classDate") String classDate) {
+
         return null;
     }
 
-    @GetMapping("/getUserClassApply/{userId}")
-    public List<SugangRecordDto> getUserClassApply(@PathVariable("userId") String userId) {
+    @GetMapping("/getUserClassApply/{studentId}")
+    public List<SugangInsertDto> getUserClassApply(@PathVariable("studentId") String studentId) {
         return null;
     }
 //    @Autowired
 //    private QuickService quickService;
 
-    //        List<PointHistory> object = pointHistoryTable.selectAllByUserId(id);
+    //        List<PointHistory> object = pointHistoryTable.selectAllBystudentId(id);
 
-    //특강 신청 : userid , 강의id , 날짜 (스트링8자)
-    //특강신청완료 : 조회 : 특정 userid => json 배열로 리턴 (날짜,특강id,특강명)
+    //특강 신청 : studentId , 강의id , 날짜 (스트링8자)
+    //특강신청완료 : 조회 : 특정 studentId => json 배열로 리턴 (날짜,특강id,특강명)
     //특강신청가능 : 조회 : 날짜별로 현재 신청가능 특강 목록 => json 배열로 (날짜,특강id,특강명) 
 
 //    @PostMapping("/item") //등록

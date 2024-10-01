@@ -27,4 +27,12 @@ public class Sugang {
     public void setClassName(String className) {
         this.className = className;
     }
+
+    @Override
+    public String toString() {
+        return "Sugang{" +
+                "sugangId=" + sugangId +
+                ", className='" + className + '\'' +
+                '}';
+    }
 }

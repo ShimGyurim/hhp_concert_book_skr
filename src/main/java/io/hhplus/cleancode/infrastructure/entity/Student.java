@@ -19,4 +19,11 @@ public class Student {
     public void setStudentId(Long studentId) {
         this.studentId = studentId;
     }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "studentId=" + studentId +
+                '}';
+    }
 }
