@@ -1,10 +1,8 @@
 package io.hhplus.cleancode.presentation.controller;
 
 
-import io.hhplus.cleancode.application.dto.SugangInsertDto;
-import io.hhplus.cleancode.application.dto.SugangSelectDto;
+import io.hhplus.cleancode.domain.DTO.SugangDto;
 import io.hhplus.cleancode.domain.service.SugangService;
-import io.hhplus.cleancode.infrastructure.entity.SugangSchedule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +23,7 @@ public class SugangController {
                          @PathVariable("availNum") Long availNum,
                         @PathVariable("sugangName") String sugangName,
                         @PathVariable("classDate") String classDate) {
-        sugangService.insert(new SugangInsertDto(sugangId,studentId,availNum,classDate,sugangName));
+        sugangService.insert(new SugangDto(sugangId,studentId,availNum,classDate,sugangName));
         return null;
     }
 
@@ -33,19 +31,20 @@ public class SugangController {
     public String apply(@PathVariable("studentId") Long studentId,
                         @PathVariable("sugangId") Long sugangId,
                         @PathVariable("classDate") String classDate) {
-        sugangService.apply(new SugangInsertDto(sugangId,studentId,0,classDate,null));
+        sugangService.apply(new SugangDto(sugangId,studentId,0,classDate,null));
         return null;
     }
 
     @GetMapping("/getClassAvail/{classDate}")
-    public List<SugangSelectDto> getClassAvail(@PathVariable("classDate") String classDate) {
-        List<SugangSelectDto> sugangInsertDtoList = sugangService.getClassAvail(new SugangInsertDto(0L,0L,0L,classDate,""));
+    public List<SugangDto> getClassAvail(@PathVariable("classDate") String classDate) {
+        List<SugangDto> sugangInsertDtoList = sugangService.getClassAvail(new SugangDto(0L,0L,0L,classDate,""));
         return sugangInsertDtoList ;
     }
 
     @GetMapping("/getUserClassApply/{studentId}")
-    public List<SugangSelectDto> getUserClassApply(@PathVariable("studentId") String studentId) {
-        return null;
+    public List<SugangDto> getUserClassApply(@PathVariable("studentId") Long studentId) {
+        List<SugangDto> sugangInsertDtoList = sugangService.getClassApplyHistory(new SugangDto(0L,studentId,0L,"",""));
+        return sugangInsertDtoList;
     }
 //    @Autowired
 //    private QuickService quickService;

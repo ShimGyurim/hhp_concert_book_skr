@@ -1,7 +1,7 @@
 package io.hhplus.cleancode.domain.service;
 
-import io.hhplus.cleancode.application.dto.SugangInsertDto;
-import io.hhplus.cleancode.application.dto.SugangSelectDto;
+import io.hhplus.cleancode.domain.DTO.SugangDto;
+import io.hhplus.cleancode.domain.mapper.SugangMapper;
 import io.hhplus.cleancode.infrastructure.entity.Student;
 import io.hhplus.cleancode.infrastructure.entity.Sugang;
 import io.hhplus.cleancode.infrastructure.entity.SugangHistory;
@@ -14,12 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SugangService {
@@ -39,7 +39,7 @@ public class SugangService {
     private static final Logger log = LoggerFactory.getLogger(SugangService.class);
 
     @Transactional
-    public String insert (SugangInsertDto sugangInsertDto) {
+    public String insert (SugangDto sugangInsertDto) {
 
         Optional<Sugang> sugangOptional = sugangRepository.findById(sugangInsertDto.getSugangId());
         Sugang sugang;
@@ -91,7 +91,7 @@ public class SugangService {
     }
 
     @Transactional
-    public String apply (SugangInsertDto sugangInsertDto) {
+    public String apply (SugangDto sugangInsertDto) {
         Optional<SugangSchedule> sugangScheduleOptional = Optional.ofNullable(sugangScheduleRepository.findByStudent_StudentIdAndSugang_SugangIdAndClassDate(sugangInsertDto.getStudentId(), sugangInsertDto.getSugangId(), sugangInsertDto.getClassDate())
                 .orElseThrow(() -> new DataAccessResourceFailureException("해당 수강 일정을 찾을 수 없습니다.")));
         SugangSchedule sugangSchedule = sugangScheduleOptional.get();
@@ -126,11 +126,24 @@ public class SugangService {
         }
     }
 
-    public List<SugangSelectDto> getClassAvail(SugangInsertDto sugangInsertDto) {
+    public List<SugangDto> getClassAvail(SugangDto sugangInsertDto) {
         //schedule 에서 findByClassDate
         List<SugangSchedule> sugangScheduleList = sugangScheduleRepository.findAllByClassDate(sugangInsertDto.getClassDate());
 
-        return SugangMapper.toSugangSelectDtoMapper(sugangScheduleList);
+        return SugangMapper.toSugangDtoMapper(sugangScheduleList);
+    }
+
+    public List<SugangDto> getClassApplyHistory(SugangDto sugangInsertDto) {
+        //schedule 에서 findByClassDate
+
+        log.error("로그:"+sugangInsertDto.getStudentId());
+        List<SugangHistory> sugangScheduleList = sugangHistoryRepository.findAllByStudent_StudentId(sugangInsertDto.getStudentId());
+
+
+        log.error("로그:"+sugangScheduleList.stream()
+                .map(SugangHistory::toString)
+                .collect(Collectors.toList()));
+        return SugangMapper.historyToSugangDtoMapper(sugangScheduleList);
     }
 
 }
