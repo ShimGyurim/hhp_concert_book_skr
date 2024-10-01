@@ -1,7 +1,7 @@
 package io.hhplus.cleancode.presentation.controller;
 
 
-import io.hhplus.cleancode.domain.DTO.SugangDto;
+import io.hhplus.cleancode.application.dto.SugangDto;
 import io.hhplus.cleancode.domain.service.SugangService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

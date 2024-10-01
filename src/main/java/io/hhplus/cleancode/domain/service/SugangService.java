@@ -1,6 +1,6 @@
 package io.hhplus.cleancode.domain.service;
 
-import io.hhplus.cleancode.domain.DTO.SugangDto;
+import io.hhplus.cleancode.application.dto.SugangDto;
 import io.hhplus.cleancode.domain.mapper.SugangMapper;
 import io.hhplus.cleancode.infrastructure.entity.Student;
 import io.hhplus.cleancode.infrastructure.entity.Sugang;
