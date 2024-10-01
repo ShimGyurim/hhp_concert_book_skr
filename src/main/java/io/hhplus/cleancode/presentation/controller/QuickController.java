@@ -1,9 +1,9 @@
-package io.hhplus.cleancode.controller;
+package io.hhplus.cleancode.presentation.controller;
 
 
-import io.hhplus.cleancode.dto.ItemDto;
-import io.hhplus.cleancode.dto.ResponseDto;
-import io.hhplus.cleancode.service.QuickService;
+import io.hhplus.cleancode.application.dto.ItemDto;
+import io.hhplus.cleancode.application.dto.ResponseDto;
+import io.hhplus.cleancode.domain.service.QuickService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

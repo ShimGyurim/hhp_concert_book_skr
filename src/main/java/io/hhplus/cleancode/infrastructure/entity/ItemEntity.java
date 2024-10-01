@@ -1,4 +1,4 @@
-package io.hhplus.cleancode.entity;
+package io.hhplus.cleancode.infrastructure.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

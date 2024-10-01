@@ -1,10 +1,10 @@
-package io.hhplus.cleancode.service;
+package io.hhplus.cleancode.domain.service;
 
-import io.hhplus.cleancode.dto.ItemDto;
+import io.hhplus.cleancode.application.dto.ItemDto;
 
-import io.hhplus.cleancode.entity.ItemEntity;
-import io.hhplus.cleancode.mapper.QuickMapper;
-import io.hhplus.cleancode.repository.ItemRepository;
+import io.hhplus.cleancode.infrastructure.entity.ItemEntity;
+//import io.hhplus.cleancode.mapper.QuickMapper;
+import io.hhplus.cleancode.infrastructure.repository.ItemRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class QuickService {
 
-    @Autowired
-    private QuickMapper quickMapper;
+//    @Autowired
+//    private QuickMapper quickMapper;
 
     @Autowired
     private ItemRepository itemRepository;

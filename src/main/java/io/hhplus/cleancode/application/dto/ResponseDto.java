@@ -1,4 +1,4 @@
-package io.hhplus.cleancode.dto;
+package io.hhplus.cleancode.application.dto;
 
 public class ResponseDto {
     private String message;
