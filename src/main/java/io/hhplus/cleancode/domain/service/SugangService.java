@@ -1,15 +1,15 @@
 package io.hhplus.cleancode.domain.service;
 
 import io.hhplus.cleancode.domain.dto.SugangDto;
-import io.hhplus.cleancode.domain.mapper.SugangMapper;
-import io.hhplus.cleancode.domain.entity.Student;
-import io.hhplus.cleancode.domain.entity.Sugang;
-import io.hhplus.cleancode.domain.entity.SugangHistory;
-import io.hhplus.cleancode.domain.entity.SugangSchedule;
-import io.hhplus.cleancode.domain.repository.StudentRepository;
-import io.hhplus.cleancode.domain.repository.SugangHistoryRepository;
-import io.hhplus.cleancode.domain.repository.SugangRepository;
-import io.hhplus.cleancode.domain.repository.SugangScheduleRepository;
+import io.hhplus.cleancode.domain.mapper.SugangDtoMapper;
+import io.hhplus.cleancode.infrastructure.entity.StudentEntity;
+import io.hhplus.cleancode.infrastructure.entity.SugangEntity;
+import io.hhplus.cleancode.infrastructure.entity.SugangHistoryEntity;
+import io.hhplus.cleancode.infrastructure.entity.SugangScheduleEntity;
+import io.hhplus.cleancode.infrastructure.repository.StudentJpaRepository;
+import io.hhplus.cleancode.infrastructure.repository.SugangHistoryJpaRepository;
+import io.hhplus.cleancode.infrastructure.repository.SugangJpaRepository;
+import io.hhplus.cleancode.infrastructure.repository.SugangScheduleJpaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,26 +25,26 @@ import java.util.stream.Collectors;
 public class SugangService {
 
     @Autowired
-    SugangRepository sugangRepository;
+    SugangJpaRepository sugangRepository;
 
     @Autowired
-    StudentRepository studentRepository;
+    StudentJpaRepository studentRepository;
 
     @Autowired
-    SugangScheduleRepository sugangScheduleRepository;
+    SugangScheduleJpaRepository sugangScheduleRepository;
 
     @Autowired
-    SugangHistoryRepository sugangHistoryRepository;
+    SugangHistoryJpaRepository sugangHistoryRepository;
 
     private static final Logger log = LoggerFactory.getLogger(SugangService.class);
 
     @Transactional
     public String insert (SugangDto sugangInsertDto) {
 
-        Optional<Sugang> sugangOptional = sugangRepository.findById(sugangInsertDto.getSugangId());
-        Sugang sugang;
+        Optional<SugangEntity> sugangOptional = sugangRepository.findById(sugangInsertDto.getSugangId());
+        SugangEntity sugang;
         if(sugangOptional.isEmpty()) {
-            sugang = new Sugang();
+            sugang = new SugangEntity();
             sugang.setSugangId(sugangInsertDto.getSugangId());
             sugang.setClassName(sugangInsertDto.getClassName());
             sugang = sugangRepository.save(sugang);
@@ -52,10 +52,10 @@ public class SugangService {
             sugang = sugangOptional.get();
         }
 
-        Optional<Student> studentOptional = studentRepository.findById(sugangInsertDto.getStudentId());
-        Student student;
+        Optional<StudentEntity> studentOptional = studentRepository.findById(sugangInsertDto.getStudentId());
+        StudentEntity student;
         if(studentOptional.isEmpty()) {
-            student = new Student();
+            student = new StudentEntity();
             student.setStudentId(sugangInsertDto.getStudentId());
             student = studentRepository.save(student);
 
@@ -64,9 +64,9 @@ public class SugangService {
             student = studentOptional.get();
         }
 
-        Optional<SugangSchedule> sugangScheduleOptional = sugangScheduleRepository.findBySugang_SugangIdAndClassDate(sugangInsertDto.getSugangId(), sugangInsertDto.getClassDate());
+        Optional<SugangScheduleEntity> sugangScheduleOptional = sugangScheduleRepository.findBySugang_SugangIdAndClassDate(sugangInsertDto.getSugangId(), sugangInsertDto.getClassDate());
         if(sugangScheduleOptional.isEmpty()) {
-            SugangSchedule sugangSchedule = new SugangSchedule();
+            SugangScheduleEntity sugangSchedule = new SugangScheduleEntity();
 
 //            Student student = new Student();
 //            student.setStudentId(sugangInsertDto.getStudentId());
@@ -92,9 +92,9 @@ public class SugangService {
 
     @Transactional
     public String apply (SugangDto sugangInsertDto) {
-        Optional<SugangSchedule> sugangScheduleOptional = Optional.ofNullable(sugangScheduleRepository.findBySugang_SugangIdAndClassDate(sugangInsertDto.getSugangId(), sugangInsertDto.getClassDate())
+        Optional<SugangScheduleEntity> sugangScheduleOptional = Optional.ofNullable(sugangScheduleRepository.findBySugang_SugangIdAndClassDate(sugangInsertDto.getSugangId(), sugangInsertDto.getClassDate())
                 .orElseThrow(() -> new DataAccessResourceFailureException("해당 수강 일정을 찾을 수 없습니다.")));
-        SugangSchedule sugangSchedule = sugangScheduleOptional.get();
+        SugangScheduleEntity sugangSchedule = sugangScheduleOptional.get();
 
 
         // 낙관적 락: 버전 확인 후 변경
@@ -103,11 +103,11 @@ public class SugangService {
 
             Long scheduleId = sugangSchedule.getScheduleId();
 
-            SugangHistory sugangHistory = new SugangHistory();
+            SugangHistoryEntity sugangHistory = new SugangHistoryEntity();
 
             sugangHistory.setSugangSchedule(sugangSchedule);
             sugangHistory.setSugang(sugangSchedule.getSugang());
-            sugangHistory.setStudent(new Student(sugangInsertDto.getStudentId()));
+            sugangHistory.setStudent(new StudentEntity(sugangInsertDto.getStudentId()));
             sugangHistory.setClassDate(sugangSchedule.getClassDate());
 
             try {
@@ -128,22 +128,22 @@ public class SugangService {
 
     public List<SugangDto> getClassAvail(SugangDto sugangInsertDto) {
         //schedule 에서 findByClassDate
-        List<SugangSchedule> sugangScheduleList = sugangScheduleRepository.findAllByClassDate(sugangInsertDto.getClassDate());
+        List<SugangScheduleEntity> sugangScheduleList = sugangScheduleRepository.findAllByClassDate(sugangInsertDto.getClassDate());
 
-        return SugangMapper.toSugangDtoMapper(sugangScheduleList);
+        return SugangDtoMapper.toSugangDtoMapper(sugangScheduleList);
     }
 
     public List<SugangDto> getClassApplyHistory(SugangDto sugangInsertDto) {
         //schedule 에서 findByClassDate
 
         log.error("로그:"+sugangInsertDto.getStudentId());
-        List<SugangHistory> sugangScheduleList = sugangHistoryRepository.findAllByStudent_StudentId(sugangInsertDto.getStudentId());
+        List<SugangHistoryEntity> sugangScheduleList = sugangHistoryRepository.findAllByStudent_StudentId(sugangInsertDto.getStudentId());
 
 
         log.error("로그:"+sugangScheduleList.stream()
-                .map(SugangHistory::toString)
+                .map(SugangHistoryEntity::toString)
                 .collect(Collectors.toList()));
-        return SugangMapper.historyToSugangDtoMapper(sugangScheduleList);
+        return SugangDtoMapper.historyToSugangDtoMapper(sugangScheduleList);
     }
 
 }
