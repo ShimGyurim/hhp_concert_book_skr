@@ -1,8 +1,6 @@
-package io.hhplus.cleancode.infrastructure.repository;
+package io.hhplus.cleancode.domain.repository;
 
-import io.hhplus.cleancode.infrastructure.entity.Student;
-import io.hhplus.cleancode.infrastructure.entity.Sugang;
-import io.hhplus.cleancode.infrastructure.entity.SugangSchedule;
+import io.hhplus.cleancode.domain.entity.SugangSchedule;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
@@ -14,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface SugangScheduleRepository extends JpaRepository<SugangSchedule, Long> {
 
-    Optional<SugangSchedule> findByStudent_StudentIdAndSugang_SugangIdAndClassDate(Long student, Long sugang, String classDate);
+    Optional<SugangSchedule> findBySugang_SugangIdAndClassDate(Long sugang, String classDate);
 
     @Override
     @Lock(LockModeType.PESSIMISTIC_WRITE)

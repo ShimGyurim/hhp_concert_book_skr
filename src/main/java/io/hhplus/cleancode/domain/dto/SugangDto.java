@@ -1,4 +1,4 @@
-package io.hhplus.cleancode.application.dto;
+package io.hhplus.cleancode.domain.dto;
 
 public class SugangDto {
     private long sugangId;

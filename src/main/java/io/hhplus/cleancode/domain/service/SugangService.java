@@ -1,15 +1,15 @@
 package io.hhplus.cleancode.domain.service;
 
-import io.hhplus.cleancode.application.dto.SugangDto;
+import io.hhplus.cleancode.domain.dto.SugangDto;
 import io.hhplus.cleancode.domain.mapper.SugangMapper;
-import io.hhplus.cleancode.infrastructure.entity.Student;
-import io.hhplus.cleancode.infrastructure.entity.Sugang;
-import io.hhplus.cleancode.infrastructure.entity.SugangHistory;
-import io.hhplus.cleancode.infrastructure.entity.SugangSchedule;
-import io.hhplus.cleancode.infrastructure.repository.StudentRepository;
-import io.hhplus.cleancode.infrastructure.repository.SugangHistoryRepository;
-import io.hhplus.cleancode.infrastructure.repository.SugangRepository;
-import io.hhplus.cleancode.infrastructure.repository.SugangScheduleRepository;
+import io.hhplus.cleancode.domain.entity.Student;
+import io.hhplus.cleancode.domain.entity.Sugang;
+import io.hhplus.cleancode.domain.entity.SugangHistory;
+import io.hhplus.cleancode.domain.entity.SugangSchedule;
+import io.hhplus.cleancode.domain.repository.StudentRepository;
+import io.hhplus.cleancode.domain.repository.SugangHistoryRepository;
+import io.hhplus.cleancode.domain.repository.SugangRepository;
+import io.hhplus.cleancode.domain.repository.SugangScheduleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,13 +64,13 @@ public class SugangService {
             student = studentOptional.get();
         }
 
-        Optional<SugangSchedule> sugangScheduleOptional = sugangScheduleRepository.findByStudent_StudentIdAndSugang_SugangIdAndClassDate(sugangInsertDto.getStudentId(), sugangInsertDto.getSugangId(), sugangInsertDto.getClassDate());
+        Optional<SugangSchedule> sugangScheduleOptional = sugangScheduleRepository.findBySugang_SugangIdAndClassDate(sugangInsertDto.getSugangId(), sugangInsertDto.getClassDate());
         if(sugangScheduleOptional.isEmpty()) {
             SugangSchedule sugangSchedule = new SugangSchedule();
 
 //            Student student = new Student();
 //            student.setStudentId(sugangInsertDto.getStudentId());
-            sugangSchedule.setStudent(student);
+//            sugangSchedule.setStudent(student);
 
 //            Sugang sugang = new Sugang();
 //            sugang.setSugangId(sugangInsertDto.getSugangId());
@@ -92,7 +92,7 @@ public class SugangService {
 
     @Transactional
     public String apply (SugangDto sugangInsertDto) {
-        Optional<SugangSchedule> sugangScheduleOptional = Optional.ofNullable(sugangScheduleRepository.findByStudent_StudentIdAndSugang_SugangIdAndClassDate(sugangInsertDto.getStudentId(), sugangInsertDto.getSugangId(), sugangInsertDto.getClassDate())
+        Optional<SugangSchedule> sugangScheduleOptional = Optional.ofNullable(sugangScheduleRepository.findBySugang_SugangIdAndClassDate(sugangInsertDto.getSugangId(), sugangInsertDto.getClassDate())
                 .orElseThrow(() -> new DataAccessResourceFailureException("해당 수강 일정을 찾을 수 없습니다.")));
         SugangSchedule sugangSchedule = sugangScheduleOptional.get();
 
@@ -107,7 +107,7 @@ public class SugangService {
 
             sugangHistory.setSugangSchedule(sugangSchedule);
             sugangHistory.setSugang(sugangSchedule.getSugang());
-            sugangHistory.setStudent(sugangSchedule.getStudent());
+            sugangHistory.setStudent(new Student(sugangInsertDto.getStudentId()));
             sugangHistory.setClassDate(sugangSchedule.getClassDate());
 
             try {

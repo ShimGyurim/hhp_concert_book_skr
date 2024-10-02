@@ -1,6 +1,6 @@
-package io.hhplus.cleancode.infrastructure.repository;
+package io.hhplus.cleancode.domain.repository;
 
-import io.hhplus.cleancode.infrastructure.entity.Student;
+import io.hhplus.cleancode.domain.entity.Student;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;

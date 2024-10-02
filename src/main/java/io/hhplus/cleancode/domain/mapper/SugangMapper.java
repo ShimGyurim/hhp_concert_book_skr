@@ -1,10 +1,9 @@
 package io.hhplus.cleancode.domain.mapper;
 
-import io.hhplus.cleancode.application.dto.SugangDto;
-import io.hhplus.cleancode.infrastructure.entity.Student;
-import io.hhplus.cleancode.infrastructure.entity.Sugang;
-import io.hhplus.cleancode.infrastructure.entity.SugangHistory;
-import io.hhplus.cleancode.infrastructure.entity.SugangSchedule;
+import io.hhplus.cleancode.domain.dto.SugangDto;
+import io.hhplus.cleancode.domain.entity.Sugang;
+import io.hhplus.cleancode.domain.entity.SugangHistory;
+import io.hhplus.cleancode.domain.entity.SugangSchedule;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,7 +23,7 @@ public class SugangMapper {
                     schedule.setClassDate(dto.getClassDate());
                     schedule.setAvailNum(dto.getAvailNum());
                     schedule.setSugang(new Sugang(dto.getSugangId()));
-                    schedule.setStudent(new Student(dto.getStudentId()));
+//                    schedule.setStudent(new Student(dto.getStudentId()));
                     return schedule;
                 })
                 .collect(Collectors.toList());
@@ -39,7 +38,7 @@ public class SugangMapper {
 
                     SugangDto.setClassDate(entity.getClassDate());
                     SugangDto.setSugangId(entity.getSugang().getSugangId());
-                    SugangDto.setStudentId(entity.getStudent().getStudentId());
+//                    SugangDto.setStudentId(entity.getStudent().getStudentId());
                     return SugangDto;
                 })
                 .collect(Collectors.toList());

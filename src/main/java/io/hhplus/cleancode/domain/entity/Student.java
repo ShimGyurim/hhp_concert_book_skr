@@ -1,4 +1,4 @@
-package io.hhplus.cleancode.infrastructure.entity;
+package io.hhplus.cleancode.domain.entity;
 
 import jakarta.persistence.*;
 
