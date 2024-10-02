@@ -1,12 +1,17 @@
---insert into student(student_id)
---select 1 from dual union
---select 2 from dual union
---select 3 from dual union
---select 4 from dual union
---select 5 from dual ;
-
+delete from sugang_history;
 delete from sugang_schedule;
 delete from sugang;
+delete from student;
+
+
+insert into student(student_id)
+select 1 from dual union
+select 2 from dual union
+select 3 from dual union
+select 4 from dual union
+select 5 from dual ;
+
+
 
 
 insert into sugang(sugang_id,class_name)
