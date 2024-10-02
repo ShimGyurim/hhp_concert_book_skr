@@ -3,10 +3,14 @@ package io.hhplus.cleancode.presentation.controller;
 
 import io.hhplus.cleancode.domain.dto.SugangDto;
 import io.hhplus.cleancode.domain.service.SugangService;
+import io.hhplus.cleancode.presentation.HttpDto.SugangRequest;
+import io.hhplus.cleancode.presentation.HttpDto.SugangResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -27,18 +31,20 @@ public class SugangController {
         return null;
     }
 
-    @GetMapping("/apply/{studentId}/{sugangId}/{classDate}")
-    public String apply(@PathVariable("studentId") Long studentId,
-                        @PathVariable("sugangId") Long sugangId,
-                        @PathVariable("classDate") String classDate) {
-        sugangService.apply(new SugangDto(sugangId,studentId,0,classDate,null));
-        return null;
+    @PostMapping("/apply")
+    public SugangResponse apply(@RequestBody SugangRequest sugangRequest) {
+
+        sugangService.apply(new SugangDto(sugangRequest.getSugangId(),sugangRequest.getStudentId(),0,sugangRequest.getClassDate(),null));
+
+        return new SugangResponse("success");
     }
 
     @GetMapping("/getClassAvail/{classDate}")
     public List<SugangDto> getClassAvail(@PathVariable("classDate") String classDate) {
         List<SugangDto> sugangInsertDtoList = sugangService.getClassAvail(new SugangDto(0L,0L,0L,classDate,""));
-        return sugangInsertDtoList ;
+
+
+        return  sugangInsertDtoList;
     }
 
     @GetMapping("/getUserClassApply/{studentId}")

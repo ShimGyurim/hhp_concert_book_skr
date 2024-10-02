@@ -1,18 +1,21 @@
-package io.hhplus.cleancode.domain.entity;
+package io.hhplus.cleancode.infrastructure.entity;
 
 import jakarta.persistence.*;
 
-public class Sugang {
-
-
+@Entity
+@Table(name="SUGANG")
+public class SugangEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="sugang_id")
     private Long sugangId;
 
     private String className;
 
-    public Sugang() {
+    public SugangEntity() {
     }
 
-    public Sugang(Long sugangId) {
+    public SugangEntity(Long sugangId) {
         this.sugangId = sugangId;
     }
 

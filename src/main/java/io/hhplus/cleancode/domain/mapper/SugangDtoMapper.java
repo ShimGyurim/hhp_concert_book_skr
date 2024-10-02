@@ -1,28 +1,28 @@
 package io.hhplus.cleancode.domain.mapper;
 
 import io.hhplus.cleancode.domain.dto.SugangDto;
-import io.hhplus.cleancode.domain.entity.Sugang;
-import io.hhplus.cleancode.domain.entity.SugangHistory;
-import io.hhplus.cleancode.domain.entity.SugangSchedule;
+import io.hhplus.cleancode.infrastructure.entity.SugangEntity;
+import io.hhplus.cleancode.infrastructure.entity.SugangHistoryEntity;
+import io.hhplus.cleancode.infrastructure.entity.SugangScheduleEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SugangMapper {
+public class SugangDtoMapper {
 
     @Autowired
     ModelMapper modelMapper;
 
-    public static List<SugangSchedule> toSugangSchedulesMapper(List<SugangDto> dtos) {
+    public static List<SugangScheduleEntity> toSugangSchedulesMapper(List<SugangDto> dtos) {
         return dtos.stream()
                 .map(dto -> {
-                    SugangSchedule schedule = new SugangSchedule();
+                    SugangScheduleEntity schedule = new SugangScheduleEntity();
 
                     schedule.setClassDate(dto.getClassDate());
                     schedule.setAvailNum(dto.getAvailNum());
-                    schedule.setSugang(new Sugang(dto.getSugangId()));
+                    schedule.setSugang(new SugangEntity(dto.getSugangId()));
 //                    schedule.setStudent(new Student(dto.getStudentId()));
                     return schedule;
                 })
@@ -31,7 +31,7 @@ public class SugangMapper {
 
 
 
-    public static List<SugangDto> toSugangDtoMapper(List<SugangSchedule> entities) {
+    public static List<SugangDto> toSugangDtoMapper(List<SugangScheduleEntity> entities) {
         return entities.stream()
                 .map(entity -> {
                     SugangDto SugangDto = new SugangDto();
@@ -44,7 +44,7 @@ public class SugangMapper {
                 .collect(Collectors.toList());
     }
     
-    public static List<SugangDto> historyToSugangDtoMapper(List<SugangHistory> entities) {
+    public static List<SugangDto> historyToSugangDtoMapper(List<SugangHistoryEntity> entities) {
         return entities.stream()
                 .map(entity -> {
                     SugangDto SugangDto = new SugangDto();

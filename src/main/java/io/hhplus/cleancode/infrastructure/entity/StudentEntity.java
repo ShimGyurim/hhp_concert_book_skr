@@ -1,20 +1,25 @@
-package io.hhplus.cleancode.domain.entity;
+package io.hhplus.cleancode.infrastructure.entity;
 
 import jakarta.persistence.*;
 
-public class Student {
-
+@Entity
+@Table(name="STUDENT")
+public class StudentEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="student_id")
     private Long studentId;
 
+//    private String name;
 
     public Long getStudentId() {
         return studentId;
     }
 
-    public Student() {
+    public StudentEntity() {
     }
 
-    public Student(Long studentId) {
+    public StudentEntity(Long studentId) {
         this.studentId = studentId;
     }
 
