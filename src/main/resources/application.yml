@@ -1,13 +1,15 @@
+server:
+  port: 10180
 spring:
   application:
-    name: cleancode
+    name: concertbook
   h2:
     console:
       enabled: true
   datasource:
     hikari:
       driver-class-name: org.h2.Driver
-      jdbc-url: jdbc:h2:~/test
+      jdbc-url: jdbc:h2:~/concert_book
       username: sa
       password:
   jpa:
