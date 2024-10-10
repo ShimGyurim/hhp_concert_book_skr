@@ -7,10 +7,13 @@ import io.hhplus.concertbook.presentation.controller.TokenController;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+@ExtendWith(MockitoExtension.class)
 public class TokenUnitTest {
 
     @InjectMocks
@@ -27,7 +30,6 @@ public class TokenUnitTest {
 
         // then
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertNotNull(tokenController.issueUserToken(reqDto));
     }
 
     @Test
