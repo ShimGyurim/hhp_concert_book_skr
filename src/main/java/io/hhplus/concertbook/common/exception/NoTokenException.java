@@ -3,13 +3,13 @@ package io.hhplus.concertbook.common.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.time.DateTimeException;
-
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class DateParameterException extends DateTimeException {
+public class NoTokenException extends Exception {
+    public NoTokenException() {
+        super();
+    }
 
-
-    public DateParameterException(String message) {
+    public NoTokenException(String message) {
         super(message);
     }
 }
