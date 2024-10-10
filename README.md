@@ -33,6 +33,26 @@
 ![image](https://github.com/user-attachments/assets/cfdafcee-6e1b-4758-98ad-3b188896a48f)
 
 
+## 기술스택
+- java 
+- spring boot
+- jpa 
+- h2 db
+
+
+## 패키지 구조
+presentation
+  controller
+application 
+  facade (필요시)
+domain
+  service 
+  entity (pojo)
+infrasructure 
+  entity (jpa)
+  mapper
+  
+
 ## API 명세
 ![image](https://github.com/user-attachments/assets/e54b9229-707c-474a-b68f-5ded399fec3b)
 ![image](https://github.com/user-attachments/assets/fe595276-86ca-4992-a033-9c2c6a2024cc)
