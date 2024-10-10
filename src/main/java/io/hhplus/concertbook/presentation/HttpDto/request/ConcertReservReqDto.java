@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class ConcertReservReqDto {
     Long concertScheduleId;
     Long seatId;
+    String token;
 }

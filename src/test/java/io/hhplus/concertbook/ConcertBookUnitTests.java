@@ -58,7 +58,7 @@ public class ConcertBookUnitTests {
     @DisplayName("예약 실패 테스트")
     public void requestSeatReservation_fail_nullConcertScheduleId() throws Exception {
         // given
-        ConcertReservReqDto reqDto = new ConcertReservReqDto(null, 50L);
+        ConcertReservReqDto reqDto = new ConcertReservReqDto(null, 50L, "token");
 
         // when, then
         Assertions.assertThrows(NoIdException.class, () -> concertBookController.requestSeatReservation(reqDto));
@@ -68,7 +68,7 @@ public class ConcertBookUnitTests {
     @DisplayName("결제 성공 테스트")
     public void makePayment_success() throws Exception {
         // given
-        PayReqDto reqDto = new PayReqDto(20L);
+        PayReqDto reqDto = new PayReqDto(20L,"token");
 
         // when
         ResponseEntity<CommonResponse<Object>> response = concertBookController.makePayment(reqDto);
@@ -81,9 +81,9 @@ public class ConcertBookUnitTests {
     @DisplayName("결제 실패 테스트: 예약 id 없음")
     public void makePayment_fail_nullReservationId() throws Exception {
         // given
-        PayReqDto reqDto = new PayReqDto(null);
+        PayReqDto reqDto = new PayReqDto(null,"token");
 
         // when, then
-        Assertions.assertThrows(IllegalArgumentException.class, () -> concertBookController.makePayment(reqDto));
+        Assertions.assertThrows(NoIdException.class, () -> concertBookController.makePayment(reqDto));
     }
 }

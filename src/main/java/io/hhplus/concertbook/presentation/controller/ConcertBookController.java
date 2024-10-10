@@ -104,7 +104,7 @@ public class ConcertBookController {
     @Operation(summary = "콘서트", description = "콘서트 예약")
     public ResponseEntity<CommonResponse<Object>> requestSeatReservation(
             @RequestBody ConcertReservReqDto concertReservReqDto
-            ) throws NoIdException {
+            ) throws NoIdException, NoTokenException {
 
         if(concertReservReqDto.getConcertScheduleId() == null) {
             throw new NoIdException("콘서트 스케줄 정보가 없습니다.");
@@ -112,6 +112,11 @@ public class ConcertBookController {
         if(concertReservReqDto.getSeatId() == null) {
             throw new NoIdException("콘서트 좌석 정보가 없습니다.");
         }
+
+        if(concertReservReqDto.getToken() == null) {
+            throw new NoTokenException("토큰없음");
+        }
+
         Long reservId = 20L;
         String concertName = "뉴진스콘서트";
         ConcertReservResDto concertReservResDto = new ConcertReservResDto(true,reservId,concertName);
@@ -130,9 +135,13 @@ public class ConcertBookController {
     @Operation(summary = "결제", description = "결제")
     public ResponseEntity<CommonResponse<Object>> makePayment(
         @RequestBody PayReqDto payReqDto
-            ) throws NoIdException {
+            ) throws NoIdException, NoTokenException {
         if(payReqDto.getReservId() == null) {
             throw new NoIdException("id가 없습니다.");
+        }
+
+        if(payReqDto.getToken() == null) {
+            throw new NoTokenException("토큰없음");
         }
 
         PayResDto payResDto = new PayResDto(payReqDto.getReservId(), true);
