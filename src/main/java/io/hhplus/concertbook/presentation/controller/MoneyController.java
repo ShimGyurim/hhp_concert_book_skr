@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/money")
-@Tag(name = "잔액/충전 api", description = "잔액/충전 api")
+@Tag(name = "Money Management", description = "잔액/충전 api")
 public class MoneyController {
 
     @PostMapping("/recharge")
