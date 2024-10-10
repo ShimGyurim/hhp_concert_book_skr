@@ -65,4 +65,5 @@ public class MoneyController {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
 }

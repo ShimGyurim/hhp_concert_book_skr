@@ -1,5 +1,6 @@
 package io.hhplus.concertbook.presentation.controller;
 
+import io.hhplus.concertbook.common.exception.NoIdException;
 import io.hhplus.concertbook.presentation.HttpDto.request.TokenReqDto;
 import io.hhplus.concertbook.presentation.HttpDto.response.CommonResponse;
 import io.hhplus.concertbook.presentation.HttpDto.response.TokenResDto;
@@ -28,7 +29,7 @@ public class TokenController {
                         TokenReqDto tokenReqDto) throws Exception {
 
         if(tokenReqDto.getUserId() == null) {
-            throw new Exception("아이디가 없습니다.");
+            throw new NoIdException("아이디가 없습니다.");
         }
 
         //TODO : 토큰 만료 확인 로직은 service 에서
