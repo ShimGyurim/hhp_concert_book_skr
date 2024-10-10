@@ -62,14 +62,23 @@
 
 ## 패키지 구조
 presentation
+
   controller
+  
 application 
+
   facade (필요시)
+  
 domain
+
   service 
+  
   entity (pojo)
+  
 infrasructure 
+
   entity (jpa)
+  
   mapper
   
 
