@@ -23,9 +23,29 @@
 
 10/18~10/24 추가 코드 작성 (5주차) : filter , interceptor 등
 
+## 개별 플로우 차트
+
+- 토큰발급 api
+  
+![image](https://github.com/user-attachments/assets/e61e64b7-755e-4c33-a907-fa3a634a4cfa)
 
 
-## 플로우 차트
+- 콘서트 날짜별 / 좌석 조회 api
+  
+![image](https://github.com/user-attachments/assets/401db229-bf28-474c-b536-2baafa1116f3)
+
+
+- 콘서트 예약 & 결제 api
+  
+![image](https://github.com/user-attachments/assets/5ccbf5c2-a272-47ff-91cd-b763c93dccf7)
+
+
+- 잔액 충전 / 조회 api
+  
+![image](https://github.com/user-attachments/assets/e86e9060-60d6-487b-ac1d-b9a0cdeaca45)
+
+
+## 전체 플로우 차트
 ![image](https://github.com/user-attachments/assets/9c1ed351-55bf-482d-95b4-87ecc8a5322b)
 
 
@@ -42,15 +62,24 @@
 
 ## 패키지 구조
 presentation
-  controller
+
+  > controller
+  
 application 
-  facade (필요시)
+
+  > facade (필요시)
+  
 domain
-  service 
-  entity (pojo)
+
+  > service 
+  
+  > entity (pojo)
+  
 infrasructure 
-  entity (jpa)
-  mapper
+
+  > entity (jpa)
+  
+  > mapper
   
 
 ## API 명세
