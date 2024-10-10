@@ -1,0 +1,34 @@
+server:
+  port: 10180
+spring:
+  application:
+    name: concertbook
+  h2:
+    console:
+      enabled: true
+  datasource:
+    hikari:
+      driver-class-name: org.h2.Driver
+      jdbc-url: jdbc:h2:~/concert_book
+      username: sa
+      password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        highlight_sql: true
+  sql:
+    init:
+      mode: always
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+springfox:
+  documentation:
+    enabled: true
+#mybatis:
+#  mapper-locations:
+#    - mappers/*.xml
