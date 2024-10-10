@@ -25,7 +25,7 @@
 
 
 
-## 시퀀스 다이어그램
+## 플로우 차트
 ![image](https://github.com/user-attachments/assets/9c1ed351-55bf-482d-95b4-87ecc8a5322b)
 
 
