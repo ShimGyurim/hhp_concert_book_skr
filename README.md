@@ -63,23 +63,23 @@
 ## 패키지 구조
 presentation
 
-  controller
+  > controller
   
 application 
 
-  facade (필요시)
+  > facade (필요시)
   
 domain
 
-  service 
+  > service 
   
-  entity (pojo)
+  > entity (pojo)
   
 infrasructure 
 
-  entity (jpa)
+  > entity (jpa)
   
-  mapper
+  > mapper
   
 
 ## API 명세
