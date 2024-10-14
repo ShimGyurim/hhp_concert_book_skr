@@ -9,7 +9,7 @@ spring:
   datasource:
     hikari:
       driver-class-name: org.h2.Driver
-      jdbc-url: jdbc:h2:~/concert_book
+      url: jdbc:h2:~/concert_book;AUTO_SERVER=true
       username: sa
       password:
   jpa:
