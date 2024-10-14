@@ -6,7 +6,7 @@ import lombok.ToString;
 
 @Data
 @Entity
-@Table(name="user")
+@Table(name="userinfo")
 
 public class UserEntity {
 

@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 @Data
 @Entity
 @Table(name="book")
-
 public class BookEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,14 +19,14 @@ public class BookEntity {
 
     @ManyToOne
     @JoinColumn(name = "seat_id")
-    long seatId;
+    SeatEntity seat;
 
     @Enumerated(EnumType.STRING)
     BookStatus statusCd;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    long userId;
+    UserEntity user;
 
     Timestamp createdAt;
     Timestamp updatedAt;

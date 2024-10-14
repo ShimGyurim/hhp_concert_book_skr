@@ -19,7 +19,7 @@ public class PaymentEntity {
 
     @ManyToOne
     @JoinColumn(name = "book_id")
-    long bookId;
+    BookEntity book;
 
     Timestamp createdAt;
     Timestamp updatedAt;

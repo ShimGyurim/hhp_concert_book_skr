@@ -15,10 +15,10 @@ public class ConcertEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="concert_id")
-    private long concertId;
+    long concertId;
 
-    private String concertName;
-    private long fee;
+    String concertName;
+    long fee;
 
 
 }

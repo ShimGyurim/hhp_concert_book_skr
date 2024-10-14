@@ -17,7 +17,7 @@ public class ConcertItemEntity {
 
     @ManyToOne
     @JoinColumn(name = "concert_id")
-    long concertId;
+    ConcertEntity concert;
 
     String concertD;
     String concertT;

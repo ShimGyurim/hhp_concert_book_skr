@@ -36,5 +36,5 @@ public class WaitTokenEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    long userId;
+    UserEntity user;
 }
