@@ -1,4 +1,6 @@
 package io.hhplus.concertbook.domain.repository;
 
-public interface ConcertItemRepo {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ConcertItemRepo extends JpaRepository {
 }

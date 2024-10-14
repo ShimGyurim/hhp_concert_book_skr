@@ -2,5 +2,5 @@ package io.hhplus.concertbook.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface WalletRepo {
+public interface WalletRepo extends JpaRepository {
 }

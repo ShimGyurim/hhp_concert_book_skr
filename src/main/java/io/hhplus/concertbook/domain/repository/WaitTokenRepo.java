@@ -1,4 +1,6 @@
 package io.hhplus.concertbook.domain.repository;
 
-public interface WaitTokenRepo {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface WaitTokenRepo extends JpaRepository {
 }

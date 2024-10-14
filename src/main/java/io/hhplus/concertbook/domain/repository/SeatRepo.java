@@ -1,4 +1,6 @@
 package io.hhplus.concertbook.domain.repository;
 
-public interface SeatRepo {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface SeatRepo extends JpaRepository {
 }

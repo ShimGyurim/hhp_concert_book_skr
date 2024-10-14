@@ -1,4 +1,4 @@
-package io.hhplus.concertbook.infrastructure.entity;
+package io.hhplus.concertbook.domain.entity;
 
 
 import jakarta.persistence.*;

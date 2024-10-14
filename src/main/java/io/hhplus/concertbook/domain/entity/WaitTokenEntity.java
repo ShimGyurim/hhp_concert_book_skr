@@ -1,4 +1,4 @@
-package io.hhplus.concertbook.infrastructure.entity;
+package io.hhplus.concertbook.domain.entity;
 
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
