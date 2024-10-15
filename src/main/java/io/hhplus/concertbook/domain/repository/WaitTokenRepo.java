@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WaitTokenRepo extends JpaRepository<WaitTokenEntity,Long> {
 
-    WaitTokenEntity findByUserNameAndServiceCd(String userName, ApiNo apiNo);
+    WaitTokenEntity findByUser_UserNameAndServiceCd(String userName, ApiNo apiNo);
 }
