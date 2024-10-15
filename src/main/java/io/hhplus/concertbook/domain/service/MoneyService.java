@@ -16,7 +16,7 @@ public class MoneyService {
 
     public long getBalance(String userName) throws Exception {
         UserEntity user = userRepo.findByUserName(userName);
-        WalletEntity wallet = walletRepo.findByUserId(user.getUserId());
+        WalletEntity wallet = walletRepo.findByUser_UserId(user.getUserId());
 
         if(user == null) {
             throw new Exception("유저정보없음");
