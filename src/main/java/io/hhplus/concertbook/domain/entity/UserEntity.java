@@ -6,14 +6,15 @@ import lombok.ToString;
 
 @Data
 @Entity
-@Table(name="userinfo")
-
+@Table(name="userinfo", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"user_name"}) // 중복 토큰 발생 불가
+})
 public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="user_id")
     long userId;
 
+    @Column(name="user_name")
     String userName;
 }
