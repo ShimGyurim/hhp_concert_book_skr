@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 //@EnableJpaRepositories
 //@ComponentScan("com.helloworld.quickstart.repository")
-public class CleanCodeApplication {
+public class ConcertBookApp {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CleanCodeApplication.class, args);
+		SpringApplication.run(ConcertBookApp.class, args);
 	}
 
 }
