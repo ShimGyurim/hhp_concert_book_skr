@@ -48,7 +48,7 @@ public class MoneyService {
     }
 
     @Transactional
-    public boolean charge(String userName,Long chargeAmt) throws Exception {
+    public long charge(String userName,Long chargeAmt) throws Exception {
         if(chargeAmt <= 0) {
             throw new Exception("충전금액 이상");
         }
@@ -62,9 +62,9 @@ public class MoneyService {
         }
 
         WalletEntity wallet = walletRepo.findByUser_UserId(user.getUserId());
-        wallet.setWalletId(wallet.getAmount()+chargeAmt);
+        wallet.setAmount(wallet.getAmount()+chargeAmt);
         walletRepo.save(wallet);
 
-        return true;
+        return wallet.getAmount();
     }
 }

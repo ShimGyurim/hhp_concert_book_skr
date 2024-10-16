@@ -1,5 +1,6 @@
 package io.hhplus.concertbook.presentation.controller;
 
+import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.exception.AmtMinusException;
 import io.hhplus.concertbook.common.exception.NoTokenException;
 import io.hhplus.concertbook.domain.service.MoneyService;
@@ -23,27 +24,25 @@ public class MoneyController {
     @Autowired
     MoneyService moneyService;
 
-    @PostMapping("/recharge")
+    @GetMapping("/charge")
     @Operation(summary = "충전", description = "충전")
-    public ResponseEntity<CommonResponse<Object>> rechargeBalance(
-            @RequestBody RechargeReqDto rechargeReqDto
-            ) throws AmtMinusException, NoTokenException {
-        if(rechargeReqDto.getChargeAmount() <0) {
+    public ResponseEntity<CommonResponse<Object>> chargeBalance(
+            @RequestParam(value = "username") String userName,
+            @RequestParam(value = "chargeamt") Long chargeAmt
+            ) throws Exception {
+        if(chargeAmt <0) {
             throw new AmtMinusException("음수 충전");
         }
 
-        if(rechargeReqDto.getToken() == null) {
-            throw new NoTokenException("토큰 없음");
+        if(userName == null) {
+            throw new NoTokenException("유저 없음");
         }
 
-        Long curAmount = 50L;
-        curAmount += rechargeReqDto.getChargeAmount();
-
-        RechargeResDto rechargeResDto = new RechargeResDto(true,curAmount);
+        long afterAmount = moneyService.charge(userName,chargeAmt);
 
         CommonResponse<Object> response = CommonResponse.builder()
                 .msg("토큰 발급 성공")
-                .data(rechargeResDto)
+                .data(afterAmount)
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

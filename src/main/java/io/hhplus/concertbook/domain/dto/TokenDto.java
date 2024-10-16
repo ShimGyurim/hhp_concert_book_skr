@@ -8,4 +8,5 @@ public class TokenDto {
     String token;
     String userName;
     ApiNo apiNo;
+    int waitNo; //TODO: 대기번호 부여
 }
