@@ -1,86 +1,146 @@
 package io.hhplus.concertbook.presentation.controller;
 
-import io.hhplus.concertbook.presentation.HttpDto.CommonResponse;
+import io.hhplus.concertbook.common.exception.DateParameterException;
+import io.hhplus.concertbook.common.exception.NoIdException;
+import io.hhplus.concertbook.common.exception.NoTokenException;
+import io.hhplus.concertbook.domain.dto.ConcertScheduleDto;
+import io.hhplus.concertbook.domain.dto.SeatDto;
+import io.hhplus.concertbook.domain.service.ConcertService;
+import io.hhplus.concertbook.domain.service.PaymentService;
+import io.hhplus.concertbook.presentation.HttpDto.request.ConcertBookReqDto;
+import io.hhplus.concertbook.presentation.HttpDto.request.PayReqDto;
+import io.hhplus.concertbook.presentation.HttpDto.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @RestController
+@RequestMapping("/concert")
+@Tag(name = "Concert Info", description = "콘서트 정보 조회")
 public class ConcertBookController {
 
-    @GetMapping("/default")
-    public String getMethod() {
-        return "success";
-    }
+    @Autowired
+    ConcertService concertService;
 
-    @PostMapping("/auth/token")
-    @Operation(summary = "토큰발급", description = "토큰을 사용자에게 발급")
+    @Autowired
+    PaymentService paymentService;
+
+    @GetMapping("/date")
+    @Operation(summary = "공연스케줄조회", description = "공연스케줄조회")
     @ApiResponse(responseCode = "200", description = "성공")
-    public ResponseEntity<CommonResponse<Object>> issueUserToken() {
-        String token = "1";
+    public ResponseEntity<CommonResponse<Object>> getAvailableDates(
+            @RequestBody
+            @Parameter(required = true, description = "콘서트날짜입력")
+            @RequestParam(value ="concertd", required = true) String concertD ) throws NoTokenException {
+
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+            LocalDate localDate = LocalDate.parse(concertD, formatter);
+        }catch (DateTimeException e) {
+            throw new DateParameterException("날짜 형식 부정확");
+        }
+
+        List<ConcertScheduleDto> concertScheduleDtos = concertService.getAvailSchedule(concertD);
+
         CommonResponse<Object> response = CommonResponse.builder()
-                .msg("토큰 발급 성공")
-                .data(token)
+                .msg("")
+                .data(concertScheduleDtos)
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping("/concerts/date")
-    public void getAvailableDates(@RequestBody
-                                              @Parameter(required = true, description = "토큰입력")
-                                                      String token) {
+    @GetMapping("/seat")
+    @Operation(summary = "공연좌석조회", description = "좌석 정보 조회")
+    @ApiResponse(responseCode = "200", description = "성공")
+    public ResponseEntity<CommonResponse<Object>> getAvailableSeats(
+
+            @Parameter(required = true, description = "콘서트정보입력")
+            @RequestParam(value = "itemid") Long itemId) throws NoTokenException, NoIdException {
+
+
+        List<SeatDto> seatDtos = concertService.getSeats(itemId);
 
         CommonResponse<Object> response = CommonResponse.builder()
                 .msg("")
-//                .data()
+                .data(seatDtos)
                 .build();
 
-//        return ResponseEntity.status(HttpStatus.OK).body(response);
-        return ;
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping("/concerts/seat")
-    public void getAvailableSeats(@RequestBody
-                                          @Parameter(required = true, description = "토큰입력")
-                                                  String token) {
+
+    @PostMapping("/book")
+    @Operation(summary = "콘서트", description = "콘서트 예약")
+    public ResponseEntity<CommonResponse<Object>> requestSeatReservation(
+            @RequestBody ConcertBookReqDto concertBookReqDto
+            ) throws Exception {
+
+//        if(concertReservReqDto.getConcertScheduleId() == null) {
+//            throw new NoIdException("콘서트 스케줄 정보가 없습니다.");
+//        }
+        if(concertBookReqDto.getSeatId() == null) {
+            throw new NoIdException("콘서트 좌석 정보가 없습니다.");
+        }
+
+        if(concertBookReqDto.getToken() == null) {
+            throw new NoTokenException("토큰없음");
+        }
+
+        long bookId = concertService.book(concertBookReqDto.getToken(), concertBookReqDto.getSeatId());
 
         CommonResponse<Object> response = CommonResponse.builder()
                 .msg("")
-//                .data()
+                .data(bookId)
                 .build();
 
-//        return ResponseEntity.status(HttpStatus.OK).body(response);
-        return ;
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 
-    @PostMapping("/reservations")
-    @Operation(summary = "좌석예약", description = "콘서트 예약 API")
-    public void requestSeatReservation() {
-        //토큰, 날짜, 좌석, 콘서트id 모두 필요
-    }
-
-    @PostMapping("/users/recharge")
-    public void rechargeBalance( ) {
-        // 사용자 , 금액 
-    }
-
-    @PostMapping("/users/balance")
-    public void getBalance( ) {
-        // 사용자
-    }
 
     @PostMapping("/payments")
-    public void makePayment( ) {
+    @Operation(summary = "결제", description = "결제")
+    public ResponseEntity<CommonResponse<Object>> makePayment(
+        @RequestBody PayReqDto payReqDto
+            ) throws Exception {
+        if(payReqDto.getBookId() == null) {
+            throw new NoIdException("id가 없습니다.");
+        }
 
+        if(payReqDto.getToken() == null) {
+            throw new NoTokenException("토큰없음");
+        }
+
+        boolean result = paymentService.pay(payReqDto.getToken(), payReqDto.getBookId());
+
+        CommonResponse<Object> response = CommonResponse.builder()
+                .msg("")
+                .data(result)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+
+
+
+    @GetMapping("/seatinsert") //좌석 추가
+    public boolean seatInsert(
+            @RequestParam(value="itemid",required = true) Long itemId) {
+        concertService.seatInsert(itemId);
+
+        return true;
+    }
 
 }
