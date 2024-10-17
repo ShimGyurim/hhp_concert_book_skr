@@ -1,35 +1,27 @@
 package io.hhplus.concertbook.domain.service;
 
-import io.hhplus.concertbook.common.constant.GlobalConstant;
-import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
 import io.hhplus.concertbook.common.exception.NoUserException;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
-import io.hhplus.concertbook.domain.repository.UserRepo;
-import io.hhplus.concertbook.domain.repository.WaitTokenRepo;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import org.apache.catalina.User;
+import io.hhplus.concertbook.domain.repository.UserRepository;
+import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
 
 @Service
 public class TokenService {
 
     @Autowired
-    WaitTokenRepo waitTokenRepo;
+    WaitTokenRepository waitTokenRepository;
 
     @Autowired
-    UserRepo userRepo;
+    UserRepository userRepository;
 
     @Autowired
     WaitQueueService waitQueueService;
@@ -44,7 +36,7 @@ public class TokenService {
 
 //        waitQueueService.queueRefresh(tokenInDto.getApiNo());
 
-        WaitTokenEntity entity = waitTokenRepo.findByUser_UserNameAndServiceCd(tokenInDto.getUserName(),tokenInDto.getApiNo());
+        WaitTokenEntity entity = waitTokenRepository.findByUser_UserNameAndServiceCd(tokenInDto.getUserName(),tokenInDto.getApiNo());
 
         if(entity == null || WaitStatus.EXPIRED.equals(entity.getStatusCd())) {
             WaitTokenEntity newEntity = new WaitTokenEntity();
@@ -53,7 +45,7 @@ public class TokenService {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
             String formDate = sdf.format(timestamp);
 
-            UserEntity user = userRepo.findByUserName(tokenInDto.getUserName());
+            UserEntity user = userRepository.findByUserName(tokenInDto.getUserName());
 
             if(user==null) {
                 throw new NoUserException("사용자없음");
@@ -65,7 +57,7 @@ public class TokenService {
             newEntity.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
             newEntity.setToken(tokenInDto.getUserName()+formDate);
 
-            waitTokenRepo.save(newEntity);
+            waitTokenRepository.save(newEntity);
 
             TokenDto dto = new TokenDto();
             dto.setToken(newEntity.getToken());
@@ -73,14 +65,14 @@ public class TokenService {
             dto.setApiNo(tokenInDto.getApiNo());
 
             //대기번호 리턴
-            Long count = waitTokenRepo.countPreviousToken(tokenInDto.getApiNo(),newEntity.getUpdatedAt());
+            Long count = waitTokenRepository.countPreviousToken(tokenInDto.getApiNo(),newEntity.getUpdatedAt());
 
 
             if(count == 0) {
-                Long countProcss = waitTokenRepo.countStatusToken(tokenInDto.getApiNo(),WaitStatus.PROCESS);
+                Long countProcss = waitTokenRepository.countStatusToken(tokenInDto.getApiNo(),WaitStatus.PROCESS);
                 if(countProcss==0) {
                     newEntity.setStatusCd(WaitStatus.PROCESS);
-                    waitTokenRepo.save(newEntity);
+                    waitTokenRepository.save(newEntity);
                 }
             }
             dto.setWaitNo(count.intValue());
@@ -94,14 +86,14 @@ public class TokenService {
             dto.setApiNo(tokenInDto.getApiNo());
 
             //대기번호 리턴
-            Long count = waitTokenRepo.countPreviousToken(tokenInDto.getApiNo(),entity.getUpdatedAt());
+            Long count = waitTokenRepository.countPreviousToken(tokenInDto.getApiNo(),entity.getUpdatedAt());
 
             if(count==0) {
 
-                Long countProcss = waitTokenRepo.countStatusToken(tokenInDto.getApiNo(),WaitStatus.PROCESS);
+                Long countProcss = waitTokenRepository.countStatusToken(tokenInDto.getApiNo(),WaitStatus.PROCESS);
                 if(countProcss==0) {
                     entity.setStatusCd(WaitStatus.PROCESS);
-                    waitTokenRepo.save(entity);
+                    waitTokenRepository.save(entity);
                 }
 
             }

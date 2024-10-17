@@ -1,14 +1,9 @@
 package io.hhplus.concertbook.presentation.controller;
 
-import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.exception.AmtMinusException;
 import io.hhplus.concertbook.common.exception.NoTokenException;
 import io.hhplus.concertbook.domain.service.MoneyService;
-import io.hhplus.concertbook.presentation.HttpDto.request.BalanceReqDto;
-import io.hhplus.concertbook.presentation.HttpDto.request.RechargeReqDto;
-import io.hhplus.concertbook.presentation.HttpDto.response.BalanceResDto;
 import io.hhplus.concertbook.presentation.HttpDto.response.CommonResponse;
-import io.hhplus.concertbook.presentation.HttpDto.response.RechargeResDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

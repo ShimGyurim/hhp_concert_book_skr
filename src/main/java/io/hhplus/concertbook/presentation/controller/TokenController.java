@@ -6,7 +6,6 @@ import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.service.TokenService;
 import io.hhplus.concertbook.presentation.HttpDto.request.TokenReqDto;
 import io.hhplus.concertbook.presentation.HttpDto.response.CommonResponse;
-import io.hhplus.concertbook.presentation.HttpDto.response.TokenResDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
