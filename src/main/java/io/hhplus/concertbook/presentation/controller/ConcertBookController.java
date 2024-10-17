@@ -134,13 +134,13 @@ public class ConcertBookController {
 
 
 
-
-    @GetMapping("/seatinsert") //좌석 추가
-    public boolean seatInsert(
-            @RequestParam(value="itemid",required = true) Long itemId) {
-        concertService.seatInsert(itemId);
-
-        return true;
-    }
+    //TEST 용
+//    @GetMapping("/seatinsert") //좌석 추가
+//    public boolean seatInsert(
+//            @RequestParam(value="itemid",required = true) Long itemId) {
+//        concertService.seatInsert(itemId);
+//
+//        return true;
+//    }
 
 }

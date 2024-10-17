@@ -5,10 +5,10 @@ import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
 import io.hhplus.concertbook.common.exception.NoTokenException;
 import io.hhplus.concertbook.domain.entity.*;
-import io.hhplus.concertbook.domain.repository.BookRepo;
-import io.hhplus.concertbook.domain.repository.PaymentRepo;
-import io.hhplus.concertbook.domain.repository.WaitTokenRepo;
-import io.hhplus.concertbook.domain.repository.WalletRepo;
+import io.hhplus.concertbook.domain.repository.BookRepository;
+import io.hhplus.concertbook.domain.repository.PaymentRepository;
+import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
+import io.hhplus.concertbook.domain.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,19 +20,19 @@ import java.util.Optional;
 public class PaymentService {
 
     @Autowired
-    BookRepo bookRepo;
+    BookRepository bookRepository;
 
     @Autowired
-    WaitTokenRepo waitTokenRepo;
+    WaitTokenRepository waitTokenRepository;
 
     @Autowired
-    WalletRepo walletRepo;
+    WalletRepository walletRepository;
 
     @Autowired
     WaitQueueService waitQueueService;
 
     @Autowired
-    PaymentRepo paymentRepo;
+    PaymentRepository paymentRepository;
 
     @Transactional
     public boolean pay(String token, Long bookId) throws Exception {
@@ -42,7 +42,7 @@ public class PaymentService {
 //        waitQueueService.queueRefresh(ApiNo.PAYMENT);
 
         //TODO: PROCESS 가 service 에 진입한 후 updatedAt 시간 갱신기능
-        Optional<BookEntity> bookEntityOptional = bookRepo.findById(bookId);
+        Optional<BookEntity> bookEntityOptional = bookRepository.findById(bookId);
         BookEntity book = bookEntityOptional.get();
         UserEntity userBook = book.getUser();
 
@@ -52,7 +52,7 @@ public class PaymentService {
         if(!BookStatus.PREPAYMENT.equals(book.getStatusCd())){
             throw new Exception("결제할 항목없음");
         }
-        WaitTokenEntity waitToken = waitTokenRepo.findByToken(token);
+        WaitTokenEntity waitToken = waitTokenRepository.findByToken(token);
         if(waitToken == null) {
             throw new NoTokenException(); //TODO: http 500 리턴 코드가 있는데 괜찮을지?
         }
@@ -86,7 +86,7 @@ public class PaymentService {
         }
         long fee = concert.getFee();
 
-        WalletEntity wallet = walletRepo.findByUser_UserId(userBook.getUserId());
+        WalletEntity wallet = walletRepository.findByUser_UserId(userBook.getUserId());
         if(wallet == null) {
             throw new Exception("잔액정보없음");
         }
@@ -96,7 +96,7 @@ public class PaymentService {
 
         //지갑 금액 차감
         wallet.setAmount(wallet.getAmount()-fee);
-        walletRepo.save(wallet);
+        walletRepository.save(wallet);
 
         //PAY 객체
         PaymentEntity payment = new PaymentEntity();
@@ -104,13 +104,13 @@ public class PaymentService {
         payment.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         payment.setUpdatedAt(payment.getCreatedAt());
 
-        paymentRepo.save(payment);
+        paymentRepository.save(payment);
 
         //콘서트 예약 상태 변경
         book.setStatusCd(BookStatus.PAID);
 
         waitToken.endProcess();
-        waitTokenRepo.save(waitToken);
+        waitTokenRepository.save(waitToken);
 //        waitQueueService.queueRefresh(ApiNo.PAYMENT);
         return true;
     }

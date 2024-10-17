@@ -7,10 +7,10 @@ import io.hhplus.concertbook.common.exception.NoTokenException;
 import io.hhplus.concertbook.domain.dto.ConcertScheduleDto;
 import io.hhplus.concertbook.domain.dto.SeatDto;
 import io.hhplus.concertbook.domain.entity.*;
-import io.hhplus.concertbook.domain.repository.BookRepo;
-import io.hhplus.concertbook.domain.repository.ConcertItemRepo;
-import io.hhplus.concertbook.domain.repository.SeatRepo;
-import io.hhplus.concertbook.domain.repository.WaitTokenRepo;
+import io.hhplus.concertbook.domain.repository.BookRepository;
+import io.hhplus.concertbook.domain.repository.ConcertItemRepository;
+import io.hhplus.concertbook.domain.repository.SeatRepository;
+import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,22 +23,22 @@ import java.util.stream.Collectors;
 public class ConcertService {
 
     @Autowired
-    ConcertItemRepo concertItemRepo;
+    ConcertItemRepository concertItemRepository;
 
     @Autowired
-    SeatRepo seatRepo;
+    SeatRepository seatRepository;
 
     @Autowired
-    WaitTokenRepo waitTokenRepo;
+    WaitTokenRepository waitTokenRepository;
 
     @Autowired
     WaitQueueService waitQueueService;
 
     @Autowired
-    BookRepo bookRepo;
+    BookRepository bookRepository;
 
     public List<ConcertScheduleDto> getAvailSchedule(String scheduleDate){
-        List<ConcertItemEntity> concertItems = concertItemRepo.findByConcertD(scheduleDate);
+        List<ConcertItemEntity> concertItems = concertItemRepository.findByConcertD(scheduleDate);
 
        List<ConcertScheduleDto> concertSchdules = concertItems.stream()
                 .map(item -> {
@@ -59,7 +59,7 @@ public class ConcertService {
     }
 
     public List<SeatDto> getSeats(long scheduleId){ //출력: 좌석id랑, 좌석 no 리스트
-        List<SeatEntity> seatItems = seatRepo.findByConcertItem_ConcertItemId(scheduleId);
+        List<SeatEntity> seatItems = seatRepository.findByConcertItem_ConcertItemId(scheduleId);
 
         List<SeatDto> seatNos = seatItems.stream()
                 .map(item -> {
@@ -84,7 +84,7 @@ public class ConcertService {
 
 //        waitQueueService.queueRefresh(ApiNo.BOOK); // 큐 새로고침
 
-        WaitTokenEntity waitToken = waitTokenRepo.findByToken(token);
+        WaitTokenEntity waitToken = waitTokenRepository.findByToken(token);
 
         if(waitToken == null) {
             throw new NoTokenException();
@@ -99,8 +99,8 @@ public class ConcertService {
             throw new Exception("다른 서비스 토큰");
         }
 
-        UserEntity user = waitTokenRepo.findUserinfoByToken(token);
-        SeatEntity seat = seatRepo.findById(seatId).get();
+        UserEntity user = waitTokenRepository.findUserinfoByToken(token);
+        SeatEntity seat = seatRepository.findById(seatId).get();
 
         if(user==null){
             throw new Exception();
@@ -113,7 +113,7 @@ public class ConcertService {
         }
 
         seat.setUse(true);
-        seatRepo.save(seat);
+        seatRepository.save(seat);
 
         BookEntity book = new BookEntity();
         book.setStatusCd(BookStatus.PREPAYMENT);
@@ -122,22 +122,22 @@ public class ConcertService {
         book.setUpdatedAt(book.getCreatedAt());
         book.setUser(user);
 
-        bookRepo.save(book);
+        bookRepository.save(book);
 
         waitToken.endProcess(); // 프로세스 end 처리 (다음
-        waitTokenRepo.save(waitToken);
+        waitTokenRepository.save(waitToken);
         return book.getBookId();
     }
 
     
     //TEST용
-    public void seatInsert(Long concertItemId) {
-        for (int i =1 ; i<=50; i++) {
-            SeatEntity seat = new SeatEntity();
-            seat.setSeatNo(i);
-            seat.setConcertItem(concertItemRepo.findById(concertItemId).get());
-            seat.setUse(false);
-            seatRepo.save(seat);
-        }
-    }
+//    public void seatInsert(Long concertItemId) {
+//        for (int i =1 ; i<=50; i++) {
+//            SeatEntity seat = new SeatEntity();
+//            seat.setSeatNo(i);
+//            seat.setConcertItem(concertItemRepository.findById(concertItemId).get());
+//            seat.setUse(false);
+//            seatRepository.save(seat);
+//        }
+//    }
 }

@@ -1,17 +1,13 @@
-package io.hhplus.concertbook;
+package io.hhplus.concertbook.UnitTests;
 
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
 import io.hhplus.concertbook.common.exception.NoTokenException;
-import io.hhplus.concertbook.common.exception.NoUserException;
-import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.*;
 import io.hhplus.concertbook.domain.service.PaymentService;
-import io.hhplus.concertbook.domain.service.TokenService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,26 +17,25 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.sql.Timestamp;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class PaymentUnitTest {
 
     @Mock
-    private UserRepo userRepo;
+    private UserRepository userRepository;
 
     @Mock
-    private WalletRepo walletRepo;
+    private WalletRepository walletRepository;
 
     @Mock
-    private BookRepo bookRepo;
+    private BookRepository bookRepository;
 
     @Mock
-    private WaitTokenRepo waitTokenRepo;
+    private WaitTokenRepository waitTokenRepository;
 
     @Mock
-    private PaymentRepo paymentRepo;
+    private PaymentRepository paymentRepository;
 
     @InjectMocks
     private PaymentService paymentService;
@@ -63,7 +58,7 @@ public class PaymentUnitTest {
     @Test
     @DisplayName("예약정보 못찾음")
     public void testPay_BookNotFound() {
-        Mockito.when(bookRepo.findById(1L)).thenReturn(Optional.empty());
+        Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.empty());
 
         Exception exception = Assertions.assertThrows(Exception.class, () -> {
             paymentService.pay("validToken", 1L);
@@ -77,7 +72,7 @@ public class PaymentUnitTest {
     public void testPay_BookNotPrepayment() {
         BookEntity book = new BookEntity();
         book.setStatusCd(BookStatus.PAID);
-        Mockito.when(bookRepo.findById(1L)).thenReturn(Optional.of(book));
+        Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
         Exception exception = Assertions.assertThrows(Exception.class, () -> {
             paymentService.pay("validToken", 1L);
@@ -91,8 +86,8 @@ public class PaymentUnitTest {
     public void testPay_TokenNotFound() {
         BookEntity book = new BookEntity();
         book.setStatusCd(BookStatus.PREPAYMENT);
-        Mockito.when(bookRepo.findById(1L)).thenReturn(Optional.of(book));
-        Mockito.when(waitTokenRepo.findByToken("invalidToken")).thenReturn(null);
+        Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+        Mockito.when(waitTokenRepository.findByToken("invalidToken")).thenReturn(null);
 
         Exception exception = Assertions.assertThrows(NoTokenException.class, () -> {
             paymentService.pay("invalidToken", 1L);
@@ -106,11 +101,11 @@ public class PaymentUnitTest {
     public void testPay_TokenExpired() {
         BookEntity book = new BookEntity();
         book.setStatusCd(BookStatus.PREPAYMENT);
-        Mockito.when(bookRepo.findById(1L)).thenReturn(Optional.of(book));
+        Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
         WaitTokenEntity waitToken = new WaitTokenEntity();
         waitToken.setStatusCd(WaitStatus.EXPIRED);
-        Mockito.when(waitTokenRepo.findByToken("expiredToken")).thenReturn(waitToken);
+        Mockito.when(waitTokenRepository.findByToken("expiredToken")).thenReturn(waitToken);
 
         Exception exception = Assertions.assertThrows(Exception.class, () -> {
             paymentService.pay("expiredToken", 1L);
@@ -132,17 +127,17 @@ public class PaymentUnitTest {
         concertItem.setConcert(new ConcertEntity());
         seat.setConcertItem(concertItem);
         book.setSeat(seat);
-        Mockito.when(bookRepo.findById(1L)).thenReturn(Optional.of(book));
+        Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
         WaitTokenEntity waitToken = new WaitTokenEntity();
         waitToken.setStatusCd(WaitStatus.PROCESS);
         waitToken.setServiceCd(ApiNo.PAYMENT);
         waitToken.setUser(user);
-        Mockito.when(waitTokenRepo.findByToken("validToken")).thenReturn(waitToken);
+        Mockito.when(waitTokenRepository.findByToken("validToken")).thenReturn(waitToken);
 
         WalletEntity wallet = new WalletEntity();
         wallet.setAmount(1000L);
-        Mockito.when(walletRepo.findByUser_UserId(1L)).thenReturn(wallet);
+        Mockito.when(walletRepository.findByUser_UserId(1L)).thenReturn(wallet);
 
 //        SeatEntity seatAnother = new SeatEntity();
         ConcertEntity concert = new ConcertEntity();
@@ -157,8 +152,8 @@ public class PaymentUnitTest {
 
         Assertions.assertTrue(result);
         Assertions.assertEquals(500L, wallet.getAmount());
-        Mockito.verify(walletRepo, Mockito.times(1)).save(wallet);
-        Mockito.verify(paymentRepo, Mockito.times(1)).save(ArgumentMatchers.any(PaymentEntity.class));
-        Mockito.verify(waitTokenRepo, Mockito.times(1)).save(waitToken);
+        Mockito.verify(walletRepository, Mockito.times(1)).save(wallet);
+        Mockito.verify(paymentRepository, Mockito.times(1)).save(ArgumentMatchers.any(PaymentEntity.class));
+        Mockito.verify(waitTokenRepository, Mockito.times(1)).save(waitToken);
     }
 }

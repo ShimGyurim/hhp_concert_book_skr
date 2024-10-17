@@ -1,23 +1,13 @@
-package io.hhplus.concertbook;
+package io.hhplus.concertbook.UnitTests;
 
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
-import io.hhplus.concertbook.common.exception.NoIdException;
-import io.hhplus.concertbook.common.exception.NoUserException;
 import io.hhplus.concertbook.domain.dto.ConcertScheduleDto;
 import io.hhplus.concertbook.domain.dto.SeatDto;
-import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.*;
 import io.hhplus.concertbook.domain.service.ConcertService;
-import io.hhplus.concertbook.domain.service.TokenService;
-import io.hhplus.concertbook.presentation.HttpDto.request.ConcertBookReqDto;
-import io.hhplus.concertbook.presentation.HttpDto.request.ConcertSeatReqDto;
-import io.hhplus.concertbook.presentation.HttpDto.request.PayReqDto;
-import io.hhplus.concertbook.presentation.HttpDto.response.CommonResponse;
-import io.hhplus.concertbook.presentation.controller.ConcertBookController;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,11 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -38,13 +24,13 @@ import java.util.Optional;
 @ExtendWith(MockitoExtension.class)
 public class ConcertBookUnitTests {
     @Mock
-    private ConcertItemRepo concertItemRepo;
+    private ConcertItemRepository concertItemRepository;
 
     @InjectMocks
     private ConcertService concertService;
 
     @Mock
-    private SeatRepo seatRepo;
+    private SeatRepository seatRepository;
 
     @Test
     @DisplayName("날짜조회 성공")
@@ -59,7 +45,7 @@ public class ConcertBookUnitTests {
         concertItem2.setAvailSeats(50);
         concertItem2.setConcert(new ConcertEntity());
 
-        Mockito.when(concertItemRepo.findByConcertD("2024-10-15")).thenReturn(Arrays.asList(concertItem1, concertItem2));
+        Mockito.when(concertItemRepository.findByConcertD("2024-10-15")).thenReturn(Arrays.asList(concertItem1, concertItem2));
 
         List<ConcertScheduleDto> result = concertService.getAvailSchedule("2024-10-15");
 
@@ -73,7 +59,7 @@ public class ConcertBookUnitTests {
     @Test
     @DisplayName("날짜조회 실패")
     public void testGetAvailSchedule_NoConcerts() {
-        Mockito.when(concertItemRepo.findByConcertD("2024-10-15")).thenReturn(Arrays.asList());
+        Mockito.when(concertItemRepository.findByConcertD("2024-10-15")).thenReturn(Arrays.asList());
 
         List<ConcertScheduleDto> result = concertService.getAvailSchedule("2024-10-15");
 
@@ -93,7 +79,7 @@ public class ConcertBookUnitTests {
         seat2.setSeatNo(20);
         seat2.setUse(false);
 
-        Mockito.when(seatRepo.findByConcertItem_ConcertItemId(1L)).thenReturn(Arrays.asList(seat1, seat2));
+        Mockito.when(seatRepository.findByConcertItem_ConcertItemId(1L)).thenReturn(Arrays.asList(seat1, seat2));
 
         List<SeatDto> result = concertService.getSeats(1L);
 
@@ -109,7 +95,7 @@ public class ConcertBookUnitTests {
     @Test
     @DisplayName("좌석조회성공")
     public void testGetSeats_NoSeats() {
-        Mockito.when(seatRepo.findByConcertItem_ConcertItemId(1L)).thenReturn(Arrays.asList());
+        Mockito.when(seatRepository.findByConcertItem_ConcertItemId(1L)).thenReturn(Arrays.asList());
 
         List<SeatDto> result = concertService.getSeats(1L);
 
@@ -117,10 +103,10 @@ public class ConcertBookUnitTests {
     }
 
     @Mock
-    WaitTokenRepo waitTokenRepo;
+    WaitTokenRepository waitTokenRepository;
 
     @Mock
-    BookRepo bookRepo;
+    BookRepository bookRepository;
 
     @Test
     @DisplayName("예약: 성공")
@@ -131,17 +117,17 @@ public class ConcertBookUnitTests {
         UserEntity user = new UserEntity();
         SeatEntity seat = new SeatEntity();
         seat.setUse(false);
-        Mockito.when(waitTokenRepo.findByToken("validToken")).thenReturn(waitToken);
-        Mockito.when(waitTokenRepo.findUserinfoByToken("validToken")).thenReturn(user);
-        Mockito.when(seatRepo.findById(1L)).thenReturn(Optional.of(seat));
+        Mockito.when(waitTokenRepository.findByToken("validToken")).thenReturn(waitToken);
+        Mockito.when(waitTokenRepository.findUserinfoByToken("validToken")).thenReturn(user);
+        Mockito.when(seatRepository.findById(1L)).thenReturn(Optional.of(seat));
 
 
         long result = concertService.book("validToken", 1L);
 
         Assertions.assertTrue(seat.isUse());
-        Mockito.verify(seatRepo, Mockito.times(1)).save(seat);
-        Mockito.verify(bookRepo, Mockito.times(1)).save(ArgumentMatchers.any(BookEntity.class));
-        Mockito.verify(waitTokenRepo, Mockito.times(1)).save(waitToken);
+        Mockito.verify(seatRepository, Mockito.times(1)).save(seat);
+        Mockito.verify(bookRepository, Mockito.times(1)).save(ArgumentMatchers.any(BookEntity.class));
+        Mockito.verify(waitTokenRepository, Mockito.times(1)).save(waitToken);
     }
 
     @Test
@@ -149,7 +135,7 @@ public class ConcertBookUnitTests {
     public void testBook_TokenWaiting() {
         WaitTokenEntity waitToken = new WaitTokenEntity();
         waitToken.setStatusCd(WaitStatus.WAIT);
-        Mockito.when(waitTokenRepo.findByToken("waitingToken")).thenReturn(waitToken);
+        Mockito.when(waitTokenRepository.findByToken("waitingToken")).thenReturn(waitToken);
 
         Exception exception = Assertions.assertThrows(Exception.class, () -> {
             concertService.book("waitingToken", 1L);
@@ -167,9 +153,9 @@ public class ConcertBookUnitTests {
         UserEntity user = new UserEntity();
         SeatEntity seat = new SeatEntity();
         seat.setUse(true);
-        Mockito.when(waitTokenRepo.findByToken("validToken")).thenReturn(waitToken);
-        Mockito.when(waitTokenRepo.findUserinfoByToken("validToken")).thenReturn(user);
-        Mockito.when(seatRepo.findById(1L)).thenReturn(Optional.of(seat));
+        Mockito.when(waitTokenRepository.findByToken("validToken")).thenReturn(waitToken);
+        Mockito.when(waitTokenRepository.findUserinfoByToken("validToken")).thenReturn(user);
+        Mockito.when(seatRepository.findById(1L)).thenReturn(Optional.of(seat));
 
         Exception exception = Assertions.assertThrows(Exception.class, () -> {
             concertService.book("validToken", 1L);

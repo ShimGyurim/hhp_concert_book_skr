@@ -1,34 +1,25 @@
-package io.hhplus.concertbook;
+package io.hhplus.concertbook.UnitTests;
 
-import io.hhplus.concertbook.common.exception.AmtMinusException;
-import io.hhplus.concertbook.common.exception.NoTokenException;
 import io.hhplus.concertbook.common.exception.NoUserException;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WalletEntity;
-import io.hhplus.concertbook.domain.repository.UserRepo;
-import io.hhplus.concertbook.domain.repository.WalletRepo;
+import io.hhplus.concertbook.domain.repository.UserRepository;
+import io.hhplus.concertbook.domain.repository.WalletRepository;
 import io.hhplus.concertbook.domain.service.MoneyService;
-import io.hhplus.concertbook.presentation.HttpDto.request.BalanceReqDto;
-import io.hhplus.concertbook.presentation.HttpDto.request.RechargeReqDto;
-import io.hhplus.concertbook.presentation.HttpDto.response.CommonResponse;
-import io.hhplus.concertbook.presentation.controller.MoneyController;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 public class MoneyUnitTests {
     @Mock
-    private UserRepo userRepo;
+    private UserRepository userRepository;
 
     @Mock
-    private WalletRepo walletRepo;
+    private WalletRepository walletRepository;
 
     @InjectMocks
     private MoneyService moneyService;
@@ -41,7 +32,7 @@ public class MoneyUnitTests {
     @Test
     @DisplayName("유저못찾음")
     public void testGetBalance_UserNotFound() {
-        Mockito.when(userRepo.findByUserName("nouser")).thenReturn(null);
+        Mockito.when(userRepository.findByUserName("nouser")).thenReturn(null);
 //        Mockito.when(walletRepo.findByUser_UserId(ArgumentMatchers.any(Long.class))).thenReturn(new WalletEntity());
 
         Exception exception = Assertions.assertThrows(NoUserException.class, () -> {
@@ -56,13 +47,13 @@ public class MoneyUnitTests {
     public void testGetBalance_WalletNotFound() throws Exception {
         UserEntity user = new UserEntity();
         user.setUserId(1L);
-        Mockito.when(userRepo.findByUserName("existingUser")).thenReturn(user);
-        Mockito.when(walletRepo.findByUser_UserId(1L)).thenReturn(null);
+        Mockito.when(userRepository.findByUserName("existingUser")).thenReturn(user);
+        Mockito.when(walletRepository.findByUser_UserId(1L)).thenReturn(null);
 
         long balance = moneyService.getBalance("existingUser");
 
         Assertions.assertEquals(0L, balance);
-        Mockito.verify(walletRepo, Mockito.times(1)).save(ArgumentMatchers.any(WalletEntity.class));
+        Mockito.verify(walletRepository, Mockito.times(1)).save(ArgumentMatchers.any(WalletEntity.class));
     }
 
     @Test
@@ -72,8 +63,8 @@ public class MoneyUnitTests {
         user.setUserId(1L);
         WalletEntity wallet = new WalletEntity();
         wallet.setAmount(100L);
-        Mockito.when(userRepo.findByUserName("existingUser")).thenReturn(user);
-        Mockito.when(walletRepo.findByUser_UserId(1L)).thenReturn(wallet);
+        Mockito.when(userRepository.findByUserName("existingUser")).thenReturn(user);
+        Mockito.when(walletRepository.findByUser_UserId(1L)).thenReturn(wallet);
 
         long balance = moneyService.getBalance("existingUser");
 
@@ -93,7 +84,7 @@ public class MoneyUnitTests {
     @Test
     @DisplayName("유저 못찾음")
     public void testCharge_UserNotFound() {
-        Mockito.when(userRepo.findByUserName("nonexistentUser")).thenReturn(null);
+        Mockito.when(userRepository.findByUserName("nonexistentUser")).thenReturn(null);
 
         Exception exception = Assertions.assertThrows(Exception.class, () -> {
             moneyService.charge("nonexistentUser", 100L);
@@ -110,12 +101,12 @@ public class MoneyUnitTests {
         WalletEntity wallet = new WalletEntity();
         wallet.setAmount(100L);
 
-        Mockito.when(userRepo.findByUserName("existingUser")).thenReturn(user);
-        Mockito.when(walletRepo.findByUser_UserId(1L)).thenReturn(wallet);
+        Mockito.when(userRepository.findByUserName("existingUser")).thenReturn(user);
+        Mockito.when(walletRepository.findByUser_UserId(1L)).thenReturn(wallet);
 
         long newBalance = moneyService.charge("existingUser", 50L);
 
         Assertions.assertEquals(150L, newBalance);
-        Mockito.verify(walletRepo, Mockito.times(1)).save(wallet);
+        Mockito.verify(walletRepository, Mockito.times(1)).save(wallet);
     }    
 }

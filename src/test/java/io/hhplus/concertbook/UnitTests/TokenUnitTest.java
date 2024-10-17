@@ -1,18 +1,14 @@
-package io.hhplus.concertbook;
+package io.hhplus.concertbook.UnitTests;
 
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
-import io.hhplus.concertbook.common.exception.NoIdException;
 import io.hhplus.concertbook.common.exception.NoUserException;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
-import io.hhplus.concertbook.domain.repository.UserRepo;
-import io.hhplus.concertbook.domain.repository.WaitTokenRepo;
+import io.hhplus.concertbook.domain.repository.UserRepository;
+import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import io.hhplus.concertbook.domain.service.TokenService;
-import io.hhplus.concertbook.presentation.HttpDto.request.TokenReqDto;
-import io.hhplus.concertbook.presentation.HttpDto.response.CommonResponse;
-import io.hhplus.concertbook.presentation.controller.TokenController;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,8 +19,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.sql.Timestamp;
 
@@ -32,10 +26,10 @@ import java.sql.Timestamp;
 public class TokenUnitTest {
 
     @Mock
-    private WaitTokenRepo waitTokenRepo;
+    private WaitTokenRepository waitTokenRepository;
 
     @Mock
-    private UserRepo userRepo;
+    private UserRepository userRepository;
 
     @InjectMocks
     TokenService tokenService;
@@ -65,10 +59,10 @@ public class TokenUnitTest {
     @Test
     @DisplayName("토큰이 없는경우")
     public void testGetToken_NewToken() throws Exception {
-        Mockito.when(waitTokenRepo.findByUser_UserNameAndServiceCd("testUser", ApiNo.BOOK)).thenReturn(null);
-        Mockito.when(userRepo.findByUserName("testUser")).thenReturn(user);
-        Mockito.when(waitTokenRepo.save(ArgumentMatchers.any(WaitTokenEntity.class))).thenReturn(entity);
-        Mockito.when(waitTokenRepo.countStatusToken(ArgumentMatchers.any(ApiNo.class),ArgumentMatchers.any(WaitStatus.class))).thenReturn(0L);
+        Mockito.when(waitTokenRepository.findByUser_UserNameAndServiceCd("testUser", ApiNo.BOOK)).thenReturn(null);
+        Mockito.when(userRepository.findByUserName("testUser")).thenReturn(user);
+        Mockito.when(waitTokenRepository.save(ArgumentMatchers.any(WaitTokenEntity.class))).thenReturn(entity);
+        Mockito.when(waitTokenRepository.countStatusToken(ArgumentMatchers.any(ApiNo.class),ArgumentMatchers.any(WaitStatus.class))).thenReturn(0L);
 
         TokenDto result = tokenService.getToken(tokenInDto);
 
@@ -82,7 +76,7 @@ public class TokenUnitTest {
     @Test
     @DisplayName("기존 토큰 있는경우")
     public void testGetToken_ExistingToken() throws Exception {
-        Mockito.when(waitTokenRepo.findByUser_UserNameAndServiceCd("testUser", ApiNo.BOOK)).thenReturn(entity);
+        Mockito.when(waitTokenRepository.findByUser_UserNameAndServiceCd("testUser", ApiNo.BOOK)).thenReturn(entity);
 
         TokenDto result = tokenService.getToken(tokenInDto);
 
@@ -95,8 +89,8 @@ public class TokenUnitTest {
 
     @Test
     public void testGetToken_UserNotFound() {
-        Mockito.when(waitTokenRepo.findByUser_UserNameAndServiceCd("testUser", ApiNo.BOOK)).thenReturn(null);
-        Mockito.when(userRepo.findByUserName("testUser")).thenReturn(null);
+        Mockito.when(waitTokenRepository.findByUser_UserNameAndServiceCd("testUser", ApiNo.BOOK)).thenReturn(null);
+        Mockito.when(userRepository.findByUserName("testUser")).thenReturn(null);
 
         Exception exception = Assertions.assertThrows(NoUserException.class, () -> {
             tokenService.getToken(tokenInDto);
