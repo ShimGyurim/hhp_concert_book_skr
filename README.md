@@ -50,7 +50,8 @@
 
 
 ## ERD
-![image](https://github.com/user-attachments/assets/cfdafcee-6e1b-4758-98ad-3b188896a48f)
+![image](https://github.com/user-attachments/assets/ec850c17-de2c-4294-8a4e-f2d259283029)
+
 
 
 ## 기술스택
