@@ -3,6 +3,7 @@ package io.hhplus.concertbook.domain.service;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
 import io.hhplus.concertbook.common.exception.NoTokenException;
+import io.hhplus.concertbook.common.exception.NoUserException;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
 import io.hhplus.concertbook.domain.entity.WalletEntity;
@@ -31,11 +32,13 @@ public class MoneyService {
     public long getBalance(String userName) throws Exception {
 
         UserEntity user = userRepo.findByUserName(userName);
-        WalletEntity wallet = walletRepo.findByUser_UserId(user.getUserId());
+
 
         if(user == null) {
-            throw new Exception("유저정보없음");
+            throw new NoUserException("유저정보없음");
         }
+
+        WalletEntity wallet = walletRepo.findByUser_UserId(user.getUserId());
         if(wallet == null) {
             WalletEntity entity = new WalletEntity();
             entity.setAmount(0);

@@ -3,6 +3,7 @@ package io.hhplus.concertbook.domain.service;
 import io.hhplus.concertbook.common.constant.GlobalConstant;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
+import io.hhplus.concertbook.common.exception.NoUserException;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
@@ -55,7 +56,7 @@ public class TokenService {
             UserEntity user = userRepo.findByUserName(tokenInDto.getUserName());
 
             if(user==null) {
-                throw new Exception("사용자없음");
+                throw new NoUserException("사용자없음");
             }
             newEntity.setUser(user);
             newEntity.setServiceCd(tokenInDto.getApiNo());
@@ -110,4 +111,5 @@ public class TokenService {
         }
 
     }
+
 }
