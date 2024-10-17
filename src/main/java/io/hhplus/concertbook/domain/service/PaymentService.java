@@ -54,7 +54,7 @@ public class PaymentService {
         }
         WaitTokenEntity waitToken = waitTokenRepository.findByToken(token);
         if(waitToken == null) {
-            throw new NoTokenException(); //TODO: http 500 리턴 코드가 있는데 괜찮을지?
+            throw new NoTokenException();
         }
 
         if(WaitStatus.EXPIRED.equals(waitToken.getStatusCd())) {

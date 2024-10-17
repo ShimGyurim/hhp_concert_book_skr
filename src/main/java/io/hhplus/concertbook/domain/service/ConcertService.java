@@ -55,7 +55,7 @@ public class ConcertService {
                 .collect(Collectors.toList());
 
 
-        return concertSchdules; //TODO: 스케줄id 말고 이름도 출력
+        return concertSchdules;
     }
 
     public List<SeatDto> getSeats(long scheduleId){ //출력: 좌석id랑, 좌석 no 리스트

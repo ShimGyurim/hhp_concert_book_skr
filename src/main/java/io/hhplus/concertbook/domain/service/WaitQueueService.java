@@ -2,7 +2,9 @@ package io.hhplus.concertbook.domain.service;
 
 import io.hhplus.concertbook.common.constant.GlobalConstant;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
+import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
+import io.hhplus.concertbook.domain.repository.BookRepository;
 import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -25,6 +27,8 @@ public class WaitQueueService {
     @Autowired
     WaitTokenRepository waitTokenRepository;
 
+    @Autowired
+    BookRepository bookRepository;
 
     //스케줄러 역할 하는 메소드 (미작동)
     @Transactional
@@ -49,6 +53,8 @@ public class WaitQueueService {
         // PROCESS 없으면 WAIT 중에서 가장 오래된 updatedAt 을 PROCESS 로 처리하기
         waitTokenRepository.updateExpiredTokens(WaitStatus.EXPIRED ,now,fiveMinutesAgo);
 
+        //5분이상 미결제시 만료
+        bookRepository.updateExpiredBooks(BookStatus.EXPIRED,now,fiveMinutesAgo,BookStatus.PREPAYMENT);
 
         if(count > 0L) return; //진행 프로세스가 있으므로 리턴
 
