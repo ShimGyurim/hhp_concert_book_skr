@@ -2,8 +2,6 @@ package io.hhplus.concertbook.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.ToString;
-
 
 @Data
 @Entity
@@ -20,5 +18,5 @@ public class SeatEntity {
     ConcertItemEntity concertItem;
 
     int seatNo;
-    boolean useYn;
+    boolean isUse;
 }

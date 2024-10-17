@@ -13,6 +13,7 @@ import jakarta.persistence.PersistenceContext;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -29,15 +30,18 @@ public class TokenService {
     @Autowired
     UserRepo userRepo;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    WaitQueueService waitQueueService;
 
+    @Transactional
     public TokenDto getToken(TokenDto tokenInDto) throws Exception {
         // 토큰을 받아 유효한게 있는지 확인
         // api 별로는 아예 신경 안스기
         if(tokenInDto == null) {
             throw new Exception();
         }
+
+//        waitQueueService.queueRefresh(tokenInDto.getApiNo());
 
         WaitTokenEntity entity = waitTokenRepo.findByUser_UserNameAndServiceCd(tokenInDto.getUserName(),tokenInDto.getApiNo());
 
@@ -50,6 +54,9 @@ public class TokenService {
 
             UserEntity user = userRepo.findByUserName(tokenInDto.getUserName());
 
+            if(user==null) {
+                throw new Exception("사용자없음");
+            }
             newEntity.setUser(user);
             newEntity.setServiceCd(tokenInDto.getApiNo());
             newEntity.setStatusCd(WaitStatus.WAIT);
@@ -64,17 +71,19 @@ public class TokenService {
             dto.setUserName(user.getUserName());
             dto.setApiNo(tokenInDto.getApiNo());
 
-            //TODO: 대기번호 리턴
+            //대기번호 리턴
+            Long count = waitTokenRepo.countPreviousToken(tokenInDto.getApiNo(),newEntity.getUpdatedAt());
 
-            Long count = entityManager.createQuery(
-                            "SELECT COUNT(w) FROM wait_token w WHERE w.service_cd = :serviceCd AND w.status_cd = :statusCd" +
-                                    " AND w.updated_at < :updatedAtThis ", Long.class)
-                    .setParameter("serviceCd",tokenInDto.getApiNo())
-                    .setParameter("statusCd",WaitStatus.WAIT)
-                    .setParameter("updatedAtThis",newEntity.getUpdatedAt())
-                    .getSingleResult();
 
+            if(count == 0) {
+                Long countProcss = waitTokenRepo.countStatusToken(tokenInDto.getApiNo(),WaitStatus.PROCESS);
+                if(countProcss==0) {
+                    newEntity.setStatusCd(WaitStatus.PROCESS);
+                    waitTokenRepo.save(newEntity);
+                }
+            }
             dto.setWaitNo(count.intValue());
+            dto.setWaitStatus(newEntity.getStatusCd());
             return dto;
 
         }else{ //유효한 토큰이 존재하는 경우
@@ -82,16 +91,21 @@ public class TokenService {
             dto.setToken(entity.getToken());
             dto.setUserName(entity.getUser().getUserName());
             dto.setApiNo(tokenInDto.getApiNo());
-            //TODO: 대기번호 리턴
 
-            Long count = entityManager.createQuery(
-                            "SELECT COUNT(w) FROM wait_token w WHERE w.service_cd = :serviceCd AND w.status_cd = :statusCd" +
-                                    " AND w.updated_at < :updatedAtThis ", Long.class)
-                    .setParameter("serviceCd",tokenInDto.getApiNo())
-                    .setParameter("statusCd",WaitStatus.WAIT)
-                    .setParameter("updatedAtThis",entity.getUpdatedAt())
-                    .getSingleResult();
-            dto.setWaitNo(count.intValue());
+            //대기번호 리턴
+            Long count = waitTokenRepo.countPreviousToken(tokenInDto.getApiNo(),entity.getUpdatedAt());
+
+            if(count==0) {
+
+                Long countProcss = waitTokenRepo.countStatusToken(tokenInDto.getApiNo(),WaitStatus.PROCESS);
+                if(countProcss==0) {
+                    entity.setStatusCd(WaitStatus.PROCESS);
+                    waitTokenRepo.save(entity);
+                }
+
+            }
+            dto.setWaitStatus(entity.getStatusCd());
+            //TODO : 엔티티 dto 매퍼 구현
             return dto;
         }
 

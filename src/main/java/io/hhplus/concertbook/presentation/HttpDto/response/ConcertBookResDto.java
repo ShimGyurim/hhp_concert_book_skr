@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ConcertReservResDto {
+public class ConcertBookResDto {
     boolean isSuccess;
-    Long reservId;
+    Long bookId;
     String concertName;
 }
