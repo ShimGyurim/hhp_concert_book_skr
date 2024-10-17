@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PayResDto {
-    Long reservId;
+    Long bookId;
     boolean isSuccess;
 }

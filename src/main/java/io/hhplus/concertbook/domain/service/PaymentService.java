@@ -6,13 +6,17 @@ import io.hhplus.concertbook.common.enumerate.WaitStatus;
 import io.hhplus.concertbook.common.exception.NoTokenException;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.BookRepo;
+import io.hhplus.concertbook.domain.repository.PaymentRepo;
 import io.hhplus.concertbook.domain.repository.WaitTokenRepo;
 import io.hhplus.concertbook.domain.repository.WalletRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 
+@Service
 public class PaymentService {
 
     @Autowired
@@ -27,13 +31,17 @@ public class PaymentService {
     @Autowired
     WaitQueueService waitQueueService;
 
+    @Autowired
+    PaymentRepo paymentRepo;
+
     @Transactional
     public boolean pay(String token, Long bookId) throws Exception {
         if(token == null){
             throw new NoTokenException();
         }
-        waitQueueService.queueRefresh(ApiNo.PAYMENT);
+//        waitQueueService.queueRefresh(ApiNo.PAYMENT);
 
+        //TODO: PROCESS 가 service 에 진입한 후 updatedAt 시간 갱신기능
         Optional<BookEntity> bookEntityOptional = bookRepo.findById(bookId);
         BookEntity book = bookEntityOptional.get();
         UserEntity userBook = book.getUser();
@@ -53,6 +61,9 @@ public class PaymentService {
             throw new Exception("토큰만료");
         }else if(WaitStatus.WAIT.equals(waitToken.getStatusCd())) {
             throw new Exception("토큰대기중");
+        }
+        if(!ApiNo.PAYMENT.equals(waitToken.getServiceCd())){
+            throw new Exception("다른 서비스 토큰");
         }
 
         UserEntity userToken = waitToken.getUser();
@@ -87,10 +98,19 @@ public class PaymentService {
         wallet.setAmount(wallet.getAmount()-fee);
         walletRepo.save(wallet);
 
+        //PAY 객체
+        PaymentEntity payment = new PaymentEntity();
+        payment.setBook(book);
+        payment.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        payment.setUpdatedAt(payment.getCreatedAt());
+
+        paymentRepo.save(payment);
+
         //콘서트 예약 상태 변경
         book.setStatusCd(BookStatus.PAID);
 
         waitToken.endProcess();
+        waitTokenRepo.save(waitToken);
 //        waitQueueService.queueRefresh(ApiNo.PAYMENT);
         return true;
     }

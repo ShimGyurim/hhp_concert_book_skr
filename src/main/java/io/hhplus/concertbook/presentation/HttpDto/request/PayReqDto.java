@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PayReqDto {
-    Long reservId;
+    Long bookId;
     String token;
 }

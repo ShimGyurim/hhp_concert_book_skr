@@ -2,10 +2,10 @@ package io.hhplus.concertbook;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-//@EnableJpaRepositories
-//@ComponentScan("com.helloworld.quickstart.repository")
+@EnableScheduling
 public class ConcertBookApp {
 
 	public static void main(String[] args) {

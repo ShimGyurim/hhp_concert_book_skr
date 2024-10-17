@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TokenReqDto {
-    String userId;
+    String userName;
+    String apiServiceName;
 }
