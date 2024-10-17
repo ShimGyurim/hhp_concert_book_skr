@@ -37,4 +37,8 @@ public class WaitTokenEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     UserEntity user;
+
+    public void endProcess() {
+        this.setStatusCd(WaitStatus.END);
+    }
 }
