@@ -1,6 +1,6 @@
 package io.hhplus.concertbook.domain.service;
 
-import io.hhplus.concertbook.common.constant.GlobalConstant;
+import io.hhplus.concertbook.domain.constant.WaitQueueConstant;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
@@ -43,7 +43,7 @@ public class WaitQueueService {
         // 5분 지난 PROCESS 는 모두 EXPIRED 처리하기
         Timestamp now = Timestamp.from(Instant.now());
         // 5분 전 시간 타임스탬프
-        Timestamp fiveMinutesAgo = Timestamp.from(now.toInstant().minus(Duration.ofMinutes(GlobalConstant.WAIT_MINUTE)));
+        Timestamp fiveMinutesAgo = Timestamp.from(now.toInstant().minus(Duration.ofMinutes(WaitQueueConstant.WAIT_MINUTE)));
 
         //진행중 토큰이 있는지 확인
         Long count = waitTokenRepository.countStatusToken(apiNo,WaitStatus.PROCESS);
