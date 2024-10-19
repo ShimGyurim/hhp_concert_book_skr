@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 
-@Repository
+
 public interface BookRepository extends JpaRepository<BookEntity,Long> {
 
     @Modifying

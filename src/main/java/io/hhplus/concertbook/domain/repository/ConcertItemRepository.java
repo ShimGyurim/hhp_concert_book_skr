@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+
 public interface ConcertItemRepository extends JpaRepository<ConcertItemEntity,Long> {
     List<ConcertItemEntity> findByConcertD (String scheduleD);
 }

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 import java.util.List;
 
-@Repository
+
 public interface WaitTokenRepository extends JpaRepository<WaitTokenEntity,Long> {
 
     WaitTokenEntity findByUser_UserNameAndServiceCd(String userName, ApiNo apiNo);
