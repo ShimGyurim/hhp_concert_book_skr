@@ -36,9 +36,8 @@ public class MoneyService {
 
         WalletEntity wallet = walletRepository.findByUser_UserId(user.getUserId());
         if(wallet == null) {
-            WalletEntity entity = new WalletEntity();
-            entity.setAmount(0);
-            entity.setUser(user);
+            WalletEntity entity = WalletEntity.builder()
+                    .amount(0).user(user).build();
 
             walletRepository.save(entity);
             return 0L;

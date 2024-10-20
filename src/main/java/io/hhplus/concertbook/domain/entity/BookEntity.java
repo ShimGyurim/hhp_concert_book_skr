@@ -2,6 +2,7 @@ package io.hhplus.concertbook.domain.entity;
 
 import io.hhplus.concertbook.common.enumerate.BookStatus;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
@@ -11,6 +12,7 @@ import java.sql.Timestamp;
 @Data
 @Entity
 @Table(name="book")
+@Builder
 public class BookEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

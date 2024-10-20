@@ -58,24 +58,24 @@ public class PayIntegTests {
         userRepository.save(user);
 
         // 지갑 생성
-        wallet = new WalletEntity();
+        wallet = WalletEntity.builder().build();
         wallet.setUser(user);
         wallet.setAmount(1000L);
         walletRepository.save(wallet);
 
         // 책 생성
-        book = new BookEntity();
+        book = BookEntity.builder().build();
         book.setUser(user);
         ConcertEntity concertEntity = new ConcertEntity();
         concertEntity.setFee(1000L);
         concertRepository.save(concertEntity);
 
-        ConcertItemEntity concertItemEntity = new ConcertItemEntity();
+        ConcertItemEntity concertItemEntity = ConcertItemEntity.builder().build();
         concertItemEntity.setConcert(concertEntity);
         concertItemRepository.save(concertItemEntity);
 
 
-        SeatEntity seat = new SeatEntity();
+        SeatEntity seat = SeatEntity.builder().build();
         seat.setConcertItem(concertItemEntity);
         seatRepository.save(seat);
         book.setSeat(seat);

@@ -35,15 +35,17 @@ public class ConcertBookUnitTests {
     @Test
     @DisplayName("날짜조회 성공")
     public void testGetAvailSchedule_Success() {
-        ConcertItemEntity concertItem1 = new ConcertItemEntity();
-        concertItem1.setConcertItemId(1L);
-        concertItem1.setAvailSeats(100);
-        concertItem1.setConcert(new ConcertEntity());
+        ConcertItemEntity concertItem1 = ConcertItemEntity.builder()
+                .concertItemId(1L).availSeats(100).concert(new ConcertEntity()).build();
+//        concertItem1.setConcertItemId(1L);
+//        concertItem1.setAvailSeats(100);
+//        concertItem1.setConcert(new ConcertEntity());
 
-        ConcertItemEntity concertItem2 = new ConcertItemEntity();
-        concertItem2.setConcertItemId(2L);
-        concertItem2.setAvailSeats(50);
-        concertItem2.setConcert(new ConcertEntity());
+        ConcertItemEntity concertItem2 = ConcertItemEntity.builder()
+                .concertItemId(2L).availSeats(50).concert(new ConcertEntity()).build();
+//        concertItem2.setConcertItemId(2L);
+//        concertItem2.setAvailSeats(50);
+//        concertItem2.setConcert(new ConcertEntity());
 
         Mockito.when(concertItemRepository.findByConcertD("2024-10-15")).thenReturn(Arrays.asList(concertItem1, concertItem2));
 
@@ -69,12 +71,12 @@ public class ConcertBookUnitTests {
     @Test
     @DisplayName("좌석조회 성공")
     public void testGetSeats_Success() {
-        SeatEntity seat1 = new SeatEntity();
+        SeatEntity seat1 = SeatEntity.builder().build();
         seat1.setSeatId(1L);
         seat1.setSeatNo(10);
         seat1.setUse(true);
 
-        SeatEntity seat2 = new SeatEntity();
+        SeatEntity seat2 = SeatEntity.builder().build();
         seat2.setSeatId(2L);
         seat2.setSeatNo(20);
         seat2.setUse(false);
@@ -115,7 +117,7 @@ public class ConcertBookUnitTests {
         waitToken.setStatusCd(WaitStatus.PROCESS);
         waitToken.setServiceCd(ApiNo.BOOK);
         UserEntity user = new UserEntity();
-        SeatEntity seat = new SeatEntity();
+        SeatEntity seat = SeatEntity.builder().build();
         seat.setUse(false);
         Mockito.when(waitTokenRepository.findByToken("validToken")).thenReturn(waitToken);
         Mockito.when(waitTokenRepository.findUserinfoByToken("validToken")).thenReturn(user);
@@ -151,7 +153,7 @@ public class ConcertBookUnitTests {
         waitToken.setStatusCd(WaitStatus.PROCESS);
         waitToken.setServiceCd(ApiNo.BOOK);
         UserEntity user = new UserEntity();
-        SeatEntity seat = new SeatEntity();
+        SeatEntity seat = SeatEntity.builder().build();
         seat.setUse(true);
         Mockito.when(waitTokenRepository.findByToken("validToken")).thenReturn(waitToken);
         Mockito.when(waitTokenRepository.findUserinfoByToken("validToken")).thenReturn(user);

@@ -70,8 +70,8 @@ public class PaymentUnitTest {
     @Test
     @DisplayName("결제할 항목없음")
     public void testPay_BookNotPrepayment() {
-        BookEntity book = new BookEntity();
-        book.setStatusCd(BookStatus.PAID);
+        BookEntity book = BookEntity.builder().statusCd(BookStatus.PAID).build();
+//        book.setStatusCd(BookStatus.PAID);
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
         Exception exception = Assertions.assertThrows(Exception.class, () -> {
@@ -84,8 +84,8 @@ public class PaymentUnitTest {
     @Test
     @DisplayName("토큰못찾음")
     public void testPay_TokenNotFound() {
-        BookEntity book = new BookEntity();
-        book.setStatusCd(BookStatus.PREPAYMENT);
+        BookEntity book = BookEntity.builder().statusCd(BookStatus.PREPAYMENT).build();
+//        book.setStatusCd(BookStatus.PREPAYMENT);
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
         Mockito.when(waitTokenRepository.findByToken("invalidToken")).thenReturn(null);
 
@@ -99,8 +99,8 @@ public class PaymentUnitTest {
     @Test
     @DisplayName("토큰만료")
     public void testPay_TokenExpired() {
-        BookEntity book = new BookEntity();
-        book.setStatusCd(BookStatus.PREPAYMENT);
+        BookEntity book = BookEntity.builder().statusCd(BookStatus.PREPAYMENT).build();
+//        book.setStatusCd(BookStatus.PREPAYMENT);
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
         WaitTokenEntity waitToken = new WaitTokenEntity();
@@ -117,15 +117,16 @@ public class PaymentUnitTest {
     @Test
     @DisplayName("결제 성공")
     public void testPay_Success() throws Exception {
-        BookEntity book = new BookEntity();
+        BookEntity book = BookEntity.builder().build();
         book.setStatusCd(BookStatus.PREPAYMENT);
         UserEntity user = new UserEntity();
         user.setUserId(1L);
         book.setUser(user);
-        SeatEntity seat = new SeatEntity();
-        ConcertItemEntity concertItem = new ConcertItemEntity();
-        concertItem.setConcert(new ConcertEntity());
-        seat.setConcertItem(concertItem);
+
+        ConcertItemEntity concertItem = ConcertItemEntity.builder().concert(new ConcertEntity()).build();
+//        concertItem.setConcert(new ConcertEntity());
+        SeatEntity seat = SeatEntity.builder().concertItem(concertItem).build();
+//        seat.setConcertItem(concertItem);
         book.setSeat(seat);
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
@@ -135,17 +136,17 @@ public class PaymentUnitTest {
         waitToken.setUser(user);
         Mockito.when(waitTokenRepository.findByToken("validToken")).thenReturn(waitToken);
 
-        WalletEntity wallet = new WalletEntity();
-        wallet.setAmount(1000L);
+        WalletEntity wallet = WalletEntity.builder().amount(1000L).build();
+//        wallet.setAmount(1000L);
         Mockito.when(walletRepository.findByUser_UserId(1L)).thenReturn(wallet);
 
 //        SeatEntity seatAnother = new SeatEntity();
         ConcertEntity concert = new ConcertEntity();
         concert.setFee(500L);
-        ConcertItemEntity concertItem1 = new ConcertItemEntity();
-        concertItem1.setConcert(concert);
-        SeatEntity seat1 = new SeatEntity();
-        seat1.setConcertItem(concertItem1);
+        ConcertItemEntity concertItem1 = ConcertItemEntity.builder().concert(concert).build();
+//        concertItem1.setConcert(concert);
+        SeatEntity seat1 = SeatEntity.builder().concertItem(concertItem1).build();
+//        seat1.setConcertItem(concertItem1);
         book.setSeat(seat1);
 
         boolean result = paymentService.pay("validToken", 1L);

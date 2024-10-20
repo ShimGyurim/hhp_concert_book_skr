@@ -63,10 +63,11 @@ public class ConcertService {
 
         List<SeatDto> seatNos = seatItems.stream()
                 .map(item -> {
-                    SeatDto dto = new SeatDto();
-                    dto.setSeatId(item.getSeatId());
-                    dto.setSeatNo(item.getSeatNo());
-                    dto.setUse(item.isUse());
+                    SeatDto dto = SeatDto.builder()
+                            .seatId(item.getSeatId()).seatNo(item.getSeatNo()).isUse(item.isUse()).build();
+//                    dto.setSeatId(item.getSeatId());
+//                    dto.setSeatNo(item.getSeatNo());
+//                    dto.setUse(item.isUse());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -102,10 +103,10 @@ public class ConcertService {
         UserEntity user = waitTokenRepository.findUserinfoByToken(token);
         SeatEntity seat = seatRepository.findById(seatId).get();
 
-        if(user==null){
+        if(user == null){
             throw new Exception();
         }
-        if(seat==null){
+        if(seat == null){
             throw new Exception();
         }
         if(seat.isUse()){
@@ -115,7 +116,7 @@ public class ConcertService {
         seat.setUse(true);
         seatRepository.save(seat);
 
-        BookEntity book = new BookEntity();
+        BookEntity book = BookEntity.builder().build();
         book.setStatusCd(BookStatus.PREPAYMENT);
         book.setSeat(seat);
         book.setCreatedAt(new Timestamp(System.currentTimeMillis()));

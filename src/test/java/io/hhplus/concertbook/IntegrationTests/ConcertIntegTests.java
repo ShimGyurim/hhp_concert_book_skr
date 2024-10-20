@@ -55,13 +55,13 @@ public class ConcertIntegTests {
         userRepository.save(user);
 
         // 콘서트 아이템 생성
-        concertItem = new ConcertItemEntity();
+        concertItem = ConcertItemEntity.builder().build();
         concertItem.setConcertD("20241015");
         concertItem.setAvailSeats(100);
         concertItemRepository.save(concertItem);
 
         // 좌석 생성
-        seat = new SeatEntity();
+        seat = SeatEntity.builder().build();
         seat.setConcertItem(concertItem);
         seat.setSeatNo(10);
         seat.setUse(false);

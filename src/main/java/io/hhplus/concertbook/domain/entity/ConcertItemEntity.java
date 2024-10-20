@@ -1,13 +1,14 @@
 package io.hhplus.concertbook.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
 @Data
 @Entity
 @Table(name="concertItem")
-
+@Builder
 public class ConcertItemEntity {
 
     @Id

@@ -61,8 +61,8 @@ public class MoneyUnitTests {
     public void testGetBalance_WalletFound() throws Exception {
         UserEntity user = new UserEntity();
         user.setUserId(1L);
-        WalletEntity wallet = new WalletEntity();
-        wallet.setAmount(100L);
+        WalletEntity wallet = WalletEntity.builder().amount(100L).build();
+//        wallet.setAmount(100L);
         Mockito.when(userRepository.findByUserName("existingUser")).thenReturn(user);
         Mockito.when(walletRepository.findByUser_UserId(1L)).thenReturn(wallet);
 
@@ -98,8 +98,9 @@ public class MoneyUnitTests {
     public void testCharge_Success() throws Exception {
         UserEntity user = new UserEntity();
         user.setUserId(1L);
-        WalletEntity wallet = new WalletEntity();
-        wallet.setAmount(100L);
+        WalletEntity wallet = WalletEntity.builder()
+                .amount(100L).build();
+//        wallet.setAmount(100L);
 
         Mockito.when(userRepository.findByUserName("existingUser")).thenReturn(user);
         Mockito.when(walletRepository.findByUser_UserId(1L)).thenReturn(wallet);
