@@ -60,7 +60,7 @@ public class MoneyService {
             throw new Exception("유저 없음");
         }
 
-        WalletEntity wallet = walletRepository.findByUser_UserId(user.getUserId());
+        WalletEntity wallet = walletRepository.findByUser_UserIdWithLock(user.getUserId());
         wallet.setAmount(wallet.getAmount()+chargeAmt);
         walletRepository.save(wallet);
 

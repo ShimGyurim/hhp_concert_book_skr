@@ -99,12 +99,9 @@ public class ConcertService {
             throw new Exception("다른 서비스 토큰");
         }
 
-        UserEntity user = waitTokenRepository.findUserinfoByToken(token);
-        SeatEntity seat = seatRepository.findById(seatId).get();
 
-        if(user==null){
-            throw new Exception();
-        }
+
+        SeatEntity seat = seatRepository.findByIdWithLock(seatId);
         if(seat==null){
             throw new Exception();
         }
@@ -113,7 +110,13 @@ public class ConcertService {
         }
 
         seat.setUse(true);
-        seatRepository.save(seat);
+        seatRepository.save(seat); //좌석 사용
+
+
+        UserEntity user = waitTokenRepository.findUserinfoByToken(token);
+        if(user==null){
+            throw new Exception();
+        }
 
         BookEntity book = new BookEntity();
         book.setStatusCd(BookStatus.PREPAYMENT);

@@ -42,8 +42,8 @@ public class PaymentService {
 //        waitQueueService.queueRefresh(ApiNo.PAYMENT);
 
         //TODO: PROCESS 가 service 에 진입한 후 updatedAt 시간 갱신기능
-        Optional<BookEntity> bookEntityOptional = bookRepository.findById(bookId);
-        BookEntity book = bookEntityOptional.get();
+//        Optional<BookEntity> bookEntityOptional = bookRepository.findById(bookId);
+        BookEntity book = bookRepository.findByIdWithLock(bookId);
         UserEntity userBook = book.getUser();
 
         if(book == null) {
@@ -86,7 +86,7 @@ public class PaymentService {
         }
         long fee = concert.getFee();
 
-        WalletEntity wallet = walletRepository.findByUser_UserId(userBook.getUserId());
+        WalletEntity wallet = walletRepository.findByUser_UserIdWithLock(userBook.getUserId());
         if(wallet == null) {
             throw new Exception("잔액정보없음");
         }
@@ -108,6 +108,7 @@ public class PaymentService {
 
         //콘서트 예약 상태 변경
         book.setStatusCd(BookStatus.PAID);
+        bookRepository.save(book);
 
         waitToken.endProcess();
         waitTokenRepository.save(waitToken);

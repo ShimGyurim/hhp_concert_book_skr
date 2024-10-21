@@ -4,7 +4,10 @@ import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,7 +37,9 @@ public interface WaitTokenRepository extends JpaRepository<WaitTokenEntity,Long>
             "WHERE w.updatedAt <= :fiveMinutesAgo AND w.statusCd <> 'END' ")
     void updateExpiredTokens(@Param("expireStatus") WaitStatus expireStatus,  @Param("nowTime") Timestamp nowTime, @Param("fiveMinutesAgo") Timestamp fiveMinutesAgo);
 
-    @Query("SELECT w.tokenId FROM WaitTokenEntity w WHERE w.statusCd = :waitStatus AND w.serviceCd = :apiNo ORDER BY w.updatedAt ASC")
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT w.tokenId FROM WaitTokenEntity w WHERE w.statusCd = :waitStatus AND w.serviceCd = :apiNo " +
+            "and not exists( SELECT ww WaitTokenEntity ww WHERE w.serviceCd = ww.serviceCd AND ww.statusCd = 'PROCESS'  ) ORDER BY w.updatedAt ASC")
     List<Long> findFirstTokenIds(@Param("waitStatus") WaitStatus waitStatus, @Param("apiNo") ApiNo apiNo);
 
     @Modifying

@@ -45,8 +45,7 @@ public class WaitQueueService {
         // 5분 전 시간 타임스탬프
         Timestamp fiveMinutesAgo = Timestamp.from(now.toInstant().minus(Duration.ofMinutes(WaitQueueConstant.WAIT_MINUTE)));
 
-        //진행중 토큰이 있는지 확인
-        Long count = waitTokenRepository.countStatusToken(apiNo,WaitStatus.PROCESS);
+
 
 
         //5분이상 된 토큰 만료처리
@@ -56,6 +55,8 @@ public class WaitQueueService {
         //5분이상 미결제시 만료
         bookRepository.updateExpiredBooks(BookStatus.EXPIRED,now,fiveMinutesAgo,BookStatus.PREPAYMENT);
 
+        //진행중 토큰이 있는지 확인
+        Long count = waitTokenRepository.countStatusToken(apiNo,WaitStatus.PROCESS);
         if(count > 0L) return; //진행 프로세스가 있으므로 리턴
 
 
