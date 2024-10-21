@@ -39,7 +39,7 @@ public interface WaitTokenRepository extends JpaRepository<WaitTokenEntity,Long>
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT w.tokenId FROM WaitTokenEntity w WHERE w.statusCd = :waitStatus AND w.serviceCd = :apiNo " +
-            "and not exists( SELECT ww WaitTokenEntity ww WHERE w.serviceCd = ww.serviceCd AND ww.statusCd = 'PROCESS'  ) ORDER BY w.updatedAt ASC")
+            "AND NOT EXISTS( SELECT ww FROM WaitTokenEntity ww WHERE w.serviceCd = ww.serviceCd AND ww.statusCd = 'PROCESS'  ) ORDER BY w.updatedAt ASC")
     List<Long> findFirstTokenIds(@Param("waitStatus") WaitStatus waitStatus, @Param("apiNo") ApiNo apiNo);
 
     @Modifying
