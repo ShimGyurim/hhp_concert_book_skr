@@ -16,7 +16,6 @@ import java.sql.Timestamp;
 
 public interface BookRepository extends JpaRepository<BookEntity,Long> {
 
-    @Lock(LockModeType.OPTIMISTIC)
     @Modifying
     @Query("UPDATE BookEntity w " +
             "SET w.statusCd = :expireStatus, w.updatedAt = :nowTime " +
