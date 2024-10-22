@@ -9,7 +9,7 @@ spring:
   datasource:
     hikari:
       driver-class-name: org.h2.Driver
-      jdbc-url: jdbc:h2:~/concert_book
+      jdbc-url: jdbc:h2:tcp://localhost/~/concert_book
       username: sa
       password:
   jpa:
@@ -29,6 +29,10 @@ spring:
 springfox:
   documentation:
     enabled: true
+logging:
+  level:
+    root: INFO
+
 #mybatis:
 #  mapper-locations:
 #    - mappers/*.xml
