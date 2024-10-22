@@ -3,7 +3,8 @@ package io.hhplus.concertbook.domain.service;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
-import io.hhplus.concertbook.common.exception.NoTokenException;
+import io.hhplus.concertbook.common.exception.CustomException;
+import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.BookRepository;
 import io.hhplus.concertbook.domain.repository.PaymentRepository;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.Optional;
 
 @Service
 public class PaymentService {
@@ -37,7 +37,7 @@ public class PaymentService {
     @Transactional
     public boolean pay(String token, Long bookId) throws Exception {
         if(token == null){
-            throw new NoTokenException();
+            throw new CustomException(ErrorCode.TOKEN_ERROR);
         }
 //        waitQueueService.queueRefresh(ApiNo.PAYMENT);
 
@@ -47,51 +47,51 @@ public class PaymentService {
         UserEntity userBook = book.getUser();
 
         if(book == null) {
-            throw new Exception();
+            throw new CustomException(ErrorCode.BOOK_ERROR);
         }
         if(!BookStatus.PREPAYMENT.equals(book.getStatusCd())){
-            throw new Exception("결제할 항목없음");
+            throw new CustomException(ErrorCode.NO_PAY);
         }
         WaitTokenEntity waitToken = waitTokenRepository.findByToken(token);
         if(waitToken == null) {
-            throw new NoTokenException();
+            throw new CustomException(ErrorCode.TOKEN_ERROR);
         }
 
         if(WaitStatus.EXPIRED.equals(waitToken.getStatusCd())) {
-            throw new Exception("토큰만료");
+            throw new CustomException(ErrorCode.TOKEN_EXPIRED);
         }else if(WaitStatus.WAIT.equals(waitToken.getStatusCd())) {
-            throw new Exception("토큰대기중");
+            throw new CustomException(ErrorCode.TOKEN_WAIT);
         }
         if(!ApiNo.PAYMENT.equals(waitToken.getServiceCd())){
-            throw new Exception("다른 서비스 토큰");
+            throw new CustomException(ErrorCode.TOKEN_ERROR);
         }
 
         UserEntity userToken = waitToken.getUser();
 
         if(userBook == null || userToken == null) {
-            throw new Exception("사용자정보없음");
+            throw new CustomException(ErrorCode.USER_ERROR);
         }else if(userBook.getUserId() != userToken.getUserId()) {
-            throw new Exception("권한없음");
+            throw new CustomException(ErrorCode.NO_AUTH);
         }
         //결제로직
 
         //돈있는지 확인
         SeatEntity seat = book.getSeat();
         if(seat == null) {
-            throw new Exception("좌석정보없음");
+            throw new CustomException(ErrorCode.SEAT_ERROR);
         }
         ConcertEntity concert = seat.getConcertItem().getConcert();
         if(concert == null) {
-            throw new Exception("콘서트없음");
+            throw new CustomException(ErrorCode.NO_CONCERT);
         }
         long fee = concert.getFee();
 
         WalletEntity wallet = walletRepository.findByUser_UserIdWithLock(userBook.getUserId());
         if(wallet == null) {
-            throw new Exception("잔액정보없음");
+            throw new CustomException(ErrorCode.NO_WALLET);
         }
         if(wallet.getAmount() < fee) {
-            throw new Exception("잔액부족");
+            throw new CustomException(ErrorCode.NO_BALANCE);
         }
 
         //지갑 금액 차감

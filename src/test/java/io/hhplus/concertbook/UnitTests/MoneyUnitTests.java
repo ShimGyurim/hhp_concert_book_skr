@@ -1,6 +1,6 @@
 package io.hhplus.concertbook.UnitTests;
 
-import io.hhplus.concertbook.common.exception.NoUserException;
+import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WalletEntity;
 import io.hhplus.concertbook.domain.repository.UserRepository;
@@ -35,7 +35,7 @@ public class MoneyUnitTests {
         Mockito.when(userRepository.findByUserName("nouser")).thenReturn(null);
 //        Mockito.when(walletRepo.findByUser_UserId(ArgumentMatchers.any(Long.class))).thenReturn(new WalletEntity());
 
-        Exception exception = Assertions.assertThrows(NoUserException.class, () -> {
+        Exception exception = Assertions.assertThrows(CustomException.class, () -> {
             moneyService.getBalance("nouser");
         });
 

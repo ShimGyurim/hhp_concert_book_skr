@@ -1,7 +1,8 @@
 package io.hhplus.concertbook.presentation.controller;
 
 import io.hhplus.concertbook.common.enumerate.ApiNo;
-import io.hhplus.concertbook.common.exception.NoIdException;
+import io.hhplus.concertbook.common.exception.CustomException;
+import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.service.TokenService;
 import io.hhplus.concertbook.presentation.HttpDto.request.TokenReqDto;
@@ -32,10 +33,10 @@ public class TokenController {
                         TokenReqDto tokenReqDto) throws Exception {
 
         if(tokenReqDto.getUserName() == null) {
-            throw new NoIdException("아이디가 없습니다.");
+            throw new CustomException(ErrorCode.NO_USERINFO);
         }
         if(tokenReqDto.getApiServiceName() == null) {
-            throw new NoIdException("대기요청 서비스 이름이 없습니다.");
+            throw new CustomException(ErrorCode.NO_API_INFO);
         }
 
         TokenDto tokenInDto = new TokenDto();

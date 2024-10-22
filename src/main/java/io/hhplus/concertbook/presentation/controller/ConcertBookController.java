@@ -1,8 +1,6 @@
 package io.hhplus.concertbook.presentation.controller;
 
-import io.hhplus.concertbook.common.exception.DateParameterException;
-import io.hhplus.concertbook.common.exception.NoIdException;
-import io.hhplus.concertbook.common.exception.NoTokenException;
+import io.hhplus.concertbook.common.exception.*;
 import io.hhplus.concertbook.domain.dto.ConcertScheduleDto;
 import io.hhplus.concertbook.domain.dto.SeatDto;
 import io.hhplus.concertbook.domain.service.ConcertService;
@@ -41,14 +39,14 @@ public class ConcertBookController {
     public ResponseEntity<CommonResponse<Object>> getAvailableDates(
             @RequestBody
             @Parameter(required = true, description = "콘서트날짜입력")
-            @RequestParam(value ="concertd", required = true) String concertD ) throws NoTokenException {
+            @RequestParam(value ="concertd", required = true) String concertD )  {
 
-        try {
+//        try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
             LocalDate localDate = LocalDate.parse(concertD, formatter);
-        }catch (DateTimeException e) {
-            throw new DateParameterException("날짜 형식 부정확");
-        }
+//        }catch (DateTimeException e) {
+//            throw new DateParameterException("날짜 형식 부정확");
+//        }
 
         List<ConcertScheduleDto> concertScheduleDtos = concertService.getAvailSchedule(concertD);
 
@@ -66,7 +64,7 @@ public class ConcertBookController {
     public ResponseEntity<CommonResponse<Object>> getAvailableSeats(
 
             @Parameter(required = true, description = "콘서트정보입력")
-            @RequestParam(value = "itemid") Long itemId) throws NoTokenException, NoIdException {
+            @RequestParam(value = "itemid") Long itemId)  {
 
 
         List<SeatDto> seatDtos = concertService.getSeats(itemId);
@@ -90,11 +88,11 @@ public class ConcertBookController {
 //            throw new NoIdException("콘서트 스케줄 정보가 없습니다.");
 //        }
         if(concertBookReqDto.getSeatId() == null) {
-            throw new NoIdException("콘서트 좌석 정보가 없습니다.");
+            throw new CustomException(ErrorCode.SEAT_ERROR);
         }
 
         if(concertBookReqDto.getToken() == null) {
-            throw new NoTokenException("토큰없음");
+            throw new CustomException(ErrorCode.TOKEN_ERROR);
         }
 
         long bookId = concertService.book(concertBookReqDto.getToken(), concertBookReqDto.getSeatId());
@@ -115,11 +113,11 @@ public class ConcertBookController {
         @RequestBody PayReqDto payReqDto
             ) throws Exception {
         if(payReqDto.getBookId() == null) {
-            throw new NoIdException("id가 없습니다.");
+            throw new CustomException(ErrorCode.BOOK_ERROR);
         }
 
         if(payReqDto.getToken() == null) {
-            throw new NoTokenException("토큰없음");
+            throw new CustomException(ErrorCode.TOKEN_ERROR);
         }
 
         boolean result = paymentService.pay(payReqDto.getToken(), payReqDto.getBookId());

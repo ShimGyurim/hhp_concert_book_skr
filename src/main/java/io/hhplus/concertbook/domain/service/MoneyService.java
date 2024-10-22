@@ -1,6 +1,7 @@
 package io.hhplus.concertbook.domain.service;
 
-import io.hhplus.concertbook.common.exception.NoUserException;
+import io.hhplus.concertbook.common.exception.CustomException;
+import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WalletEntity;
 import io.hhplus.concertbook.domain.repository.UserRepository;
@@ -31,7 +32,7 @@ public class MoneyService {
 
 
         if(user == null) {
-            throw new NoUserException("유저정보없음");
+            throw new CustomException(ErrorCode.USER_ERROR);
         }
 
         WalletEntity wallet = walletRepository.findByUser_UserId(user.getUserId());
@@ -49,7 +50,7 @@ public class MoneyService {
     @Transactional
     public long charge(String userName,Long chargeAmt) throws Exception {
         if(chargeAmt <= 0) {
-            throw new Exception("충전금액 이상");
+            throw new CustomException(ErrorCode.CHARGE_INPUT_ERROR);
         }
 
         //금액 충전
@@ -57,7 +58,7 @@ public class MoneyService {
         UserEntity user = userRepository.findByUserName(userName);
 
         if(user == null) {
-            throw new Exception("유저 없음");
+            throw new CustomException(ErrorCode.USER_ERROR);
         }
 
         WalletEntity wallet = walletRepository.findByUser_UserIdWithLock(user.getUserId());

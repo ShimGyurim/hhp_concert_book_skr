@@ -2,7 +2,7 @@ package io.hhplus.concertbook.IntegrationTests;
 
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
-import io.hhplus.concertbook.common.exception.NoUserException;
+import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
@@ -102,7 +102,7 @@ public class TokenIntegTests {
         tokenInDto.setUserName("nonexistentUser");
         tokenInDto.setApiNo(ApiNo.BOOK);
 
-        Exception exception = Assertions.assertThrows(NoUserException.class, () -> {
+        Exception exception = Assertions.assertThrows(CustomException.class, () -> {
             tokenService.getToken(tokenInDto);
         });
 

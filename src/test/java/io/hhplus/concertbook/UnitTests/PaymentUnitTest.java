@@ -3,7 +3,7 @@ package io.hhplus.concertbook.UnitTests;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
-import io.hhplus.concertbook.common.exception.NoTokenException;
+import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.*;
 import io.hhplus.concertbook.domain.service.PaymentService;
@@ -48,7 +48,7 @@ public class PaymentUnitTest {
     @Test
     @DisplayName("토큰없음")
     public void testPay_NoToken() {
-        Exception exception = Assertions.assertThrows(NoTokenException.class, () -> {
+        Exception exception = Assertions.assertThrows(CustomException.class, () -> {
             paymentService.pay(null, 1L);
         });
 
@@ -89,7 +89,7 @@ public class PaymentUnitTest {
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
         Mockito.when(waitTokenRepository.findByToken("invalidToken")).thenReturn(null);
 
-        Exception exception = Assertions.assertThrows(NoTokenException.class, () -> {
+        Exception exception = Assertions.assertThrows(CustomException.class, () -> {
             paymentService.pay("invalidToken", 1L);
         });
 

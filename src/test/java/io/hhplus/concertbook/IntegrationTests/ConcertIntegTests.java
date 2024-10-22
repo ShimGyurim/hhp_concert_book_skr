@@ -4,13 +4,12 @@ package io.hhplus.concertbook.IntegrationTests;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
-import io.hhplus.concertbook.common.exception.NoTokenException;
+import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.domain.dto.ConcertScheduleDto;
 import io.hhplus.concertbook.domain.dto.SeatDto;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.*;
 import io.hhplus.concertbook.domain.service.ConcertService;
-import org.apache.catalina.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -128,6 +127,6 @@ public class ConcertIntegTests {
     @DisplayName("좌석예약: 토큰이없어 실패")
     public void testBook_NoToken() {
         // When & Then
-        Assertions.assertThrows(NoTokenException.class, () -> concertService.book(null, seat.getSeatId()));
+        Assertions.assertThrows(CustomException.class, () -> concertService.book(null, seat.getSeatId()));
     }
 }

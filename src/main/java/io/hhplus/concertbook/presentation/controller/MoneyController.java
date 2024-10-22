@@ -1,7 +1,7 @@
 package io.hhplus.concertbook.presentation.controller;
 
-import io.hhplus.concertbook.common.exception.AmtMinusException;
-import io.hhplus.concertbook.common.exception.NoTokenException;
+import io.hhplus.concertbook.common.exception.CustomException;
+import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.service.MoneyService;
 import io.hhplus.concertbook.presentation.HttpDto.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,11 +26,11 @@ public class MoneyController {
             @RequestParam(value = "chargeamt") Long chargeAmt
             ) throws Exception {
         if(chargeAmt <0) {
-            throw new AmtMinusException("음수 충전");
+            throw new CustomException(ErrorCode.CHARGE_INPUT_ERROR);
         }
 
         if(userName == null) {
-            throw new NoTokenException("유저 없음");
+            throw new CustomException(ErrorCode.NO_USERINFO);
         }
 
         long afterAmount = moneyService.charge(userName,chargeAmt);
@@ -49,7 +49,7 @@ public class MoneyController {
             @RequestParam(value="username") String userName) throws Exception {
 
         if(userName==null) {
-            throw new Exception("유저 없음");
+            throw new CustomException(ErrorCode.NO_USERINFO);
         }
 
         Long balance = moneyService.getBalance(userName);

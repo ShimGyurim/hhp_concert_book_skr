@@ -2,7 +2,7 @@ package io.hhplus.concertbook.UnitTests;
 
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
-import io.hhplus.concertbook.common.exception.NoUserException;
+import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
@@ -92,7 +92,7 @@ public class TokenUnitTest {
         Mockito.when(waitTokenRepository.findByUser_UserNameAndServiceCd("testUser", ApiNo.BOOK)).thenReturn(null);
         Mockito.when(userRepository.findByUserName("testUser")).thenReturn(null);
 
-        Exception exception = Assertions.assertThrows(NoUserException.class, () -> {
+        Exception exception = Assertions.assertThrows(CustomException.class, () -> {
             tokenService.getToken(tokenInDto);
         });
 

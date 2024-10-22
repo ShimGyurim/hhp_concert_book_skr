@@ -3,7 +3,8 @@ package io.hhplus.concertbook.domain.service;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
-import io.hhplus.concertbook.common.exception.NoTokenException;
+import io.hhplus.concertbook.common.exception.CustomException;
+import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.dto.ConcertScheduleDto;
 import io.hhplus.concertbook.domain.dto.SeatDto;
 import io.hhplus.concertbook.domain.entity.*;
@@ -79,7 +80,7 @@ public class ConcertService {
         //TODO: token 이랑 userid 를 같이 받는게 옳은건지?
 
         if(token == null){
-            throw new NoTokenException();
+            throw new CustomException(ErrorCode.TOKEN_ERROR);
         }
 
 //        waitQueueService.queueRefresh(ApiNo.BOOK); // 큐 새로고침
@@ -87,26 +88,26 @@ public class ConcertService {
         WaitTokenEntity waitToken = waitTokenRepository.findByToken(token);
 
         if(waitToken == null) {
-            throw new NoTokenException();
+            throw new CustomException(ErrorCode.TOKEN_ERROR);
         }
 
         if(WaitStatus.EXPIRED.equals(waitToken.getStatusCd())) {
-            throw new Exception("토큰만료");
+            throw new CustomException(ErrorCode.TOKEN_EXPIRED);
         }else if(WaitStatus.WAIT.equals(waitToken.getStatusCd())) {
-            throw new Exception("토큰대기중");
+            throw new CustomException(ErrorCode.TOKEN_WAIT);
         }
         if(!ApiNo.BOOK.equals(waitToken.getServiceCd())){
-            throw new Exception("다른 서비스 토큰");
+            throw new CustomException(ErrorCode.TOKEN_ERROR);
         }
 
 
 
         SeatEntity seat = seatRepository.findByIdWithLock(seatId);
         if(seat==null){
-            throw new Exception();
+            throw new CustomException(ErrorCode.SEAT_ERROR);
         }
         if(seat.isUse()){
-            throw new Exception("좌석점유중");
+            throw new CustomException(ErrorCode.SEAT_FULL);
         }
 
         seat.setUse(true);
@@ -115,7 +116,7 @@ public class ConcertService {
 
         UserEntity user = waitTokenRepository.findUserinfoByToken(token);
         if(user==null){
-            throw new Exception();
+            throw new CustomException(ErrorCode.USER_ERROR);
         }
 
         BookEntity book = new BookEntity();

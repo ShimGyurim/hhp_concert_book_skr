@@ -3,7 +3,7 @@ package io.hhplus.concertbook.IntegrationTests;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
-import io.hhplus.concertbook.common.exception.NoTokenException;
+import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.*;
 import io.hhplus.concertbook.domain.service.PaymentService;
@@ -113,6 +113,6 @@ public class PayIntegTests {
     @DisplayName("결제: 토큰없음 에러")
     public void testPay_NoToken() {
         // When & Then
-        Assertions.assertThrows(NoTokenException.class, () -> paymentService.pay(null, book.getBookId()));
+        Assertions.assertThrows(CustomException.class, () -> paymentService.pay(null, book.getBookId()));
     }
 }

@@ -1,7 +1,8 @@
 package io.hhplus.concertbook.domain.service;
 
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
-import io.hhplus.concertbook.common.exception.NoUserException;
+import io.hhplus.concertbook.common.exception.CustomException;
+import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
@@ -31,7 +32,7 @@ public class TokenService {
         // 토큰을 받아 유효한게 있는지 확인
         // api 별로는 아예 신경 안스기
         if(tokenInDto == null) {
-            throw new Exception();
+            throw new Exception("DTO정보없음");
         }
 
 //        waitQueueService.queueRefresh(tokenInDto.getApiNo());
@@ -48,7 +49,7 @@ public class TokenService {
             UserEntity user = userRepository.findByUserName(tokenInDto.getUserName());
 
             if(user==null) {
-                throw new NoUserException("사용자없음");
+                throw new CustomException(ErrorCode.USER_ERROR);
             }
             newEntity.setUser(user);
             newEntity.setServiceCd(tokenInDto.getApiNo());
