@@ -29,6 +29,10 @@ spring:
 springfox:
   documentation:
     enabled: true
+logging:
+  level:
+    root: INFO
+
 #mybatis:
 #  mapper-locations:
 #    - mappers/*.xml
