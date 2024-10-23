@@ -6,7 +6,9 @@ import io.hhplus.concertbook.domain.entity.WalletEntity;
 import io.hhplus.concertbook.domain.repository.UserRepository;
 import io.hhplus.concertbook.domain.repository.WalletRepository;
 import io.hhplus.concertbook.domain.service.MoneyService;
+import io.hhplus.concertbook.tool.RepositoryClean;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,14 @@ public class MoneyIntegTests {
 
     @Autowired
     private MoneyService moneyService;
+
+    @Autowired
+    private RepositoryClean repositoryClean;
+
+    @BeforeEach
+    public void clean() {
+        repositoryClean.cleanRepository();
+    }
 
     @Test
     @Transactional

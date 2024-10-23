@@ -4,6 +4,7 @@ import io.hhplus.concertbook.ConcertBookApp;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
+import io.hhplus.concertbook.tool.RepositoryClean;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.*;
 import io.hhplus.concertbook.domain.service.ConcertService;
@@ -57,9 +58,14 @@ public class PaymentConcurrencyTest {
     @Autowired
     private ConcertItemRepository concertItemRepository;
 
+    @Autowired
+    private RepositoryClean repositoryClean;
+
     @BeforeEach
     @Transactional
     public void setUp() {
+        repositoryClean.cleanRepository();
+
         String userName = "testUser";
         UserEntity user = new UserEntity();
         user.setUserName(userName);

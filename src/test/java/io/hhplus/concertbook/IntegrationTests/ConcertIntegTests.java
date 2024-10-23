@@ -11,6 +11,7 @@ import io.hhplus.concertbook.domain.dto.SeatDto;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.*;
 import io.hhplus.concertbook.domain.service.ConcertService;
+import io.hhplus.concertbook.tool.RepositoryClean;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,6 +43,9 @@ public class ConcertIntegTests {
     @Autowired
     private ConcertService concertService;
 
+    @Autowired
+    private RepositoryClean repositoryClean;
+
     private ConcertItemEntity concertItem;
     private SeatEntity seat;
     private WaitTokenEntity waitToken;
@@ -49,6 +53,7 @@ public class ConcertIntegTests {
 
     @BeforeEach
     public void setUp() {
+        repositoryClean.cleanRepository();
 
         user = new UserEntity();
         user.setUserName("testUser");

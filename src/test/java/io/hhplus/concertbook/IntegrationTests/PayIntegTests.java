@@ -8,6 +8,7 @@ import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.*;
 import io.hhplus.concertbook.domain.service.PaymentService;
+import io.hhplus.concertbook.tool.RepositoryClean;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,6 +47,9 @@ public class PayIntegTests {
     @Autowired
     SeatRepository seatRepository;
 
+    @Autowired
+    private RepositoryClean repositoryClean;
+
     private UserEntity user;
     private BookEntity book;
     private WalletEntity wallet;
@@ -53,6 +57,7 @@ public class PayIntegTests {
 
     @BeforeEach
     public void setUp() {
+        repositoryClean.cleanRepository();
         // 사용자 생성
         user = new UserEntity();
         user.setUserName("testUser");

@@ -11,6 +11,7 @@ import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
 import io.hhplus.concertbook.domain.repository.UserRepository;
 import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import io.hhplus.concertbook.domain.service.TokenService;
+import io.hhplus.concertbook.tool.RepositoryClean;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,8 +34,12 @@ public class TokenIntegTests {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RepositoryClean repositoryClean;
+
     @BeforeEach
     public void setUp() {
+        repositoryClean.cleanRepository();
         // 초기 데이터 설정
         UserEntity user = new UserEntity();
         user.setUserName("testUser");

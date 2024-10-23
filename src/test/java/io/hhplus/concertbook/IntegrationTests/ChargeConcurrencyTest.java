@@ -1,18 +1,17 @@
 package io.hhplus.concertbook.IntegrationTests;
 
 import io.hhplus.concertbook.ConcertBookApp;
+import io.hhplus.concertbook.tool.RepositoryClean;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WalletEntity;
 import io.hhplus.concertbook.domain.repository.UserRepository;
 import io.hhplus.concertbook.domain.repository.WalletRepository;
 import io.hhplus.concertbook.domain.service.MoneyService;
-import org.apache.catalina.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -29,6 +28,14 @@ public class ChargeConcurrencyTest {
 
     @Autowired
     private WalletRepository walletRepository;
+
+    @Autowired
+    private RepositoryClean repositoryClean;
+
+    @BeforeEach
+    public void clean() {
+        repositoryClean.cleanRepository();
+    }
 
     @Test
 //    @Transactional

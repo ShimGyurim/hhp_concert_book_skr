@@ -3,6 +3,7 @@ package io.hhplus.concertbook.IntegrationTests;
 import io.hhplus.concertbook.ConcertBookApp;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
+import io.hhplus.concertbook.tool.RepositoryClean;
 import io.hhplus.concertbook.domain.entity.SeatEntity;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -44,9 +44,14 @@ public class BookingConcurrencyTest {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private RepositoryClean repositoryClean;
+
     @BeforeEach
 //    @Transactional
     public void setUp() {
+        repositoryClean.cleanRepository();
+
         String userName = "testUser";
         UserEntity user = new UserEntity();
         user.setUserName(userName);
