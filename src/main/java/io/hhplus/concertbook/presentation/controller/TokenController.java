@@ -3,6 +3,7 @@ package io.hhplus.concertbook.presentation.controller;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.common.exception.ErrorCode;
+import io.hhplus.concertbook.common.exception.ErrorResponse;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.service.TokenService;
 import io.hhplus.concertbook.presentation.HttpDto.request.TokenReqDto;
@@ -30,11 +31,14 @@ public class TokenController {
     public ResponseEntity<CommonResponse<Object>> issueUserToken(
                 @RequestBody
                 @Parameter(required = true, description = "토큰입력")
-                        TokenReqDto tokenReqDto) throws Exception {
+                        TokenReqDto tokenReqDto,
+                @SessionAttribute("user") String sessionUser) throws Exception {
 
         if(tokenReqDto.getUserName() == null) {
             throw new CustomException(ErrorCode.NO_USERINFO);
         }
+        if(!tokenReqDto.getUserName().equals(sessionUser))
+            throw new CustomException(ErrorCode.USER_ERROR); //사용자가 세션과 다름
         if(tokenReqDto.getApiServiceName() == null) {
             throw new CustomException(ErrorCode.NO_API_INFO);
         }
