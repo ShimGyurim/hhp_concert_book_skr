@@ -1,6 +1,7 @@
 package io.hhplus.concertbook.UnitTests;
 
 import io.hhplus.concertbook.common.exception.CustomException;
+import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WalletEntity;
 import io.hhplus.concertbook.domain.repository.UserRepository;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 @ExtendWith(MockitoExtension.class)
 public class MoneyUnitTests {
@@ -35,11 +37,11 @@ public class MoneyUnitTests {
         Mockito.when(userRepository.findByUserName("nouser")).thenReturn(null);
 //        Mockito.when(walletRepo.findByUser_UserId(ArgumentMatchers.any(Long.class))).thenReturn(new WalletEntity());
 
-        Exception exception = Assertions.assertThrows(CustomException.class, () -> {
+        CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
             moneyService.getBalance("nouser");
         });
 
-        Assertions.assertEquals("유저정보없음", exception.getMessage());
+        Assertions.assertEquals(ErrorCode.USER_ERROR, exception.getErrorCode());
     }
 
     @Test
@@ -74,11 +76,10 @@ public class MoneyUnitTests {
     @Test
     @DisplayName("비정상 충전금액")
     public void testCharge_InvalidAmount() {
-        Exception exception = Assertions.assertThrows(Exception.class, () -> {
+        CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
             moneyService.charge("user", -100L);
         });
-
-        Assertions.assertEquals("충전금액 이상", exception.getMessage());
+        Assertions.assertEquals(ErrorCode.CHARGE_INPUT_ERROR, exception.getErrorCode());
     }
 
     @Test
@@ -86,11 +87,11 @@ public class MoneyUnitTests {
     public void testCharge_UserNotFound() {
         Mockito.when(userRepository.findByUserName("nonexistentUser")).thenReturn(null);
 
-        Exception exception = Assertions.assertThrows(Exception.class, () -> {
+        CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
             moneyService.charge("nonexistentUser", 100L);
         });
 
-        Assertions.assertEquals("유저 없음", exception.getMessage());
+        Assertions.assertEquals(ErrorCode.USER_ERROR, exception.getErrorCode());
     }
 
     @Test
@@ -102,7 +103,7 @@ public class MoneyUnitTests {
         wallet.setAmount(100L);
 
         Mockito.when(userRepository.findByUserName("existingUser")).thenReturn(user);
-        Mockito.when(walletRepository.findByUser_UserId(1L)).thenReturn(wallet);
+        Mockito.when(walletRepository.findByUser_UserIdWithLock(1L)).thenReturn(wallet);
 
         long newBalance = moneyService.charge("existingUser", 50L);
 

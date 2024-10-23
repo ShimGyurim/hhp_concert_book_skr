@@ -119,7 +119,7 @@ public class ConcertBookUnitTests {
         seat.setUse(false);
         Mockito.when(waitTokenRepository.findByToken("validToken")).thenReturn(waitToken);
         Mockito.when(waitTokenRepository.findUserinfoByToken("validToken")).thenReturn(user);
-        Mockito.when(seatRepository.findById(1L)).thenReturn(Optional.of(seat));
+        Mockito.when(seatRepository.findByIdWithLock(1L)).thenReturn(seat);
 
 
         long result = concertService.book("validToken", 1L);
