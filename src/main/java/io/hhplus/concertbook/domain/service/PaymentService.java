@@ -44,11 +44,12 @@ public class PaymentService {
         //TODO: PROCESS 가 service 에 진입한 후 updatedAt 시간 갱신기능
 //        Optional<BookEntity> bookEntityOptional = bookRepository.findById(bookId);
         BookEntity book = bookRepository.findByIdWithLock(bookId);
-        UserEntity userBook = book.getUser();
-
         if(book == null) {
             throw new CustomException(ErrorCode.BOOK_ERROR);
         }
+        UserEntity userBook = book.getUser();
+
+
         if(!BookStatus.PREPAYMENT.equals(book.getStatusCd())){
             throw new CustomException(ErrorCode.NO_PAY);
         }
