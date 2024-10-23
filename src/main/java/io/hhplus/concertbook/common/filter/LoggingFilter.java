@@ -36,7 +36,6 @@ public class LoggingFilter implements Filter {
 
         //request 요청으로 어떤 uri 가 들어왔는지 확인
         String uri = httpServletRequest.getRequestURI();
-
         String reqContent = new String(httpServletRequest.getContentAsByteArray());
         log.info("uri : {}, request : {}", uri, reqContent);
 
@@ -44,7 +43,7 @@ public class LoggingFilter implements Filter {
         String resContent = new String(httpServletResponse.getContentAsByteArray());
 
         //주의 : response를 클라이언트에서 볼 수 있도록 하려면 response를 복사해야 한다. response를 콘솔에 보여주면 내용이 사라진다.
-        httpServletResponse.copyBodyToResponse();
+//        httpServletResponse.copyBodyToResponse();
 
         log.info("status: {}, response {}", httpStatus, resContent);
     }
