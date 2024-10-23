@@ -2,17 +2,17 @@ package io.hhplus.concertbook.common.exception;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.web.bind.annotation.GetMapping;
 
+import java.io.Serializable;
+
+@Getter
 @AllArgsConstructor
 public class ErrorResponse {
-    int code;
-    String message;
     String name;
+    String message;
 
-    public ErrorResponse(String name, String message) {
-        this.name=name;
-        this.message=message;
-    }
     public ErrorResponse(String message) {
         this.message=message;
     }
