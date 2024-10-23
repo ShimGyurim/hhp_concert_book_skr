@@ -1,5 +1,6 @@
 package io.hhplus.concertbook.IntegrationTests;
 
+import io.hhplus.concertbook.ConcertBookApp;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WalletEntity;
 import io.hhplus.concertbook.domain.repository.UserRepository;
@@ -12,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
+@SpringBootTest(classes = ConcertBookApp.class)
 public class MoneyIntegTests {
 
     @Autowired

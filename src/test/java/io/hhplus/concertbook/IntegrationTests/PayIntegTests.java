@@ -1,5 +1,6 @@
 package io.hhplus.concertbook.IntegrationTests;
 
+import io.hhplus.concertbook.ConcertBookApp;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
@@ -15,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
+@SpringBootTest(classes = ConcertBookApp.class)
 public class PayIntegTests {
 
     @Autowired
