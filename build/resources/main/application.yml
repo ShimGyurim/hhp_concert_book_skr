@@ -1,5 +1,7 @@
 server:
   port: 10180
+#  tomcat:
+#    native: true
 spring:
   application:
     name: concertbook
@@ -31,7 +33,7 @@ springfox:
     enabled: true
 logging:
   level:
-    root: INFO
+    root: DEBUG
 
 #mybatis:
 #  mapper-locations:
