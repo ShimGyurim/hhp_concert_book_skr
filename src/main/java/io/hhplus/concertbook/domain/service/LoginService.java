@@ -15,13 +15,24 @@ public class LoginService {
     @Autowired
     UserRepository userRepository;
 
-    public boolean login(String userName) {
+    public boolean login(String userName,String password) {
         if(userName == null)
             throw new CustomException(ErrorCode.USER_ERROR);
         UserEntity user = userRepository.findByUserName(userName);
-        if(userName.equals(user.getUserName()))
-            return true;
-        else
-            return false;
+        String dbpw =user.getPassword();
+
+        if(dbpw != null && !"".equals(dbpw)) {
+            if(userName.equals(user.getUserName()) && password.equals(user.getPassword()))
+                return true;
+            else
+                return false;
+        }else {
+            if(userName.equals(user.getUserName()))
+                return true;
+            else
+                return false;
+        }
+
+
     }
 }

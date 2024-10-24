@@ -22,12 +22,12 @@ public class LoginController {
     @PostMapping("/login")
     public Map<String, String> login(HttpServletRequest request, @RequestBody Map<String, String> credentials) {
         String username = credentials.get("username");
-//        String password = credentials.get("password");
+        String password = credentials.get("password");
         log.info("userid: {} ",username);
         // 사용자 인증 로직 (예: 데이터베이스 조회)
 
 
-        if (loginService.login(username)) {
+        if (loginService.login(username,password)) {
             log.info("로그인성공");
             request.getSession().setAttribute("user", username);
             Map<String, String> response = new HashMap<>();
