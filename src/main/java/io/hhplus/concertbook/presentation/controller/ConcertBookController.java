@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/concert")
 @Tag(name = "Concert Info", description = "콘서트 정보 조회")
@@ -81,7 +83,8 @@ public class ConcertBookController {
     @PostMapping("/book")
     @Operation(summary = "콘서트", description = "콘서트 예약")
     public ResponseEntity<CommonResponse<Object>> requestSeatReservation(
-            @RequestBody ConcertBookReqDto concertBookReqDto
+            @RequestBody ConcertBookReqDto concertBookReqDto,
+            @SessionAttribute("user") String sessionUser
             ) throws Exception {
 
 //        if(concertReservReqDto.getConcertScheduleId() == null) {
@@ -91,8 +94,13 @@ public class ConcertBookController {
             throw new CustomException(ErrorCode.SEAT_ERROR);
         }
 
+        log.info("sessionUser {} token {}",sessionUser,concertBookReqDto.getToken());
         if(concertBookReqDto.getToken() == null) {
             throw new CustomException(ErrorCode.TOKEN_ERROR);
+        }
+
+        if(!concertBookReqDto.getToken().startsWith(sessionUser)){
+            throw new CustomException(ErrorCode.NO_AUTH);
         }
 
         long bookId = concertService.book(concertBookReqDto.getToken(), concertBookReqDto.getSeatId());
@@ -110,14 +118,20 @@ public class ConcertBookController {
     @PostMapping("/payments")
     @Operation(summary = "결제", description = "결제")
     public ResponseEntity<CommonResponse<Object>> makePayment(
-        @RequestBody PayReqDto payReqDto
+        @RequestBody PayReqDto payReqDto,
+        @SessionAttribute("user") String sessionUser
             ) throws Exception {
+
         if(payReqDto.getBookId() == null) {
             throw new CustomException(ErrorCode.BOOK_ERROR);
         }
 
         if(payReqDto.getToken() == null) {
             throw new CustomException(ErrorCode.TOKEN_ERROR);
+        }
+
+        if(!payReqDto.getToken().startsWith(sessionUser)) { //세션의 유저명이 토큰이랑 불일치
+            throw new CustomException(ErrorCode.NO_AUTH);
         }
 
         boolean result = paymentService.pay(payReqDto.getToken(), payReqDto.getBookId());
