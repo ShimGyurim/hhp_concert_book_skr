@@ -33,7 +33,7 @@ springfox:
     enabled: true
 logging:
   level:
-    root: DEBUG
+    root: INFO
 
 #mybatis:
 #  mapper-locations:
