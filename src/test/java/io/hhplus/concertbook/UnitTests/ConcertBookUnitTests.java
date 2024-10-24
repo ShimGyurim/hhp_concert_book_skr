@@ -2,6 +2,8 @@ package io.hhplus.concertbook.UnitTests;
 
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
+import io.hhplus.concertbook.common.exception.CustomException;
+import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.dto.ConcertScheduleDto;
 import io.hhplus.concertbook.domain.dto.SeatDto;
 import io.hhplus.concertbook.domain.entity.*;
@@ -137,11 +139,11 @@ public class ConcertBookUnitTests {
         waitToken.setStatusCd(WaitStatus.WAIT);
         Mockito.when(waitTokenRepository.findByToken("waitingToken")).thenReturn(waitToken);
 
-        Exception exception = Assertions.assertThrows(Exception.class, () -> {
+        CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
             concertService.book("waitingToken", 1L);
         });
 
-        Assertions.assertEquals("토큰대기중", exception.getMessage());
+        Assertions.assertEquals(ErrorCode.TOKEN_WAIT, exception.getErrorCode());
     }
 
     @Test
@@ -154,13 +156,13 @@ public class ConcertBookUnitTests {
         SeatEntity seat = new SeatEntity();
         seat.setUse(true);
         Mockito.when(waitTokenRepository.findByToken("validToken")).thenReturn(waitToken);
-        Mockito.when(waitTokenRepository.findUserinfoByToken("validToken")).thenReturn(user);
-        Mockito.when(seatRepository.findById(1L)).thenReturn(Optional.of(seat));
+//        Mockito.when(waitTokenRepository.findUserinfoByToken("validToken")).thenReturn(user);
+        Mockito.when(seatRepository.findByIdWithLock(1L)).thenReturn(seat);
 
-        Exception exception = Assertions.assertThrows(Exception.class, () -> {
+        CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
             concertService.book("validToken", 1L);
         });
 
-        Assertions.assertEquals("좌석점유중", exception.getMessage());
+        Assertions.assertEquals(ErrorCode.SEAT_FULL, exception.getErrorCode());
     }
 }

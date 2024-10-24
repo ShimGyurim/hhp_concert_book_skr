@@ -87,8 +87,8 @@ public class PaymentUnitTest {
     public void testPay_TokenNotFound() {
         BookEntity book = new BookEntity();
         book.setStatusCd(BookStatus.PREPAYMENT);
-        Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        Mockito.when(waitTokenRepository.findByToken("invalidToken")).thenReturn(null);
+//        Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+//        Mockito.when(waitTokenRepository.findByToken("invalidToken")).thenReturn(null);
 
         Exception exception = Assertions.assertThrows(CustomException.class, () -> {
             paymentService.pay("invalidToken", 1L);
@@ -102,17 +102,17 @@ public class PaymentUnitTest {
     public void testPay_TokenExpired() {
         BookEntity book = new BookEntity();
         book.setStatusCd(BookStatus.PREPAYMENT);
-        Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+        Mockito.when(bookRepository.findByIdWithLock(1L)).thenReturn(book);
 
         WaitTokenEntity waitToken = new WaitTokenEntity();
         waitToken.setStatusCd(WaitStatus.EXPIRED);
         Mockito.when(waitTokenRepository.findByToken("expiredToken")).thenReturn(waitToken);
 
-        Exception exception = Assertions.assertThrows(Exception.class, () -> {
+        CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
             paymentService.pay("expiredToken", 1L);
         });
 
-        Assertions.assertEquals("토큰만료", exception.getMessage());
+        Assertions.assertEquals(ErrorCode.TOKEN_EXPIRED, exception.getErrorCode());
     }
 
     @Test
