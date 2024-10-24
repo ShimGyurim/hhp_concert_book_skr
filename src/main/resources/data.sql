@@ -1,3 +1,5 @@
+select 1 from dual;
+
 delete from payment;
 
 delete from book;
