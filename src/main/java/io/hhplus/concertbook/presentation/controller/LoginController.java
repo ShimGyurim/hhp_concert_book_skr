@@ -23,9 +23,7 @@ public class LoginController {
     public Map<String, String> login(HttpServletRequest request, @RequestBody Map<String, String> credentials) {
         String username = credentials.get("username");
         String password = credentials.get("password");
-        log.info("userid: {} ",username);
-        // 사용자 인증 로직 (예: 데이터베이스 조회)
-
+        log.info("userid: {} , password {} ",username, password);
 
         if (loginService.login(username,password)) {
             log.info("로그인성공");
@@ -35,6 +33,7 @@ public class LoginController {
             return response;
         }
 
+        log.info("로그인실패");
         Map<String, String> response = new HashMap<>();
         response.put("message", "Invalid credentials");
         return response;
