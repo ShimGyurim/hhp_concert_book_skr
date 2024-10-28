@@ -67,4 +67,20 @@ public class MoneyService {
 
         return wallet.getAmount();
     }
+
+    public WalletEntity findAndLockWallet(Long userId) throws CustomException {
+        WalletEntity wallet = walletRepository.findByUser_UserIdWithLock(userId);
+        if (wallet == null) {
+            throw new CustomException(ErrorCode.NO_WALLET);
+        }
+        return wallet;
+    }
+
+    public void deductAmount(WalletEntity wallet, long amount) throws CustomException {
+        if (wallet.getAmount() < amount) {
+            throw new CustomException(ErrorCode.NO_BALANCE);
+        }
+        wallet.setAmount(wallet.getAmount() - amount);
+        walletRepository.save(wallet);
+    }
 }

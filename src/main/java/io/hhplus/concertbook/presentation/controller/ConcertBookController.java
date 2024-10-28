@@ -1,5 +1,7 @@
 package io.hhplus.concertbook.presentation.controller;
 
+import io.hhplus.concertbook.application.facade.BookFacade;
+import io.hhplus.concertbook.application.facade.PayFacade;
 import io.hhplus.concertbook.common.exception.*;
 import io.hhplus.concertbook.domain.dto.ConcertScheduleDto;
 import io.hhplus.concertbook.domain.dto.SeatDto;
@@ -18,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -33,7 +34,10 @@ public class ConcertBookController {
     ConcertService concertService;
 
     @Autowired
-    PaymentService paymentService;
+    BookFacade bookFacade;
+
+    @Autowired
+    PayFacade payFacade;
 
     @GetMapping("/date")
     @Operation(summary = "공연스케줄조회", description = "공연스케줄조회")
@@ -103,7 +107,7 @@ public class ConcertBookController {
             throw new CustomException(ErrorCode.NO_AUTH);
         }
 
-        long bookId = concertService.book(concertBookReqDto.getToken(), concertBookReqDto.getSeatId());
+        long bookId = bookFacade.book(concertBookReqDto.getToken(), concertBookReqDto.getSeatId());
 
         CommonResponse<Object> response = CommonResponse.builder()
                 .msg("")
@@ -134,7 +138,7 @@ public class ConcertBookController {
             throw new CustomException(ErrorCode.NO_AUTH);
         }
 
-        boolean result = paymentService.pay(payReqDto.getToken(), payReqDto.getBookId());
+        boolean result = payFacade.pay(payReqDto.getToken(), payReqDto.getBookId());
 
         CommonResponse<Object> response = CommonResponse.builder()
                 .msg("")

@@ -75,63 +75,63 @@ public class ConcertService {
         return seatNos;
     }
 
-    @Transactional
-    public long book(String token,long seatId) throws Exception {
-        //TODO: token 이랑 userid 를 같이 받는게 옳은건지?
-
-        if(token == null){
-            throw new CustomException(ErrorCode.TOKEN_ERROR);
-        }
-
-//        waitQueueService.queueRefresh(ApiNo.BOOK); // 큐 새로고침
-
-        WaitTokenEntity waitToken = waitTokenRepository.findByToken(token);
-
-        if(waitToken == null) {
-            throw new CustomException(ErrorCode.TOKEN_ERROR);
-        }
-
-        if(WaitStatus.EXPIRED.equals(waitToken.getStatusCd())) {
-            throw new CustomException(ErrorCode.TOKEN_EXPIRED);
-        }else if(WaitStatus.WAIT.equals(waitToken.getStatusCd())) {
-            throw new CustomException(ErrorCode.TOKEN_WAIT);
-        }
-        if(!ApiNo.BOOK.equals(waitToken.getServiceCd())){
-            throw new CustomException(ErrorCode.TOKEN_ERROR);
-        }
-
-
-
-        SeatEntity seat = seatRepository.findByIdWithLock(seatId);
-        if(seat==null){
-            throw new CustomException(ErrorCode.SEAT_ERROR);
-        }
-        if(seat.isUse()){
-            throw new CustomException(ErrorCode.SEAT_FULL);
-        }
-
-        seat.setUse(true);
-        seatRepository.save(seat); //좌석 사용
-
-
-        UserEntity user = waitTokenRepository.findUserinfoByToken(token);
-        if(user==null){
-            throw new CustomException(ErrorCode.USER_ERROR);
-        }
-
-        BookEntity book = new BookEntity();
-        book.setStatusCd(BookStatus.PREPAYMENT);
-        book.setSeat(seat);
-        book.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        book.setUpdatedAt(book.getCreatedAt());
-        book.setUser(user);
-
-        bookRepository.save(book);
-
-        waitToken.endProcess(); // 프로세스 end 처리 (다음
-        waitTokenRepository.save(waitToken);
-        return book.getBookId();
-    }
+//    @Transactional
+//    public long book(String token,long seatId) throws Exception {
+//        //TODO: token 이랑 userid 를 같이 받는게 옳은건지?
+//
+//        if(token == null){
+//            throw new CustomException(ErrorCode.TOKEN_ERROR);
+//        }
+//
+////        waitQueueService.queueRefresh(ApiNo.BOOK); // 큐 새로고침
+//
+//        WaitTokenEntity waitToken = waitTokenRepository.findByToken(token);
+//
+//        if(waitToken == null) {
+//            throw new CustomException(ErrorCode.TOKEN_ERROR);
+//        }
+//
+//        if(WaitStatus.EXPIRED.equals(waitToken.getStatusCd())) {
+//            throw new CustomException(ErrorCode.TOKEN_EXPIRED);
+//        }else if(WaitStatus.WAIT.equals(waitToken.getStatusCd())) {
+//            throw new CustomException(ErrorCode.TOKEN_WAIT);
+//        }
+//        if(!ApiNo.BOOK.equals(waitToken.getServiceCd())){
+//            throw new CustomException(ErrorCode.TOKEN_ERROR);
+//        }
+//
+//
+//
+//        SeatEntity seat = seatRepository.findByIdWithLock(seatId);
+//        if(seat==null){
+//            throw new CustomException(ErrorCode.SEAT_ERROR);
+//        }
+//        if(seat.isUse()){
+//            throw new CustomException(ErrorCode.SEAT_FULL);
+//        }
+//
+//        seat.setUse(true);
+//        seatRepository.save(seat); //좌석 사용
+//
+//
+//        UserEntity user = waitTokenRepository.findUserinfoByToken(token);
+//        if(user==null){
+//            throw new CustomException(ErrorCode.USER_ERROR);
+//        }
+//
+//        BookEntity book = new BookEntity();
+//        book.setStatusCd(BookStatus.PREPAYMENT);
+//        book.setSeat(seat);
+//        book.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+//        book.setUpdatedAt(book.getCreatedAt());
+//        book.setUser(user);
+//
+//        bookRepository.save(book);
+//
+//        waitToken.endProcess(); // 프로세스 end 처리 (다음
+//        waitTokenRepository.save(waitToken);
+//        return book.getBookId();
+//    }
 
     
     //TEST용
@@ -144,4 +144,78 @@ public class ConcertService {
 //            seatRepository.save(seat);
 //        }
 //    }
+
+
+
+    public void endProcess(WaitTokenEntity waitToken) {
+        waitToken.endProcess();
+        waitTokenRepository.save(waitToken);
+    }
+
+    public BookEntity findAndLockBook(Long bookId) throws CustomException {
+        BookEntity book = bookRepository.findByIdWithLock(bookId);
+        if (book == null) {
+            throw new CustomException(ErrorCode.BOOK_ERROR);
+        }
+        if (!BookStatus.PREPAYMENT.equals(book.getStatusCd())) {
+            throw new CustomException(ErrorCode.NO_PAY);
+        }
+        return book;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    public WaitTokenEntity validateToken(String token) throws CustomException {
+//        if (token == null) {
+//            throw new CustomException(ErrorCode.TOKEN_ERROR);
+//        }
+//
+//        WaitTokenEntity waitToken = waitTokenRepository.findByToken(token);
+//        if (waitToken == null) {
+//            throw new CustomException(ErrorCode.TOKEN_ERROR);
+//        }
+//
+//        if (WaitStatus.EXPIRED.equals(waitToken.getStatusCd())) {
+//            throw new CustomException(ErrorCode.TOKEN_EXPIRED);
+//        } else if (WaitStatus.WAIT.equals(waitToken.getStatusCd())) {
+//            throw new CustomException(ErrorCode.TOKEN_WAIT);
+//        }
+//
+//        if (!ApiNo.BOOK.equals(waitToken.getServiceCd())) {
+//            throw new CustomException(ErrorCode.TOKEN_ERROR);
+//        }
+//
+//        return waitToken;
+//    }
+
+
+
+
+
+
+
+//    public UserEntity findUserByToken(String token) throws CustomException {
+//        UserEntity user = waitTokenRepository.findUserinfoByToken(token);
+//        if (user == null) {
+//            throw new CustomException(ErrorCode.USER_ERROR);
+//        }
+//        return user;
+//    }
+
+
+
+
 }

@@ -1,5 +1,6 @@
 package io.hhplus.concertbook.domain.service;
 
+import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
 import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.common.exception.ErrorCode;
@@ -105,4 +106,39 @@ public class TokenService {
 
     }
 
+    public WaitTokenEntity validateToken(String token, ApiNo apiNo) throws CustomException {
+        if (token == null) {
+            throw new CustomException(ErrorCode.TOKEN_ERROR);
+        }
+
+        WaitTokenEntity waitToken = waitTokenRepository.findByToken(token);
+        if (waitToken == null) {
+            throw new CustomException(ErrorCode.TOKEN_ERROR);
+        }
+
+        if (WaitStatus.EXPIRED.equals(waitToken.getStatusCd())) {
+            throw new CustomException(ErrorCode.TOKEN_EXPIRED);
+        } else if (WaitStatus.WAIT.equals(waitToken.getStatusCd())) {
+            throw new CustomException(ErrorCode.TOKEN_WAIT);
+        }
+
+        if (!apiNo.equals(waitToken.getServiceCd())) {
+            throw new CustomException(ErrorCode.TOKEN_ERROR);
+        }
+
+        return waitToken;
+    }
+
+    public void endProcess(WaitTokenEntity waitToken) {
+        waitToken.endProcess();
+        waitTokenRepository.save(waitToken);
+    }
+
+    public UserEntity findUserByToken(String token) throws CustomException {
+        UserEntity user = waitTokenRepository.findUserinfoByToken(token);
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_ERROR);
+        }
+        return user;
+    }
 }
