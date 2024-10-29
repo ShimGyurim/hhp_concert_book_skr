@@ -27,11 +27,6 @@ public class MoneyUnitTests {
     @InjectMocks
     private MoneyService moneyService;
 
-//    @BeforeEach
-//    public void setUp() {
-//        MockitoAnnotations.openMocks(this);
-//    }
-
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -41,7 +36,6 @@ public class MoneyUnitTests {
     @DisplayName("유저못찾음")
     public void testGetBalance_UserNotFound() {
         Mockito.when(userRepository.findByUserName("nouser")).thenReturn(null);
-//        Mockito.when(walletRepo.findByUser_UserId(ArgumentMatchers.any(Long.class))).thenReturn(new WalletEntity());
 
         CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
             moneyService.getBalance("nouser");

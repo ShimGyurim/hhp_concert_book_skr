@@ -28,9 +28,6 @@ public class BookingConcurrencyTest {
     @Autowired
     private MoneyService moneyService;
 
-//    @Autowired
-//    private ConcertService concertService;
-
     @Autowired
     private BookFacade bookFacade;
 
@@ -53,7 +50,6 @@ public class BookingConcurrencyTest {
     private RepositoryClean repositoryClean;
 
     @BeforeEach
-//    @Transactional
     public void setUp() {
         repositoryClean.cleanRepository();
 
@@ -74,10 +70,8 @@ public class BookingConcurrencyTest {
     }
 
     @Test
-//    @Transactional
     public void testConcurrentBooking() throws Exception {
         String token = "testToken";
-//        long seatId = 1L;
         int threadCount = 10;
 
         SeatEntity seat = new SeatEntity();
@@ -109,10 +103,5 @@ public class BookingConcurrencyTest {
         Assertions.assertTrue(seat1.isUse());
         Assertions.assertEquals(1L,bookRepository.countBySeat_SeatId(seatId));
 
-//        Assertions.assertThrows(Exception.class, () -> {
-//            if (seat.isUse()) {
-//                throw new Exception("좌석점유중");
-//            }
-//        });
     }
 }

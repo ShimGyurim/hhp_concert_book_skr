@@ -65,12 +65,7 @@ public class PayFacadeTest {
 
         when(tokenService.validateToken(token, ApiNo.PAYMENT)).thenReturn(waitToken);
         when(concertService.findAndLockBook(bookId)).thenReturn(book);
-//        doNothing().when(userService).validateUser(userBook, userToken);
         when(moneyService.findAndLockWallet(userBook.getUserId())).thenReturn(wallet);
-//        doNothing().when(moneyService).deductAmount(wallet, 1000L);
-//        doNothing().when(paymentService).createPayment(book);
-//        doNothing().when(bookService).updateBookStatus(book, BookStatus.PAID);
-//        doNothing().when(tokenService).endProcess(waitToken);
 
         boolean result = payFacade.pay(token, bookId);
 

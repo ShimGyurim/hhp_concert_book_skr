@@ -7,8 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
 
-//    ERROR("API오류", "에러가 발생했습니다.", HttpConstant.INTERNAL_SERVER_ERROR),
-//    DATABASE_ERROR("API오류",  "데이터베이스 오류", HttpConstant.INTERNAL_SERVER_ERROR),
     NO_AUTH("권한없음", "권한없음.", HttpConstant.FORBIDDEN),
     USER_ERROR("사용자", "사용자가 없거나 무효.", HttpConstant.INTERNAL_SERVER_ERROR),
     TOKEN_ERROR("토큰무효", "토큰이 없거나 무효.", HttpConstant.INTERNAL_SERVER_ERROR),
@@ -25,8 +23,6 @@ public enum ErrorCode {
     NO_WALLET("잔액정보없음", "잔액정보없음.", HttpConstant.INTERNAL_SERVER_ERROR),
     NO_BALANCE("잔액없음", "잔액없음.", HttpConstant.INTERNAL_SERVER_ERROR),
     MONEY_ERROR("잔액무효", "잔액정보 무효.", HttpConstant.INTERNAL_SERVER_ERROR);
-//    ID_ERROR("ID무효", "잔액정보 무효.", HttpConstant.INTERNAL_SERVER_ERROR)
-//    RESERVATION_ERROR("시간초과", "예약시간이 초과되었습니다.", HttpConstant.INTERNAL_SERVER_ERROR);
 
 
     private final String name;

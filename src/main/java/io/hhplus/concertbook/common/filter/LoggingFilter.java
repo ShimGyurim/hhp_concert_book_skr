@@ -13,9 +13,7 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import java.io.IOException;
 
 @Slf4j
-//@WebFilter(urlPatterns = "/concert/date")
 public class LoggingFilter implements Filter {
-//    private static final Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {

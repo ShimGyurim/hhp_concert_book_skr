@@ -24,16 +24,6 @@ public class RepositoryClean {
     WalletRepository walletRepository;
 
     public void cleanRepository() {
-        
         // XXX : 제약조건으로 삭제 에러가 나는 경우가 있어 우선 미사용 처리
-//        paymentRepository.deleteAll();
-//        waitTokenRepository.deleteAll();
-//        walletRepository.deleteAll();
-//        bookRepository.deleteAll();
-//        seatRepository.deleteAll();
-//        concertItemRepository.deleteAll();
-//        concertRepository.deleteAll();
-//        userRepository.deleteAll();
-
     }
 }

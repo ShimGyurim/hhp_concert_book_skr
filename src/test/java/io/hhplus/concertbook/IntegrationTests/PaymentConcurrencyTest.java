@@ -138,7 +138,6 @@ public class PaymentConcurrencyTest {
         assertNotNull(book);
         assertTrue(BookStatus.PAID.equals(book.getStatusCd()));
         assertEquals(200L-100L,walletRepository.findById(walletId).get().getAmount());
-//        assertEquals(1, bookRepository.countBySeat_SeatId(book.getSeat().getSeatId()));
         Assertions.assertEquals(1L,paymentRepository.countByBook_BookId(bookId));
     }
 }

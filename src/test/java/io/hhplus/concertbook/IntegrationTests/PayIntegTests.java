@@ -36,9 +36,6 @@ public class PayIntegTests {
     @Autowired
     private PaymentRepository paymentRepository;
 
-//    @Autowired
-//    private PaymentService paymentService;
-
     @Autowired
     ConcertRepository concertRepository;
 

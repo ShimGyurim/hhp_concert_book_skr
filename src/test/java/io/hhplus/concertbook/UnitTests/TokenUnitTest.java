@@ -99,17 +99,6 @@ public class TokenUnitTest {
         Assertions.assertEquals(ErrorCode.USER_ERROR, exception.getErrorCode());
     }
 
-//    @Mock
-//    private WaitTokenRepository waitTokenRepository;
-
-//    @InjectMocks
-//    private TokenService tokenService;
-
-//    @BeforeEach
-//    public void setUp() {
-//        MockitoAnnotations.openMocks(this);
-//    }
-
     @Test
     @DisplayName("토큰검증 : 성공")
     public void testValidateToken_Success() throws CustomException {
@@ -139,17 +128,6 @@ public class TokenUnitTest {
 
         Assertions.assertEquals(ErrorCode.TOKEN_ERROR, exception.getErrorCode());
     }
-
-//    @Mock
-//    private WaitTokenRepository waitTokenRepository;
-//
-//    @InjectMocks
-//    private TokenService tokenService;
-//
-//    @BeforeEach
-//    public void setUp() {
-//        MockitoAnnotations.openMocks(this);
-//    }
 
     @Test
     @DisplayName("토큰으로 유저찾기 : 성공")

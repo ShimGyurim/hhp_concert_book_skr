@@ -117,68 +117,6 @@ public class ConcertBookUnitTests {
         Assertions.assertTrue(result.isEmpty());
     }
 
-
-
-//    @Test
-//    @DisplayName("예약: 성공")
-//    public void testBook_Success() throws Exception {
-//        WaitTokenEntity waitToken = new WaitTokenEntity();
-//        waitToken.setStatusCd(WaitStatus.PROCESS);
-//        waitToken.setServiceCd(ApiNo.BOOK);
-//        UserEntity user = new UserEntity();
-//        SeatEntity seat = new SeatEntity();
-//        seat.setUse(false);
-//        Mockito.when(waitTokenRepository.findByToken("validToken")).thenReturn(waitToken);
-//        Mockito.when(waitTokenRepository.findUserinfoByToken("validToken")).thenReturn(user);
-//        Mockito.when(seatRepository.findByIdWithLock(1L)).thenReturn(seat);
-//
-//
-//        long result = bookFacade.book("validToken", 1L);
-//
-//        Assertions.assertTrue(seat.isUse());
-//        Mockito.verify(seatRepository, Mockito.times(1)).save(seat);
-//        Mockito.verify(bookRepository, Mockito.times(1)).save(ArgumentMatchers.any(BookEntity.class));
-//        Mockito.verify(waitTokenRepository, Mockito.times(1)).save(waitToken);
-//    }
-
-//    @Test
-//    @DisplayName("예약: 토큰대기중")
-//    public void testBook_TokenWaiting() {
-//        WaitTokenEntity waitToken = new WaitTokenEntity();
-//        waitToken.setStatusCd(WaitStatus.WAIT);
-//        String tokenString ="waitingToken";
-//        Mockito.when(tokenService.validateToken(tokenString,ApiNo.BOOK)).thenReturn(waitToken);
-//        Mockito.when(waitTokenRepository.findByToken(Mockito.anyString())).thenReturn(waitToken);
-//
-//        CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
-//            bookFacade.book(tokenString, 1L);
-//        });
-//
-//        Assertions.assertEquals(ErrorCode.TOKEN_WAIT, exception.getErrorCode());
-//    }
-
-//    @Test
-//    @DisplayName("예약: 좌석점유중")
-//    public void testBook_SeatOccupied() {
-//        WaitTokenEntity waitToken = new WaitTokenEntity();
-//        waitToken.setStatusCd(WaitStatus.PROCESS);
-//        waitToken.setServiceCd(ApiNo.BOOK);
-//        UserEntity user = new UserEntity();
-//        SeatEntity seat = new SeatEntity();
-//        seat.setUse(true);
-//        Mockito.when(waitTokenRepository.findByToken("validToken")).thenReturn(waitToken);
-////        Mockito.when(waitTokenRepository.findUserinfoByToken("validToken")).thenReturn(user);
-//        Mockito.when(seatRepository.findByIdWithLock(1L)).thenReturn(seat);
-//
-//        CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
-//            bookFacade.book("validToken", 1L);
-//        });
-//
-//        Assertions.assertEquals(ErrorCode.SEAT_FULL, exception.getErrorCode());
-//    }
-
-
-
     @Test
     @DisplayName("예약 정보 (락 객체) : 성공")
     public void testFindAndLockBook_Success() throws CustomException {

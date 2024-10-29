@@ -38,7 +38,6 @@ public class ChargeConcurrencyTest {
     }
 
     @Test
-//    @Transactional
     public void testConcurrentCharge() throws Exception {
         String userName = "testUser";
         Long initialAmount = 1000L;
