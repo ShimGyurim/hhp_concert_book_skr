@@ -2,6 +2,7 @@ package io.hhplus.concertbook.IntegrationTests;
 
 
 import io.hhplus.concertbook.ConcertBookApp;
+import io.hhplus.concertbook.application.facade.BookFacade;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
@@ -45,6 +46,9 @@ public class ConcertIntegTests {
 
     @Autowired
     private RepositoryClean repositoryClean;
+
+    @Autowired
+    private BookFacade bookFacade;
 
     private ConcertItemEntity concertItem;
     private SeatEntity seat;
@@ -117,7 +121,7 @@ public class ConcertIntegTests {
     @DisplayName("좌석예약: 성공")
     public void testBook_Success() throws Exception {
         // When
-        long bookId = concertService.book("testToken", seat.getSeatId());
+        long bookId = bookFacade.book("testToken", seat.getSeatId());
 
         // Then
         Assertions.assertNotNull(bookId);
@@ -133,6 +137,6 @@ public class ConcertIntegTests {
     @DisplayName("좌석예약: 토큰이없어 실패")
     public void testBook_NoToken() {
         // When & Then
-        Assertions.assertThrows(CustomException.class, () -> concertService.book(null, seat.getSeatId()));
+        Assertions.assertThrows(CustomException.class, () -> bookFacade.book(null, seat.getSeatId()));
     }
 }

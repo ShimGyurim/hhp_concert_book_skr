@@ -1,6 +1,7 @@
 package io.hhplus.concertbook.IntegrationTests;
 
 import io.hhplus.concertbook.ConcertBookApp;
+import io.hhplus.concertbook.application.facade.BookFacade;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
 import io.hhplus.concertbook.tool.RepositoryClean;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -26,8 +28,11 @@ public class BookingConcurrencyTest {
     @Autowired
     private MoneyService moneyService;
 
+//    @Autowired
+//    private ConcertService concertService;
+
     @Autowired
-    private ConcertService concertService;
+    private BookFacade bookFacade;
 
     @Autowired
     private UserRepository userRepository;
@@ -88,7 +93,7 @@ public class BookingConcurrencyTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    concertService.book(token, seatId);
+                    bookFacade.book(token, seatId);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {

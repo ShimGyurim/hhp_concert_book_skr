@@ -1,6 +1,7 @@
 package io.hhplus.concertbook.IntegrationTests;
 
 import io.hhplus.concertbook.ConcertBookApp;
+import io.hhplus.concertbook.application.facade.PayFacade;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
@@ -35,8 +36,8 @@ public class PayIntegTests {
     @Autowired
     private PaymentRepository paymentRepository;
 
-    @Autowired
-    private PaymentService paymentService;
+//    @Autowired
+//    private PaymentService paymentService;
 
     @Autowired
     ConcertRepository concertRepository;
@@ -46,6 +47,9 @@ public class PayIntegTests {
 
     @Autowired
     SeatRepository seatRepository;
+
+    @Autowired
+    PayFacade payFacade;
 
     @Autowired
     private RepositoryClean repositoryClean;
@@ -106,7 +110,7 @@ public class PayIntegTests {
         waitTokenRepository.save(waitToken);
 
         // When
-        boolean result = paymentService.pay("testToken", book.getBookId());
+        boolean result = payFacade.pay("testToken", book.getBookId());
 
         // Then
         Assertions.assertTrue(result);
@@ -119,6 +123,6 @@ public class PayIntegTests {
     @DisplayName("결제: 토큰없음 에러")
     public void testPay_NoToken() {
         // When & Then
-        Assertions.assertThrows(CustomException.class, () -> paymentService.pay(null, book.getBookId()));
+        Assertions.assertThrows(CustomException.class, () -> payFacade.pay(null, book.getBookId()));
     }
 }

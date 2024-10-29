@@ -1,6 +1,7 @@
 package io.hhplus.concertbook.IntegrationTests;
 
 import io.hhplus.concertbook.ConcertBookApp;
+import io.hhplus.concertbook.application.facade.PayFacade;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
@@ -33,6 +34,9 @@ public class PaymentConcurrencyTest {
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private PayFacade payFacade;
 
     @Autowired
     private UserRepository userRepository;
@@ -119,7 +123,7 @@ public class PaymentConcurrencyTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    paymentService.pay(token, bookId);
+                    payFacade.pay(token, bookId);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {

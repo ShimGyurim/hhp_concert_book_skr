@@ -15,10 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Timestamp;
@@ -42,6 +39,7 @@ public class TokenUnitTest {
 
     @BeforeEach
     public void setUp() {
+        MockitoAnnotations.openMocks(this);
         tokenInDto = new TokenDto();
         tokenInDto.setUserName("testUser");
         tokenInDto.setApiNo(ApiNo.BOOK);
@@ -89,12 +87,93 @@ public class TokenUnitTest {
     }
 
     @Test
+    @DisplayName("토큰검증 : 유저못찾음")
     public void testGetToken_UserNotFound() {
         Mockito.when(waitTokenRepository.findByUser_UserNameAndServiceCd("testUser", ApiNo.BOOK)).thenReturn(null);
         Mockito.when(userRepository.findByUserName("testUser")).thenReturn(null);
 
         CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
             tokenService.getToken(tokenInDto);
+        });
+
+        Assertions.assertEquals(ErrorCode.USER_ERROR, exception.getErrorCode());
+    }
+
+//    @Mock
+//    private WaitTokenRepository waitTokenRepository;
+
+//    @InjectMocks
+//    private TokenService tokenService;
+
+//    @BeforeEach
+//    public void setUp() {
+//        MockitoAnnotations.openMocks(this);
+//    }
+
+    @Test
+    @DisplayName("토큰검증 : 성공")
+    public void testValidateToken_Success() throws CustomException {
+        String token = "validToken";
+        ApiNo apiNo = ApiNo.PAYMENT;
+        WaitTokenEntity waitToken = new WaitTokenEntity();
+        waitToken.setStatusCd(WaitStatus.PROCESS);
+        waitToken.setServiceCd(apiNo);
+
+        Mockito.when(waitTokenRepository.findByToken(token)).thenReturn(waitToken);
+
+        WaitTokenEntity result = tokenService.validateToken(token, apiNo);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(waitToken, result);
+    }
+
+    @Test
+    @DisplayName("토큰검증 : 토큰정보없음")
+    public void testValidateToken_TokenNull() {
+        String token = null;
+        ApiNo apiNo = ApiNo.PAYMENT;
+
+        CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
+            tokenService.validateToken(token, apiNo);
+        });
+
+        Assertions.assertEquals(ErrorCode.TOKEN_ERROR, exception.getErrorCode());
+    }
+
+//    @Mock
+//    private WaitTokenRepository waitTokenRepository;
+//
+//    @InjectMocks
+//    private TokenService tokenService;
+//
+//    @BeforeEach
+//    public void setUp() {
+//        MockitoAnnotations.openMocks(this);
+//    }
+
+    @Test
+    @DisplayName("토큰으로 유저찾기 : 성공")
+    public void testFindUserByToken_Success() throws CustomException {
+        String token = "validToken";
+        UserEntity user = new UserEntity();
+
+        Mockito.when(waitTokenRepository.findUserinfoByToken(token)).thenReturn(user);
+
+        UserEntity result = tokenService.findUserByToken(token);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(user, result);
+    }
+
+    @Test
+    @DisplayName("토큰으로 유저찾기 : 유저 못찾음")
+    public void testFindUserByToken_UserNotFound() {
+        String token = "invalidToken";
+
+        Mockito.when(waitTokenRepository.findUserinfoByToken(token)).thenReturn(null);
+
+        CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
+            tokenService.findUserByToken(token);
         });
 
         Assertions.assertEquals(ErrorCode.USER_ERROR, exception.getErrorCode());

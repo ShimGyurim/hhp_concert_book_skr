@@ -8,6 +8,7 @@ import io.hhplus.concertbook.domain.repository.UserRepository;
 import io.hhplus.concertbook.domain.repository.WalletRepository;
 import io.hhplus.concertbook.domain.service.MoneyService;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +31,11 @@ public class MoneyUnitTests {
 //    public void setUp() {
 //        MockitoAnnotations.openMocks(this);
 //    }
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
     @DisplayName("유저못찾음")
@@ -109,5 +115,38 @@ public class MoneyUnitTests {
 
         Assertions.assertEquals(150L, newBalance);
         Mockito.verify(walletRepository, Mockito.times(1)).save(wallet);
-    }    
+    }
+
+
+
+
+
+    @Test
+    @DisplayName("잔액 정보 (락 객체) : 성공")
+    public void testFindAndLockWallet_Success() throws CustomException {
+        Long userId = 1L;
+        WalletEntity wallet = new WalletEntity();
+
+        Mockito.when(walletRepository.findByUser_UserIdWithLock(userId)).thenReturn(wallet);
+
+        WalletEntity result = moneyService.findAndLockWallet(userId);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(wallet, result);
+        Mockito.verify(walletRepository).findByUser_UserIdWithLock(userId);
+    }
+
+    @Test
+    @DisplayName("예약 정보 (락 객체) : 잔액정보 못찾음")
+    public void testFindAndLockWallet_WalletNotFound() {
+        Long userId = 1L;
+
+        Mockito.when(walletRepository.findByUser_UserIdWithLock(userId)).thenReturn(null);
+
+        CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
+            moneyService.findAndLockWallet(userId);
+        });
+
+        Assertions.assertEquals(ErrorCode.NO_WALLET, exception.getErrorCode());
+    }
 }
