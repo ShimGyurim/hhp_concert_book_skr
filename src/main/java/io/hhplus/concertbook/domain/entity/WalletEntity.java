@@ -24,7 +24,6 @@ public class WalletEntity {
     UserEntity user;
 
     @Column(nullable = false)
-    @ColumnDefault("0")
     @Version
     int version;
 }

@@ -22,7 +22,7 @@ public interface BookRepository extends JpaRepository<BookEntity,Long> {
             "WHERE w.updatedAt <= :fiveMinutesAgo AND w.statusCd <> :prePayStatus ")
     void updateExpiredBooks(@Param("expireStatus") BookStatus expireStatus, @Param("nowTime") Timestamp nowTime, @Param("fiveMinutesAgo") Timestamp fiveMinutesAgo, @Param("prePayStatus") BookStatus prePayStatus);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Lock(LockModeType.OPTIMISTIC)
     @Query("SELECT b FROM BookEntity b WHERE b.bookId = :bookId")
     BookEntity findByIdWithLock(@Param("bookId") long bookId);
 

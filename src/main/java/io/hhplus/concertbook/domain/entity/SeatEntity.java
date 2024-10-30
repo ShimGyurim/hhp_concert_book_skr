@@ -2,6 +2,7 @@ package io.hhplus.concertbook.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 
 @Data
 @Entity
@@ -19,4 +20,8 @@ public class SeatEntity {
 
     int seatNo;
     boolean isUse;
+
+    @Column(nullable = false)
+    @Version
+    int version;
 }

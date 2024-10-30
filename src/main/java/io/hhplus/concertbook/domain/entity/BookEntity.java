@@ -31,4 +31,7 @@ public class BookEntity {
     Timestamp createdAt;
     Timestamp updatedAt;
 
+    @Column(nullable = false)
+    @Version
+    int version;
 }
