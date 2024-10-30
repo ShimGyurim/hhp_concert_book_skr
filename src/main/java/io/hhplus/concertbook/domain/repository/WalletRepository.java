@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface WalletRepository extends JpaRepository<WalletEntity,Long> {
     WalletEntity findByUser_UserId(long userId);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Lock(LockModeType.OPTIMISTIC)
     @Query("SELECT w FROM WalletEntity w JOIN w.user u WHERE u.userId = :userId")
     WalletEntity findByUser_UserIdWithLock(@Param("userId") long userId);
 

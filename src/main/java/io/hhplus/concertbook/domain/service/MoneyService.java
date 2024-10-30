@@ -10,7 +10,9 @@ import io.hhplus.concertbook.domain.repository.WalletRepository;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
@@ -30,8 +32,6 @@ public class MoneyService {
     @Autowired
     WaitQueueService waitQueueService;
 
-    @Autowired
-    private RedissonClient redissonClient;
 
     public long getBalance(String userName) throws Exception {
 
@@ -56,18 +56,12 @@ public class MoneyService {
 
     @Transactional
     public long charge(String userName,Long chargeAmt) throws Exception {
-        final RLock lock = redissonClient.getLock(userName);
-        boolean available = lock.tryLock(10,2, TimeUnit.SECONDS);
 
-        if(!available) {
-            throw new Exception("락 잠금상태");
-        }
         if(chargeAmt <= 0) {
             throw new CustomException(ErrorCode.CHARGE_INPUT_ERROR);
         }
 
         //금액 충전
-
         UserEntity user = userRepository.findByUserName(userName);
 
         if(user == null) {
@@ -78,7 +72,6 @@ public class MoneyService {
         wallet.setAmount(wallet.getAmount()+chargeAmt);
         walletRepository.save(wallet);
 
-        lock.unlock();
         return wallet.getAmount();
     }
 
