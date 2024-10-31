@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = ConcertBookApp.class)
-public class PaymentConcurrencyTest {
+public class PayConcurrencyTest {
 
     @Autowired
     private ConcertService concertService;
