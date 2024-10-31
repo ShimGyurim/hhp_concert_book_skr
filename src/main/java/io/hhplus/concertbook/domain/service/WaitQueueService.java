@@ -45,9 +45,6 @@ public class WaitQueueService {
         // 5분 전 시간 타임스탬프
         Timestamp fiveMinutesAgo = Timestamp.from(now.toInstant().minus(Duration.ofMinutes(WaitQueueConstant.WAIT_MINUTE)));
 
-
-
-
         //5분이상 된 토큰 만료처리
         // PROCESS 없으면 WAIT 중에서 가장 오래된 updatedAt 을 PROCESS 로 처리하기
         waitTokenRepository.updateExpiredTokens(WaitStatus.EXPIRED ,now,fiveMinutesAgo);

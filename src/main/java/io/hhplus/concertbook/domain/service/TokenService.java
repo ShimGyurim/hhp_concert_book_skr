@@ -36,8 +36,6 @@ public class TokenService {
             throw new Exception("DTO정보없음");
         }
 
-//        waitQueueService.queueRefresh(tokenInDto.getApiNo());
-
         WaitTokenEntity entity = waitTokenRepository.findByUser_UserNameAndServiceCd(tokenInDto.getUserName(),tokenInDto.getApiNo());
 
         if(entity == null || WaitStatus.EXPIRED.equals(entity.getStatusCd())) {
