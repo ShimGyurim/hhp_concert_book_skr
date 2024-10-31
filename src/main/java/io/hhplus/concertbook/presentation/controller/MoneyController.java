@@ -1,5 +1,6 @@
 package io.hhplus.concertbook.presentation.controller;
 
+import io.hhplus.concertbook.application.facade.MoneyFacade;
 import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.service.MoneyService;
@@ -19,6 +20,9 @@ public class MoneyController {
     @Autowired
     MoneyService moneyService;
 
+    @Autowired
+    MoneyFacade moneyFacade;
+
     @GetMapping("/charge")
     @Operation(summary = "충전", description = "충전")
     public ResponseEntity<CommonResponse<Object>> chargeBalance(
@@ -33,7 +37,7 @@ public class MoneyController {
             throw new CustomException(ErrorCode.NO_USERINFO);
         }
 
-        long afterAmount = moneyService.charge(userName,chargeAmt);
+        long afterAmount = moneyFacade.chargeWithRedisLock(userName,chargeAmt);
 
         CommonResponse<Object> response = CommonResponse.builder()
                 .msg("토큰 발급 성공")
