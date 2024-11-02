@@ -1,35 +1,29 @@
 package io.hhplus.concertbook.domain.service;
 
-import io.hhplus.concertbook.common.constant.GlobalConstant;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.WaitStatus;
-import io.hhplus.concertbook.common.exception.NoUserException;
+import io.hhplus.concertbook.common.exception.CustomException;
+import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
-import io.hhplus.concertbook.domain.repository.UserRepo;
-import io.hhplus.concertbook.domain.repository.WaitTokenRepo;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import org.apache.catalina.User;
+import io.hhplus.concertbook.domain.repository.UserRepository;
+import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
 
 @Service
 public class TokenService {
 
     @Autowired
-    WaitTokenRepo waitTokenRepo;
+    WaitTokenRepository waitTokenRepository;
 
     @Autowired
-    UserRepo userRepo;
+    UserRepository userRepository;
 
     @Autowired
     WaitQueueService waitQueueService;
@@ -39,12 +33,10 @@ public class TokenService {
         // 토큰을 받아 유효한게 있는지 확인
         // api 별로는 아예 신경 안스기
         if(tokenInDto == null) {
-            throw new Exception();
+            throw new Exception("DTO정보없음");
         }
 
-//        waitQueueService.queueRefresh(tokenInDto.getApiNo());
-
-        WaitTokenEntity entity = waitTokenRepo.findByUser_UserNameAndServiceCd(tokenInDto.getUserName(),tokenInDto.getApiNo());
+        WaitTokenEntity entity = waitTokenRepository.findByUser_UserNameAndServiceCd(tokenInDto.getUserName(),tokenInDto.getApiNo());
 
         if(entity == null || WaitStatus.EXPIRED.equals(entity.getStatusCd())) {
             WaitTokenEntity newEntity = new WaitTokenEntity();
@@ -53,10 +45,10 @@ public class TokenService {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
             String formDate = sdf.format(timestamp);
 
-            UserEntity user = userRepo.findByUserName(tokenInDto.getUserName());
+            UserEntity user = userRepository.findByUserName(tokenInDto.getUserName());
 
             if(user==null) {
-                throw new NoUserException("사용자없음");
+                throw new CustomException(ErrorCode.USER_ERROR);
             }
             newEntity.setUser(user);
             newEntity.setServiceCd(tokenInDto.getApiNo());
@@ -65,7 +57,7 @@ public class TokenService {
             newEntity.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
             newEntity.setToken(tokenInDto.getUserName()+formDate);
 
-            waitTokenRepo.save(newEntity);
+            waitTokenRepository.save(newEntity);
 
             TokenDto dto = new TokenDto();
             dto.setToken(newEntity.getToken());
@@ -73,14 +65,14 @@ public class TokenService {
             dto.setApiNo(tokenInDto.getApiNo());
 
             //대기번호 리턴
-            Long count = waitTokenRepo.countPreviousToken(tokenInDto.getApiNo(),newEntity.getUpdatedAt());
+            Long count = waitTokenRepository.countPreviousToken(tokenInDto.getApiNo(),newEntity.getUpdatedAt());
 
 
             if(count == 0) {
-                Long countProcss = waitTokenRepo.countStatusToken(tokenInDto.getApiNo(),WaitStatus.PROCESS);
+                Long countProcss = waitTokenRepository.countStatusToken(tokenInDto.getApiNo(),WaitStatus.PROCESS);
                 if(countProcss==0) {
                     newEntity.setStatusCd(WaitStatus.PROCESS);
-                    waitTokenRepo.save(newEntity);
+                    waitTokenRepository.save(newEntity);
                 }
             }
             dto.setWaitNo(count.intValue());
@@ -94,14 +86,14 @@ public class TokenService {
             dto.setApiNo(tokenInDto.getApiNo());
 
             //대기번호 리턴
-            Long count = waitTokenRepo.countPreviousToken(tokenInDto.getApiNo(),entity.getUpdatedAt());
+            Long count = waitTokenRepository.countPreviousToken(tokenInDto.getApiNo(),entity.getUpdatedAt());
 
             if(count==0) {
 
-                Long countProcss = waitTokenRepo.countStatusToken(tokenInDto.getApiNo(),WaitStatus.PROCESS);
+                Long countProcss = waitTokenRepository.countStatusToken(tokenInDto.getApiNo(),WaitStatus.PROCESS);
                 if(countProcss==0) {
                     entity.setStatusCd(WaitStatus.PROCESS);
-                    waitTokenRepo.save(entity);
+                    waitTokenRepository.save(entity);
                 }
 
             }
@@ -112,4 +104,39 @@ public class TokenService {
 
     }
 
+    public WaitTokenEntity validateToken(String token, ApiNo apiNo) throws CustomException {
+        if (token == null) {
+            throw new CustomException(ErrorCode.TOKEN_ERROR);
+        }
+
+        WaitTokenEntity waitToken = waitTokenRepository.findByToken(token);
+        if (waitToken == null) {
+            throw new CustomException(ErrorCode.TOKEN_ERROR);
+        }
+
+        if (WaitStatus.EXPIRED.equals(waitToken.getStatusCd())) {
+            throw new CustomException(ErrorCode.TOKEN_EXPIRED);
+        } else if (WaitStatus.WAIT.equals(waitToken.getStatusCd())) {
+            throw new CustomException(ErrorCode.TOKEN_WAIT);
+        }
+
+        if (!apiNo.equals(waitToken.getServiceCd())) {
+            throw new CustomException(ErrorCode.TOKEN_ERROR);
+        }
+
+        return waitToken;
+    }
+
+    public void endProcess(WaitTokenEntity waitToken) {
+        waitToken.endProcess();
+        waitTokenRepository.save(waitToken);
+    }
+
+    public UserEntity findUserByToken(String token) throws CustomException {
+        UserEntity user = waitTokenRepository.findUserinfoByToken(token);
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_ERROR);
+        }
+        return user;
+    }
 }

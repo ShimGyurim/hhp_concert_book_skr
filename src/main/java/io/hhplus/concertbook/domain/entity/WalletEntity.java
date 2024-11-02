@@ -1,8 +1,10 @@
 package io.hhplus.concertbook.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 
 @Data
 @Entity
@@ -20,4 +22,8 @@ public class WalletEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     UserEntity user;
+
+    @Column(nullable = false)
+    @Version
+    int version;
 }
