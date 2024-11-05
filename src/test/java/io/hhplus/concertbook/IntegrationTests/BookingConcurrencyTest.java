@@ -9,14 +9,12 @@ import io.hhplus.concertbook.domain.entity.SeatEntity;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
 import io.hhplus.concertbook.domain.repository.*;
-import io.hhplus.concertbook.domain.service.ConcertService;
 import io.hhplus.concertbook.domain.service.MoneyService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -53,9 +51,9 @@ public class BookingConcurrencyTest {
     public void setUp() {
         repositoryClean.cleanRepository();
 
-        String userName = "testUser";
+        String userLoginId = "testUser";
         UserEntity user = new UserEntity();
-        user.setUserName(userName);
+        user.setUserLoginId(userLoginId);
         userRepository.save(user);
 
         WaitTokenEntity waitToken = new WaitTokenEntity();

@@ -17,7 +17,7 @@ delete from wait_token;
 
 delete from userinfo;
 
---insert into userinfo (user_id,user_name)
+--insert into userinfo (user_id,user_login_id)
 --select 1,'a' from dual union
 --select 2,'b' from dual ;
 --

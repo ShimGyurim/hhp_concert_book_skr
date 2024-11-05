@@ -50,14 +50,14 @@ public class ChargeConcurrencyTest {
     @Test
     @DisplayName("분산락(심플락) 및 낙관적락 적용 : 성공 케이스만 카운트해서 검증")
     public void testConcurrentCharge() throws Exception {
-        String userName = "testUser";
+        String userLoginId = "testUser";
         Long initialAmount = 1000L;
         Long chargeAmount = 100L;
         int threadCount = 10;
 
         // 유저와 지갑 초기화
         UserEntity user = new UserEntity();
-        user.setUserName(userName);
+        user.setUserLoginId(userLoginId);
         userRepository.save(user);
 
         WalletEntity wallet = new WalletEntity();
@@ -73,7 +73,7 @@ public class ChargeConcurrencyTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    moneyFacade.chargeWithRedisLock(userName, chargeAmount);
+                    moneyFacade.chargeWithRedisLock(userLoginId, chargeAmount);
                     successCnt.incrementAndGet(); //성공한 케이스만 횟수 증가
                 } catch (Exception e) {
                     e.printStackTrace();

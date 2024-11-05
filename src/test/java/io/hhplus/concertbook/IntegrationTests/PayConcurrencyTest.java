@@ -70,9 +70,9 @@ public class PayConcurrencyTest {
     public void setUp() {
         repositoryClean.cleanRepository();
 
-        String userName = "testUser";
+        String userLoginId = "testUser";
         UserEntity user = new UserEntity();
-        user.setUserName(userName);
+        user.setUserLoginId(userLoginId);
         userRepository.save(user);
 
         WaitTokenEntity waitToken = new WaitTokenEntity();

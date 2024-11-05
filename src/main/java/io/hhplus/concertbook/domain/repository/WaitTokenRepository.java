@@ -19,7 +19,7 @@ import java.util.List;
 
 public interface WaitTokenRepository extends JpaRepository<WaitTokenEntity,Long> {
 
-    WaitTokenEntity findByUser_UserNameAndServiceCd(String userName, ApiNo apiNo);
+    WaitTokenEntity findByUser_UserLoginIdAndServiceCd(String userLoginId, ApiNo apiNo);
     WaitTokenEntity findByToken(String token);
 
     @Query("SELECT w.user FROM WaitTokenEntity w  WHERE w.token = :token")

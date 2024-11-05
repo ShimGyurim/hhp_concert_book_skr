@@ -60,7 +60,7 @@ public class ConcertIntegTests {
         repositoryClean.cleanRepository();
 
         user = new UserEntity();
-        user.setUserName("testUser");
+        user.setUserLoginId("testUser");
         userRepository.save(user);
 
         // 콘서트 아이템 생성

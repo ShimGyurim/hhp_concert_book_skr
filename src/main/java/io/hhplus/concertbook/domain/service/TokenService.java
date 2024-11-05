@@ -36,7 +36,7 @@ public class TokenService {
             throw new Exception("DTO정보없음");
         }
 
-        WaitTokenEntity entity = waitTokenRepository.findByUser_UserNameAndServiceCd(tokenInDto.getUserName(),tokenInDto.getApiNo());
+        WaitTokenEntity entity = waitTokenRepository.findByUser_UserLoginIdAndServiceCd(tokenInDto.getUserLoginId(),tokenInDto.getApiNo());
 
         if(entity == null || WaitStatus.EXPIRED.equals(entity.getStatusCd())) {
             WaitTokenEntity newEntity = new WaitTokenEntity();
@@ -45,7 +45,7 @@ public class TokenService {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
             String formDate = sdf.format(timestamp);
 
-            UserEntity user = userRepository.findByUserName(tokenInDto.getUserName());
+            UserEntity user = userRepository.findByUserLoginId(tokenInDto.getUserLoginId());
 
             if(user==null) {
                 throw new CustomException(ErrorCode.USER_ERROR);
@@ -55,13 +55,13 @@ public class TokenService {
             newEntity.setStatusCd(WaitStatus.WAIT);
             newEntity.setCreatedAt(new Timestamp(System.currentTimeMillis()));
             newEntity.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-            newEntity.setToken(tokenInDto.getUserName()+formDate);
+            newEntity.setToken(tokenInDto.getUserLoginId()+formDate);
 
             waitTokenRepository.save(newEntity);
 
             TokenDto dto = new TokenDto();
             dto.setToken(newEntity.getToken());
-            dto.setUserName(user.getUserName());
+            dto.setUserLoginId(user.getUserLoginId());
             dto.setApiNo(tokenInDto.getApiNo());
 
             //대기번호 리턴
@@ -82,7 +82,7 @@ public class TokenService {
         }else{ //유효한 토큰이 존재하는 경우
             TokenDto dto = new TokenDto();
             dto.setToken(entity.getToken());
-            dto.setUserName(entity.getUser().getUserName());
+            dto.setUserLoginId(entity.getUser().getUserLoginId());
             dto.setApiNo(tokenInDto.getApiNo());
 
             //대기번호 리턴

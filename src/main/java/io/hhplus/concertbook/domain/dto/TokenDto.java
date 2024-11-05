@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class TokenDto {
     String token;
-    String userName;
+    String userLoginId;
     ApiNo apiNo;
     int waitNo;
     WaitStatus waitStatus;
