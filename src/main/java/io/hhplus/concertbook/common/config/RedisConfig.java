@@ -2,6 +2,7 @@ package io.hhplus.concertbook.common.config;
 
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -16,6 +17,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import javax.cache.CacheManager;
 import java.time.Duration;
 
+@EnableCaching
 @Configuration
 public class RedisConfig {
     @Value("${spring.redis.host}")

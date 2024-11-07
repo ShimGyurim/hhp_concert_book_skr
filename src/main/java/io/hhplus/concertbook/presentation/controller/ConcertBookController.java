@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -148,15 +149,10 @@ public class ConcertBookController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-
-
-    //TEST 용
-//    @GetMapping("/seatinsert") //좌석 추가
-//    public boolean seatInsert(
-//            @RequestParam(value="itemid",required = true) Long itemId) {
-//        concertService.seatInsert(itemId);
-//
-//        return true;
-//    }
-
+    //TEST 용 cacheEvict
+    @GetMapping("/evictConcertSchedule")
+    @CacheEvict(value = "concertSchedule", key = "#scheduleDate")
+    public void evictCache(@RequestParam(value ="concertd", required = true) String scheduleDate) {
+        // 캐시를 비우는 로직
+    }
 }

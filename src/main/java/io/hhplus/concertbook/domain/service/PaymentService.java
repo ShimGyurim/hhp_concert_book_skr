@@ -11,6 +11,7 @@ import io.hhplus.concertbook.domain.repository.PaymentRepository;
 import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import io.hhplus.concertbook.domain.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,7 @@ public class PaymentService {
     @Autowired
     PaymentRepository paymentRepository;
 
+    @CacheEvict(value = "concertSchedule")
     public PaymentEntity createPayment(BookEntity book) {
         PaymentEntity payment = new PaymentEntity();
         payment.setBook(book);

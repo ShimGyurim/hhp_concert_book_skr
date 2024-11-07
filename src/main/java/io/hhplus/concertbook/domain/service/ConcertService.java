@@ -12,6 +12,7 @@ import io.hhplus.concertbook.domain.repository.BookRepository;
 import io.hhplus.concertbook.domain.repository.ConcertItemRepository;
 import io.hhplus.concertbook.domain.repository.SeatRepository;
 import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ConcertService {
 
@@ -43,6 +45,7 @@ public class ConcertService {
     public List<ConcertScheduleDto> getAvailSchedule(String scheduleDate){
         List<ConcertItemEntity> concertItems = concertItemRepository.findByConcertD(scheduleDate);
 
+        log.info("CONCERT SCHEDULE NOT CACHED");
        List<ConcertScheduleDto> concertSchdules = concertItems.stream()
                 .map(item -> {
                     Long id = item.getConcertItemId();
