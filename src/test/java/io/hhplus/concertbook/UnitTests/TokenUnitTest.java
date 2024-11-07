@@ -50,7 +50,6 @@ public class TokenUnitTest {
         entity = new WaitTokenEntity();
         entity.setUser(user);
         entity.setServiceCd(ApiNo.BOOK);
-//        entity.setStatusCd(WaitStatus.WAIT);
         entity.setToken(user+""+entity.getUpdatedAt());
         entity.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
     }

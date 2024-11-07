@@ -46,38 +46,11 @@ public class WaitQueueService {
     @Transactional
     public void queueRefresh(ApiNo apiNo) {
 
-        // 5분 지난 PROCESS 는 모두 EXPIRED 처리하기
-        // expire 설정으로 사라짐
-//        Timestamp now = Timestamp.from(Instant.now());
-        // 5분 전 시간 타임스탬프
-//        Timestamp fiveMinutesAgo = Timestamp.from(now.toInstant().minus(Duration.ofMinutes(WaitQueueConstant.WAIT_MINUTE)));
-
-        //5분이상 된 토큰 만료처리
-        // PROCESS 없으면 WAIT 중에서 가장 오래된 updatedAt 을 PROCESS 로 처리하기
-//        waitTokenRepository.updateExpiredTokens(WaitStatus.EXPIRED ,now,fiveMinutesAgo);
-
-        //5분이상 미결제시 만료
-//        bookRepository.updateExpiredBooks(BookStatus.EXPIRED,now,fiveMinutesAgo,BookStatus.PREPAYMENT);
-
-        //진행중 토큰이 있는지 확인
-//        Long count = waitTokenRepository.countStatusToken(apiNo,WaitStatus.PROCESS);
-//        if(count > 0L) return; //진행 프로세스가 있으므로 리턴
-
-
-        //새 process 될 토큰 검색
-
         // WAIT->ACTIVE 로 변경
         List<String> tokenList = redisQueue.popTokensFromWaitingQueue(apiNo.toString(),PUSH_CNT);
         redisQueue.waitRemoves(apiNo.toString(),tokenList);
         redisQueue.pushTokensToActiveQueue(apiNo.toString(),tokenList);
 
-//        List<Long> tokenIds = waitTokenRepository.findFirstTokenIds(WaitStatus.WAIT, apiNo);
-//        if (!tokenIds.isEmpty()) {
-//            Long firstTokenId = tokenIds.get(0);
-//            // 해당 레코드의 status_cd를 "PROCESS"로 업데이트
-//            waitTokenRepository.updateTokenStatus(WaitStatus.PROCESS, firstTokenId);
-//            waitTokenRepository.updateTokenUpdatedAt(now,firstTokenId); //새 유효시간 부여
-//        }
     }
 
 }

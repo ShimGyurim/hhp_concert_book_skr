@@ -39,7 +39,6 @@ public class TokenService {
         if(tokenInDto == null) {
             throw new Exception("DTO정보없음");
         }
-//        WaitTokenEntity entity = waitTokenEntity.findByUser_UserLoginIdAndServiceCd(tokenInDto.getUserLoginId(),tokenInDto.getApiNo());
         if(tokenInDto.getApiNo() == null) {
             throw new Exception("ApiNo정보없음");
         }
@@ -70,7 +69,6 @@ public class TokenService {
             }
             newEntity.setUser(user);
             newEntity.setServiceCd(tokenInDto.getApiNo());
-//            newEntity.setStatusCd(WaitStatus.WAIT);
             newEntity.setCreatedAt(new Timestamp(System.currentTimeMillis()));
             newEntity.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
             newEntity.setToken(tokenInDto.getUserLoginId()+formDate);
@@ -83,17 +81,6 @@ public class TokenService {
             dto.setUserLoginId(user.getUserLoginId());
             dto.setApiNo(tokenInDto.getApiNo());
 
-            //대기번호 리턴
-//            Long count = waitTokenEntity.countPreviousToken(tokenInDto.getApiNo(),newEntity.getUpdatedAt());
-//
-//
-//            if(count == 0) {
-//                Long countProcss = waitTokenEntity.countStatusToken(tokenInDto.getApiNo(),WaitStatus.PROCESS);
-//                if(countProcss==0) {
-//                    newEntity.setStatusCd(WaitStatus.PROCESS);
-//                    waitTokenEntity.save(newEntity);
-//                }
-//            }
             dto.setWaitNo(redisQueue.getWaitQueueRank(tokenInDto.getApiNo().toString(),newEntity.getToken()));
             dto.setWaitStatus(WaitStatus.WAIT);
             return dto;
@@ -141,12 +128,6 @@ public class TokenService {
         if (waitToken == null) {
             throw new CustomException(ErrorCode.TOKEN_ERROR);
         }
-
-//        if (WaitStatus.EXPIRED.equals(waitToken.getStatusCd())) {
-//            throw new CustomException(ErrorCode.TOKEN_EXPIRED);
-//        } else if (WaitStatus.WAIT.equals(waitToken.getStatusCd())) {
-//            throw new CustomException(ErrorCode.TOKEN_WAIT);
-//        }
 
         boolean isActiveTokenExist = redisQueue.isValueInActiveQueue(apiNo.toString(),token);
         if(!isActiveTokenExist) {

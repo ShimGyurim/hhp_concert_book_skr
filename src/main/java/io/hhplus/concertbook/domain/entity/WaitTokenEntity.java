@@ -26,9 +26,6 @@ public class WaitTokenEntity {
     Timestamp updatedAt;
     Timestamp expiredAt;
 
-//    @Enumerated(EnumType.STRING)
-//    WaitStatus statusCd;
-
     @Enumerated(EnumType.STRING)
     ApiNo serviceCd;
 
@@ -38,7 +35,5 @@ public class WaitTokenEntity {
     @JoinColumn(name = "user_id")
     UserEntity user;
 
-//    public void endProcess() {
-//        this.setStatusCd(WaitStatus.END);
-//    }
+
 }
