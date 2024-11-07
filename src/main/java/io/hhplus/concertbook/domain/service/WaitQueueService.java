@@ -9,6 +9,8 @@ import io.hhplus.concertbook.domain.repository.RedisQueue;
 import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class WaitQueueService {
@@ -34,16 +37,26 @@ public class WaitQueueService {
     @Autowired
     RedisQueue redisQueue;
 
+    @Autowired
+    RedissonClient redissonClient;
+
     private final long PUSH_CNT = 100L;
 
     //스케줄러 역할 하는 메소드 (미작동)
-    @Transactional
     @Scheduled(fixedRate = 10000)
-    public void queueRefreshSchedule() {
+    public void queueRefreshSchedule() throws Exception {
+        final RLock lock = redissonClient.getLock("scheduler");
+        boolean available = lock.tryLock(10,2, TimeUnit.SECONDS);
+
+        if(!available) {
+            throw new Exception("락 잠금상태");
+        }
         queueRefresh(ApiNo.PAYMENT);
         queueRefresh(ApiNo.BOOK);
+
+        lock.unlock();
+
     }
-    @Transactional
     public void queueRefresh(ApiNo apiNo) {
 
         // WAIT->ACTIVE 로 변경
