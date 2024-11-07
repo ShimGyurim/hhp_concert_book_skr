@@ -65,6 +65,9 @@ public class PayConcurrencyTest {
     @Autowired
     private RepositoryClean repositoryClean;
 
+    @Autowired
+    private RedisQueue redisQueue;
+
     @BeforeEach
     @Transactional
     public void setUp() {
@@ -78,9 +81,10 @@ public class PayConcurrencyTest {
         WaitTokenEntity waitToken = new WaitTokenEntity();
         waitToken.setToken("testToken");
         waitToken.setUser(user);
-        waitToken.setStatusCd(WaitStatus.PROCESS);
         waitToken.setServiceCd(ApiNo.PAYMENT);
         waitTokenRepository.save(waitToken);
+
+        redisQueue.activeEnqueue(ApiNo.PAYMENT.toString(),"testToken");
 
         SeatEntity seat = new SeatEntity();
         seat.setUse(false);

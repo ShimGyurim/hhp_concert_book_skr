@@ -50,6 +50,9 @@ public class ConcertIntegTests {
     @Autowired
     private BookFacade bookFacade;
 
+    @Autowired
+    private RedisQueue redisQueue;
+
     private ConcertItemEntity concertItem;
     private SeatEntity seat;
     private WaitTokenEntity waitToken;
@@ -81,8 +84,9 @@ public class ConcertIntegTests {
         waitToken.setToken("testToken");
         waitToken.setUser(user);
         waitToken.setServiceCd(ApiNo.BOOK);
-        waitToken.setStatusCd(WaitStatus.PROCESS);
         waitTokenRepository.save(waitToken);
+
+        redisQueue.activeEnqueue(ApiNo.BOOK.toString(),"testToken");
     }
 
     @Test

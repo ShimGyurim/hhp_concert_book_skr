@@ -47,6 +47,9 @@ public class BookingConcurrencyTest {
     @Autowired
     private RepositoryClean repositoryClean;
 
+    @Autowired
+    private RedisQueue redisQueue;
+
     @BeforeEach
     public void setUp() {
         repositoryClean.cleanRepository();
@@ -59,10 +62,10 @@ public class BookingConcurrencyTest {
         WaitTokenEntity waitToken = new WaitTokenEntity();
         waitToken.setToken("testToken");
         waitToken.setUser(user);
-        waitToken.setStatusCd(WaitStatus.PROCESS);
         waitToken.setServiceCd(ApiNo.BOOK);
         waitTokenRepository.save(waitToken);
 
+        redisQueue.activeEnqueue(ApiNo.BOOK.toString(),"testToken");
 
 
     }

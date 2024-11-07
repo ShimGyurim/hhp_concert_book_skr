@@ -7,6 +7,7 @@ import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
+import io.hhplus.concertbook.domain.repository.RedisQueue;
 import io.hhplus.concertbook.domain.repository.UserRepository;
 import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import io.hhplus.concertbook.domain.service.TokenService;
@@ -28,6 +29,9 @@ public class TokenUnitTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private RedisQueue redisQueue;
 
     @InjectMocks
     TokenService tokenService;
@@ -68,13 +72,22 @@ public class TokenUnitTest {
         Assertions.assertEquals("testUser", result.getUserLoginId());
         Assertions.assertEquals(ApiNo.BOOK, result.getApiNo());
         Assertions.assertNotNull(result.getToken());
-        Assertions.assertEquals(WaitStatus.PROCESS, result.getWaitStatus());
+        Assertions.assertEquals(WaitStatus.WAIT, result.getWaitStatus());
     }
 
     @Test
     @DisplayName("기존 토큰 있는경우")
     public void testGetToken_ExistingToken() throws Exception {
         Mockito.when(waitTokenRepository.findByUser_UserLoginIdAndServiceCd("testUser", ApiNo.BOOK)).thenReturn(entity);
+
+        Mockito.when(redisQueue.isValueInWaitQueue(ArgumentMatchers.anyString(),ArgumentMatchers.anyString())).thenReturn(false);
+        Mockito.when(redisQueue.isValueInActiveQueue(ArgumentMatchers.anyString(),ArgumentMatchers.anyString())).thenReturn(true);
+
+        WaitTokenEntity entity = new WaitTokenEntity();
+        UserEntity user = new UserEntity();
+        user.setUserLoginId("testUser");
+        entity.setUser(user);
+        Mockito.when(waitTokenRepository.findByToken(ArgumentMatchers.anyString())).thenReturn(entity);
 
         TokenDto result = tokenService.getToken(tokenInDto);
 
@@ -104,10 +117,11 @@ public class TokenUnitTest {
         String token = "validToken";
         ApiNo apiNo = ApiNo.PAYMENT;
         WaitTokenEntity waitToken = new WaitTokenEntity();
-//        waitToken.setStatusCd(WaitStatus.PROCESS);
         waitToken.setServiceCd(apiNo);
 
         Mockito.when(waitTokenRepository.findByToken(token)).thenReturn(waitToken);
+
+        Mockito.when(redisQueue.isValueInActiveQueue(apiNo.toString(),token)).thenReturn(true);
 
         WaitTokenEntity result = tokenService.validateToken(token, apiNo);
 

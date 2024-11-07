@@ -8,6 +8,7 @@ import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
+import io.hhplus.concertbook.domain.repository.RedisQueue;
 import io.hhplus.concertbook.domain.repository.UserRepository;
 import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import io.hhplus.concertbook.domain.service.TokenService;
@@ -37,6 +38,9 @@ public class TokenIntegTests {
     @Autowired
     private RepositoryClean repositoryClean;
 
+    @Autowired
+    private RedisQueue redisQueue;
+
     @BeforeEach
     public void setUp() {
         repositoryClean.cleanRepository();
@@ -62,7 +66,7 @@ public class TokenIntegTests {
         Assertions.assertEquals(ApiNo.BOOK, result.getApiNo());
         Assertions.assertNotNull(result.getToken());
         Assertions.assertEquals(0, result.getWaitNo());
-        Assertions.assertEquals(WaitStatus.PROCESS, result.getWaitStatus());
+        Assertions.assertEquals(WaitStatus.WAIT, result.getWaitStatus()); //스케줄러가 돌아야 PROCESS
 
         WaitTokenEntity savedToken = waitTokenRepository.findByToken(result.getToken());
         Assertions.assertNotNull(savedToken);
@@ -80,9 +84,10 @@ public class TokenIntegTests {
         existingToken.setToken("existingToken");
         existingToken.setUser(user);
         existingToken.setServiceCd(ApiNo.PAYMENT);
-        existingToken.setStatusCd(WaitStatus.WAIT);
         existingToken.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         waitTokenRepository.save(existingToken);
+
+        redisQueue.activeEnqueue(ApiNo.PAYMENT.toString(),"existingToken");
 
         TokenDto tokenInDto = new TokenDto();
         tokenInDto.setUserLoginId("testUser");
@@ -98,7 +103,6 @@ public class TokenIntegTests {
         Assertions.assertEquals(WaitStatus.PROCESS, result.getWaitStatus());
 
         WaitTokenEntity updatedToken = waitTokenRepository.findByToken("existingToken");
-        Assertions.assertEquals(WaitStatus.PROCESS, updatedToken.getStatusCd());
     }
 
     @Test

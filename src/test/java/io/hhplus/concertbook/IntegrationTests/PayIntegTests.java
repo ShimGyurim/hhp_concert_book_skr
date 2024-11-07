@@ -48,6 +48,9 @@ public class PayIntegTests {
     PayFacade payFacade;
 
     @Autowired
+    private RedisQueue redisQueue;
+
+    @Autowired
     private RepositoryClean repositoryClean;
 
     private UserEntity user;
@@ -93,8 +96,9 @@ public class PayIntegTests {
         waitToken.setToken("testToken");
         waitToken.setUser(user);
         waitToken.setServiceCd(ApiNo.PAYMENT);
-        waitToken.setStatusCd(WaitStatus.PROCESS);
         waitTokenRepository.save(waitToken);
+
+        redisQueue.activeEnqueue(ApiNo.PAYMENT.toString(),"testToken");
     }
 
     @Test
@@ -102,7 +106,6 @@ public class PayIntegTests {
     @DisplayName("결제성공")
     public void testPay_Success() throws Exception {
         // Given
-        waitToken.setStatusCd(WaitStatus.PROCESS);
         waitTokenRepository.save(waitToken);
 
         // When

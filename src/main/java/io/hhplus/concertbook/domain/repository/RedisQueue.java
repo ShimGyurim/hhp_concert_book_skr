@@ -35,6 +35,10 @@ public class RedisQueue {
         waitQueue.add(queueName+WAIT_QUEUE, tokenValue, score);
     }
 
+    public void activeEnqueue(String queueName, String tokenValue) {
+        activeQueue.add(queueName+ACTIVE_QUEUE, tokenValue);
+    }
+
     public boolean isValueInWaitQueue (String queueName, String tokenValue) {
         Long rank = waitQueue.rank(queueName+WAIT_QUEUE,tokenValue);
         return rank != null;
