@@ -13,6 +13,7 @@ import io.hhplus.concertbook.domain.repository.ConcertItemRepository;
 import io.hhplus.concertbook.domain.repository.SeatRepository;
 import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,7 @@ public class ConcertService {
     @Autowired
     BookRepository bookRepository;
 
+    @Cacheable(value = "concertSchedule", key = "#scheduleDate", cacheManager = "concertCacheManager")
     public List<ConcertScheduleDto> getAvailSchedule(String scheduleDate){
         List<ConcertItemEntity> concertItems = concertItemRepository.findByConcertD(scheduleDate);
 
