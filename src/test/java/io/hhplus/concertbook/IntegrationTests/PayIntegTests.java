@@ -4,10 +4,10 @@ import io.hhplus.concertbook.ConcertBookApp;
 import io.hhplus.concertbook.application.facade.PayFacade;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
-import io.hhplus.concertbook.common.enumerate.WaitStatus;
 import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.*;
+import io.hhplus.concertbook.domain.repository.RedisRepository;
 import io.hhplus.concertbook.tool.RepositoryClean;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +48,7 @@ public class PayIntegTests {
     PayFacade payFacade;
 
     @Autowired
-    private RedisQueue redisQueue;
+    private RedisRepository redisRepository;
 
     @Autowired
     private RepositoryClean repositoryClean;
@@ -98,7 +98,7 @@ public class PayIntegTests {
         waitToken.setServiceCd(ApiNo.PAYMENT);
         waitTokenRepository.save(waitToken);
 
-        redisQueue.activeEnqueue(ApiNo.PAYMENT.toString(),"testToken");
+        redisRepository.activeEnqueue(ApiNo.PAYMENT.toString(),"testToken");
     }
 
     @Test

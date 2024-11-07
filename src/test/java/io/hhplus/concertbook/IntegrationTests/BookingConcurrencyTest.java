@@ -3,7 +3,7 @@ package io.hhplus.concertbook.IntegrationTests;
 import io.hhplus.concertbook.ConcertBookApp;
 import io.hhplus.concertbook.application.facade.BookFacade;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
-import io.hhplus.concertbook.common.enumerate.WaitStatus;
+import io.hhplus.concertbook.domain.repository.RedisRepository;
 import io.hhplus.concertbook.tool.RepositoryClean;
 import io.hhplus.concertbook.domain.entity.SeatEntity;
 import io.hhplus.concertbook.domain.entity.UserEntity;
@@ -48,7 +48,7 @@ public class BookingConcurrencyTest {
     private RepositoryClean repositoryClean;
 
     @Autowired
-    private RedisQueue redisQueue;
+    private RedisRepository redisRepository;
 
     @BeforeEach
     public void setUp() {
@@ -65,7 +65,7 @@ public class BookingConcurrencyTest {
         waitToken.setServiceCd(ApiNo.BOOK);
         waitTokenRepository.save(waitToken);
 
-        redisQueue.activeEnqueue(ApiNo.BOOK.toString(),"testToken");
+        redisRepository.activeEnqueue(ApiNo.BOOK.toString(),"testToken");
 
 
     }

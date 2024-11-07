@@ -7,7 +7,7 @@ import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
-import io.hhplus.concertbook.domain.repository.RedisQueue;
+import io.hhplus.concertbook.domain.repository.RedisRepository;
 import io.hhplus.concertbook.domain.repository.UserRepository;
 import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class TokenService {
     WaitQueueService waitQueueService;
 
     @Autowired
-    RedisQueue redisQueue;
+    RedisRepository redisRepository;
 
     @Transactional
     public TokenDto getToken(TokenDto tokenInDto) throws Exception {
@@ -49,8 +49,8 @@ public class TokenService {
         WaitTokenEntity waitTokenEntity = waitTokenRepository.findByUser_UserLoginIdAndServiceCd(tokenInDto.getUserLoginId(),tokenInDto.getApiNo());
 
         if(waitTokenEntity != null && waitTokenEntity.getToken() != null) {
-            isWaitTokenExist = redisQueue.isValueInWaitQueue(tokenInDto.getApiNo().toString(),waitTokenEntity.getToken());
-            isActiveTokenExist = redisQueue.isValueInActiveQueue(tokenInDto.getApiNo().toString(),waitTokenEntity.getToken());
+            isWaitTokenExist = redisRepository.isValueInWaitQueue(tokenInDto.getApiNo().toString(),waitTokenEntity.getToken());
+            isActiveTokenExist = redisRepository.isValueInActiveQueue(tokenInDto.getApiNo().toString(),waitTokenEntity.getToken());
         }
 
 
@@ -73,7 +73,7 @@ public class TokenService {
             newEntity.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
             newEntity.setToken(tokenInDto.getUserLoginId()+formDate);
 
-            redisQueue.waitEnqueue(tokenInDto.getApiNo().toString(), newEntity.getToken());
+            redisRepository.waitEnqueue(tokenInDto.getApiNo().toString(), newEntity.getToken());
             waitTokenRepository.save(newEntity); // token 저장
 
             TokenDto dto = new TokenDto();
@@ -81,7 +81,7 @@ public class TokenService {
             dto.setUserLoginId(user.getUserLoginId());
             dto.setApiNo(tokenInDto.getApiNo());
 
-            dto.setWaitNo(redisQueue.getWaitQueueRank(tokenInDto.getApiNo().toString(),newEntity.getToken()));
+            dto.setWaitNo(redisRepository.getWaitQueueRank(tokenInDto.getApiNo().toString(),newEntity.getToken()));
             dto.setWaitStatus(WaitStatus.WAIT);
             return dto;
 
@@ -95,7 +95,7 @@ public class TokenService {
             dto.setApiNo(tokenInDto.getApiNo());
 
             //대기번호 리턴
-            dto.setWaitNo(redisQueue.getWaitQueueRank(tokenInDto.getApiNo().toString(),waitTokenEntity.getToken()));
+            dto.setWaitNo(redisRepository.getWaitQueueRank(tokenInDto.getApiNo().toString(),waitTokenEntity.getToken()));
 
             dto.setWaitStatus(WaitStatus.WAIT);
             return dto;
@@ -129,7 +129,7 @@ public class TokenService {
             throw new CustomException(ErrorCode.TOKEN_ERROR);
         }
 
-        boolean isActiveTokenExist = redisQueue.isValueInActiveQueue(apiNo.toString(),token);
+        boolean isActiveTokenExist = redisRepository.isValueInActiveQueue(apiNo.toString(),token);
         if(!isActiveTokenExist) {
             throw new CustomException(ErrorCode.TOKEN_ERROR);
         }
@@ -142,8 +142,8 @@ public class TokenService {
     }
 
     public void endProcess(WaitTokenEntity waitToken) {
-        redisQueue.waitRemove(waitToken.getServiceCd().toString(),waitToken.getToken());
-        redisQueue.activeRemove(waitToken.getServiceCd().toString(),waitToken.getToken());
+        redisRepository.waitRemove(waitToken.getServiceCd().toString(),waitToken.getToken());
+        redisRepository.activeRemove(waitToken.getServiceCd().toString(),waitToken.getToken());
         waitTokenRepository.deleteById(waitToken.getTokenId()); //삭제
     }
 

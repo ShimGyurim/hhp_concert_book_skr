@@ -1,11 +1,8 @@
 package io.hhplus.concertbook.domain.service;
 
-import io.hhplus.concertbook.domain.constant.WaitQueueConstant;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
-import io.hhplus.concertbook.common.enumerate.BookStatus;
-import io.hhplus.concertbook.common.enumerate.WaitStatus;
 import io.hhplus.concertbook.domain.repository.BookRepository;
-import io.hhplus.concertbook.domain.repository.RedisQueue;
+import io.hhplus.concertbook.domain.repository.RedisRepository;
 import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -14,11 +11,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -35,7 +28,7 @@ public class WaitQueueService {
     BookRepository bookRepository;
 
     @Autowired
-    RedisQueue redisQueue;
+    RedisRepository redisRepository;
 
     @Autowired
     RedissonClient redissonClient;
@@ -60,9 +53,9 @@ public class WaitQueueService {
     public void queueRefresh(ApiNo apiNo) {
 
         // WAIT->ACTIVE 로 변경
-        List<String> tokenList = redisQueue.popTokensFromWaitingQueue(apiNo.toString(),PUSH_CNT);
-        redisQueue.waitRemoves(apiNo.toString(),tokenList);
-        redisQueue.pushTokensToActiveQueue(apiNo.toString(),tokenList);
+        List<String> tokenList = redisRepository.popTokensFromWaitingQueue(apiNo.toString(),PUSH_CNT);
+        redisRepository.waitRemoves(apiNo.toString(),tokenList);
+        redisRepository.pushTokensToActiveQueue(apiNo.toString(),tokenList);
 
     }
 

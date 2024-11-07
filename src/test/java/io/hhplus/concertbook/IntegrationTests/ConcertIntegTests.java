@@ -5,13 +5,13 @@ import io.hhplus.concertbook.ConcertBookApp;
 import io.hhplus.concertbook.application.facade.BookFacade;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
-import io.hhplus.concertbook.common.enumerate.WaitStatus;
 import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.domain.dto.ConcertScheduleDto;
 import io.hhplus.concertbook.domain.dto.SeatDto;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.*;
 import io.hhplus.concertbook.domain.service.ConcertService;
+import io.hhplus.concertbook.domain.repository.RedisRepository;
 import io.hhplus.concertbook.tool.RepositoryClean;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +51,7 @@ public class ConcertIntegTests {
     private BookFacade bookFacade;
 
     @Autowired
-    private RedisQueue redisQueue;
+    private RedisRepository redisRepository;
 
     private ConcertItemEntity concertItem;
     private SeatEntity seat;
@@ -86,7 +86,7 @@ public class ConcertIntegTests {
         waitToken.setServiceCd(ApiNo.BOOK);
         waitTokenRepository.save(waitToken);
 
-        redisQueue.activeEnqueue(ApiNo.BOOK.toString(),"testToken");
+        redisRepository.activeEnqueue(ApiNo.BOOK.toString(),"testToken");
     }
 
     @Test

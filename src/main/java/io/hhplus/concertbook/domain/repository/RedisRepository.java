@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class RedisQueue {
+public class RedisRepository {
     private final RedisTemplate<String, String> redisTemplate;
     private final ZSetOperations<String, String> waitQueue;
     private final SetOperations<String, String> activeQueue;
@@ -22,7 +22,7 @@ public class RedisQueue {
 
     private final long EXPIRE_TIME = 60 * 10L;
     @Autowired
-    public RedisQueue(RedisTemplate<String, String> redisTemplate) {
+    public RedisRepository(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
         this.waitQueue = redisTemplate.opsForZSet();
         this.activeQueue = redisTemplate.opsForSet();

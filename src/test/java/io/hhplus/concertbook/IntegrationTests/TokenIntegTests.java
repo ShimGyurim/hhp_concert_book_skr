@@ -8,7 +8,7 @@ import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
-import io.hhplus.concertbook.domain.repository.RedisQueue;
+import io.hhplus.concertbook.domain.repository.RedisRepository;
 import io.hhplus.concertbook.domain.repository.UserRepository;
 import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import io.hhplus.concertbook.domain.service.TokenService;
@@ -39,7 +39,7 @@ public class TokenIntegTests {
     private RepositoryClean repositoryClean;
 
     @Autowired
-    private RedisQueue redisQueue;
+    private RedisRepository redisRepository;
 
     @BeforeEach
     public void setUp() {
@@ -87,7 +87,7 @@ public class TokenIntegTests {
         existingToken.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         waitTokenRepository.save(existingToken);
 
-        redisQueue.activeEnqueue(ApiNo.PAYMENT.toString(),"existingToken");
+        redisRepository.activeEnqueue(ApiNo.PAYMENT.toString(),"existingToken");
 
         TokenDto tokenInDto = new TokenDto();
         tokenInDto.setUserLoginId("testUser");

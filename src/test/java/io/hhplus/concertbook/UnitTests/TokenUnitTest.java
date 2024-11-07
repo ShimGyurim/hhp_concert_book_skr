@@ -7,7 +7,7 @@ import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
-import io.hhplus.concertbook.domain.repository.RedisQueue;
+import io.hhplus.concertbook.domain.repository.RedisRepository;
 import io.hhplus.concertbook.domain.repository.UserRepository;
 import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import io.hhplus.concertbook.domain.service.TokenService;
@@ -31,7 +31,7 @@ public class TokenUnitTest {
     private UserRepository userRepository;
 
     @Mock
-    private RedisQueue redisQueue;
+    private RedisRepository redisRepository;
 
     @InjectMocks
     TokenService tokenService;
@@ -80,8 +80,8 @@ public class TokenUnitTest {
     public void testGetToken_ExistingToken() throws Exception {
         Mockito.when(waitTokenRepository.findByUser_UserLoginIdAndServiceCd("testUser", ApiNo.BOOK)).thenReturn(entity);
 
-        Mockito.when(redisQueue.isValueInWaitQueue(ArgumentMatchers.anyString(),ArgumentMatchers.anyString())).thenReturn(false);
-        Mockito.when(redisQueue.isValueInActiveQueue(ArgumentMatchers.anyString(),ArgumentMatchers.anyString())).thenReturn(true);
+        Mockito.when(redisRepository.isValueInWaitQueue(ArgumentMatchers.anyString(),ArgumentMatchers.anyString())).thenReturn(false);
+        Mockito.when(redisRepository.isValueInActiveQueue(ArgumentMatchers.anyString(),ArgumentMatchers.anyString())).thenReturn(true);
 
         WaitTokenEntity entity = new WaitTokenEntity();
         UserEntity user = new UserEntity();
@@ -121,7 +121,7 @@ public class TokenUnitTest {
 
         Mockito.when(waitTokenRepository.findByToken(token)).thenReturn(waitToken);
 
-        Mockito.when(redisQueue.isValueInActiveQueue(apiNo.toString(),token)).thenReturn(true);
+        Mockito.when(redisRepository.isValueInActiveQueue(apiNo.toString(),token)).thenReturn(true);
 
         WaitTokenEntity result = tokenService.validateToken(token, apiNo);
 
