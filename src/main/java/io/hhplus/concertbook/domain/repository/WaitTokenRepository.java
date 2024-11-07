@@ -25,29 +25,29 @@ public interface WaitTokenRepository extends JpaRepository<WaitTokenEntity,Long>
     @Query("SELECT w.user FROM WaitTokenEntity w  WHERE w.token = :token")
     UserEntity findUserinfoByToken(@Param("token") String token);
 
-    @Query("SELECT COUNT(w) FROM WaitTokenEntity w WHERE w.serviceCd = :serviceCd AND w.statusCd in ('WAIT','PROCESS') AND w.updatedAt < :updatedAtThis")
-    Long countPreviousToken(@Param("serviceCd") ApiNo serviceCd,  @Param("updatedAtThis") Timestamp updatedAtThis);
+//    @Query("SELECT COUNT(w) FROM WaitTokenEntity w WHERE w.serviceCd = :serviceCd AND w.statusCd in ('WAIT','PROCESS') AND w.updatedAt < :updatedAtThis")
+//    Long countPreviousToken(@Param("serviceCd") ApiNo serviceCd,  @Param("updatedAtThis") Timestamp updatedAtThis);
 
-    @Query("SELECT COUNT(w) FROM WaitTokenEntity w WHERE w.serviceCd = :serviceCd AND w.statusCd = :statusCd ")
-    Long countStatusToken(@Param("serviceCd") ApiNo serviceCd, @Param("statusCd") WaitStatus statusCd);
+//    @Query("SELECT COUNT(w) FROM WaitTokenEntity w WHERE w.serviceCd = :serviceCd AND w.statusCd = :statusCd ")
+//    Long countStatusToken(@Param("serviceCd") ApiNo serviceCd, @Param("statusCd") WaitStatus statusCd);
 
-    @Modifying
-    @Query("UPDATE WaitTokenEntity w " +
-            "SET w.statusCd = :expireStatus, w.expiredAt = :nowTime " +
-            "WHERE w.updatedAt <= :fiveMinutesAgo AND w.statusCd <> 'END' ")
-    void updateExpiredTokens(@Param("expireStatus") WaitStatus expireStatus,  @Param("nowTime") Timestamp nowTime, @Param("fiveMinutesAgo") Timestamp fiveMinutesAgo);
+//    @Modifying
+//    @Query("UPDATE WaitTokenEntity w " +
+//            "SET w.statusCd = :expireStatus, w.expiredAt = :nowTime " +
+//            "WHERE w.updatedAt <= :fiveMinutesAgo AND w.statusCd <> 'END' ")
+//    void updateExpiredTokens(@Param("expireStatus") WaitStatus expireStatus,  @Param("nowTime") Timestamp nowTime, @Param("fiveMinutesAgo") Timestamp fiveMinutesAgo);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT w.tokenId FROM WaitTokenEntity w WHERE w.statusCd = :waitStatus AND w.serviceCd = :apiNo " +
-            "AND NOT EXISTS( SELECT ww FROM WaitTokenEntity ww WHERE w.serviceCd = ww.serviceCd AND ww.statusCd = 'PROCESS'  ) ORDER BY w.updatedAt ASC")
-    List<Long> findFirstTokenIds(@Param("waitStatus") WaitStatus waitStatus, @Param("apiNo") ApiNo apiNo);
+//    @Lock(LockModeType.PESSIMISTIC_WRITE)
+//    @Query("SELECT w.tokenId FROM WaitTokenEntity w WHERE w.statusCd = :waitStatus AND w.serviceCd = :apiNo " +
+//            "AND NOT EXISTS( SELECT ww FROM WaitTokenEntity ww WHERE w.serviceCd = ww.serviceCd AND ww.statusCd = 'PROCESS'  ) ORDER BY w.updatedAt ASC")
+//    List<Long> findFirstTokenIds(@Param("waitStatus") WaitStatus waitStatus, @Param("apiNo") ApiNo apiNo);
 
-    @Modifying
-    @Query("UPDATE WaitTokenEntity w SET w.statusCd = :processStatus WHERE w.tokenId = :tokenId")
-    void updateTokenStatus(@Param("processStatus") WaitStatus processStatus, @Param("tokenId") Long tokenId);
+//    @Modifying
+//    @Query("UPDATE WaitTokenEntity w SET w.statusCd = :processStatus WHERE w.tokenId = :tokenId")
+//    void updateTokenStatus(@Param("processStatus") WaitStatus processStatus, @Param("tokenId") Long tokenId);
 
-    @Modifying
-    @Query("UPDATE WaitTokenEntity w SET w.updatedAt = :nowTime WHERE w.tokenId = :tokenId")
-    void updateTokenUpdatedAt(@Param("nowTime") Timestamp nowTime, @Param("tokenId") Long tokenId);
+//    @Modifying
+//    @Query("UPDATE WaitTokenEntity w SET w.updatedAt = :nowTime WHERE w.tokenId = :tokenId")
+//    void updateTokenUpdatedAt(@Param("nowTime") Timestamp nowTime, @Param("tokenId") Long tokenId);
 
 }

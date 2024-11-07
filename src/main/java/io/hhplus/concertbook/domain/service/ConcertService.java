@@ -147,10 +147,10 @@ public class ConcertService {
 
 
 
-    public void endProcess(WaitTokenEntity waitToken) {
-        waitToken.endProcess();
-        waitTokenRepository.save(waitToken);
-    }
+//    public void endProcess(WaitTokenEntity waitToken) {
+//        waitToken.endProcess();
+//        waitTokenRepository.save(waitToken);
+//    }
 
     public BookEntity findAndLockBook(Long bookId) throws CustomException {
         BookEntity book = bookRepository.findByIdWithLock(bookId);

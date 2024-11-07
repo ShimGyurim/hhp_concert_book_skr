@@ -9,6 +9,6 @@ public class TokenDto {
     String token;
     String userLoginId;
     ApiNo apiNo;
-    int waitNo;
+    long waitNo;
     WaitStatus waitStatus;
 }

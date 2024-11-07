@@ -50,7 +50,7 @@ public class TokenUnitTest {
         entity = new WaitTokenEntity();
         entity.setUser(user);
         entity.setServiceCd(ApiNo.BOOK);
-        entity.setStatusCd(WaitStatus.WAIT);
+//        entity.setStatusCd(WaitStatus.WAIT);
         entity.setToken(user+""+entity.getUpdatedAt());
         entity.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
     }
@@ -61,7 +61,7 @@ public class TokenUnitTest {
         Mockito.when(waitTokenRepository.findByUser_UserLoginIdAndServiceCd("testUser", ApiNo.BOOK)).thenReturn(null);
         Mockito.when(userRepository.findByUserLoginId("testUser")).thenReturn(user);
         Mockito.when(waitTokenRepository.save(ArgumentMatchers.any(WaitTokenEntity.class))).thenReturn(entity);
-        Mockito.when(waitTokenRepository.countStatusToken(ArgumentMatchers.any(ApiNo.class),ArgumentMatchers.any(WaitStatus.class))).thenReturn(0L);
+//        Mockito.when(waitTokenRepository.countStatusToken(ArgumentMatchers.any(ApiNo.class),ArgumentMatchers.any(WaitStatus.class))).thenReturn(0L);
 
         TokenDto result = tokenService.getToken(tokenInDto);
 
@@ -105,7 +105,7 @@ public class TokenUnitTest {
         String token = "validToken";
         ApiNo apiNo = ApiNo.PAYMENT;
         WaitTokenEntity waitToken = new WaitTokenEntity();
-        waitToken.setStatusCd(WaitStatus.PROCESS);
+//        waitToken.setStatusCd(WaitStatus.PROCESS);
         waitToken.setServiceCd(apiNo);
 
         Mockito.when(waitTokenRepository.findByToken(token)).thenReturn(waitToken);
