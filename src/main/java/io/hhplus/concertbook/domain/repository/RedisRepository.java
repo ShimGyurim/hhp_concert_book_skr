@@ -97,7 +97,11 @@ public class RedisRepository {
             activeQueue.add(ACTIVE_QUEUE+queueName, token);
 
         }
-        redisTemplate.expire(ACTIVE_QUEUE+queueName, EXPIRE_TIME, TimeUnit.SECONDS);// TTL을 10분(600초)로 설정
+
+        if(redisTemplate.getExpire(ACTIVE_QUEUE+queueName) == -1L) {
+            redisTemplate.expire(ACTIVE_QUEUE+queueName, EXPIRE_TIME, TimeUnit.SECONDS);// TTL을 10분(600초)로 설정
+        }
+
         return tokenList;
     }
 
