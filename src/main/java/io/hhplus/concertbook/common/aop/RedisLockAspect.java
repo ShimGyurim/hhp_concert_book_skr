@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +28,13 @@ public class RedisLockAspect {
     @Around("@annotation(distributor)")
     public Object around(ProceedingJoinPoint joinPoint,Distributor distributor) throws Throwable {
         Object[] args = joinPoint.getArgs();
-        String userLoginId = (String) args[0];
+        String userLoginId = (String) (args.length == 0 ? null : args[0]);
 
+        String methodName = ((MethodSignature) joinPoint.getSignature()).getMethod().getName();
+
+        log.info("method name "+methodName+" ditributed aop call");
         // Redis 락 획득 로직
-        lock = redissonClient.getLock(userLoginId);
+        lock = redissonClient.getLock(userLoginId != null ? userLoginId : methodName);
         boolean available = lock.tryLock(10,2, TimeUnit.SECONDS);
 
         if(!available) {

@@ -1,5 +1,6 @@
 package io.hhplus.concertbook.domain.service;
 
+import io.hhplus.concertbook.common.annotation.Distributor;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.domain.repository.BookRepository;
 import io.hhplus.concertbook.domain.repository.RedisRepository;
@@ -35,19 +36,20 @@ public class WaitQueueService {
 
     private final long PUSH_CNT = 100L;
 
-    //스케줄러 역할 하는 메소드 (미작동)
+    //스케줄러 역할 하는 메소드
     @Scheduled(fixedRate = 10000)
+    @Distributor
     public void queueRefreshSchedule() throws Exception {
-        final RLock lock = redissonClient.getLock("scheduler");
-        boolean available = lock.tryLock(10,2, TimeUnit.SECONDS);
+//        final RLock lock = redissonClient.getLock("scheduler");
+//        boolean available = lock.tryLock(10,2, TimeUnit.SECONDS);
 
-        if(!available) {
-            throw new Exception("락 잠금상태");
-        }
+//        if(!available) {
+//            throw new Exception("락 잠금상태");
+//        }
         queueRefresh(ApiNo.PAYMENT);
         queueRefresh(ApiNo.BOOK);
 
-        lock.unlock();
+//        lock.unlock();
 
     }
     public void queueRefresh(ApiNo apiNo) {
