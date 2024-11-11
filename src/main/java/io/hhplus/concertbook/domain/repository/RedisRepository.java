@@ -17,8 +17,8 @@ public class RedisRepository {
     private final ZSetOperations<String, String> waitQueue;
     private final SetOperations<String, String> activeQueue;
 
-    private final String WAIT_QUEUE = ":WAIT_QUEUE";
-    private final String ACTIVE_QUEUE = ":ACTIVE_QUEUE";
+    private final String WAIT_QUEUE = "WAIT_QUEUE:";
+    private final String ACTIVE_QUEUE = "ACTIVE_QUEUE:";
 
     private final long EXPIRE_TIME = 60 * 10L;
     @Autowired
@@ -32,55 +32,55 @@ public class RedisRepository {
         waitEnqueue(queueName, tokenValue, System.currentTimeMillis());
     }
     public void waitEnqueue(String queueName, String tokenValue, double score) {
-        waitQueue.add(queueName+WAIT_QUEUE, tokenValue, score);
+        waitQueue.add(WAIT_QUEUE+queueName, tokenValue, score);
     }
 
     public void activeEnqueue(String queueName, String tokenValue) {
-        activeQueue.add(queueName+ACTIVE_QUEUE, tokenValue);
+        activeQueue.add(ACTIVE_QUEUE+queueName, tokenValue);
     }
 
     public boolean isValueInWaitQueue (String queueName, String tokenValue) {
-        Long rank = waitQueue.rank(queueName+WAIT_QUEUE,tokenValue);
+        Long rank = waitQueue.rank(WAIT_QUEUE+queueName,tokenValue);
         return rank != null;
     }
 
     public boolean isValueInActiveQueue (String queueName, String tokenValue) {
-        return activeQueue.isMember(queueName+ACTIVE_QUEUE,tokenValue);
+        return activeQueue.isMember(ACTIVE_QUEUE+queueName,tokenValue);
     }
 
     public long getWaitQueueRank (String queueName, String tokenValue) {
-        return waitQueue.rank(queueName+WAIT_QUEUE,tokenValue);
+        return waitQueue.rank(WAIT_QUEUE+queueName,tokenValue);
     }
 
     public String waitDequeue(String queueName) {
         Set<String> items = waitQueue.range(queueName, 0, 0);
         if (items != null && !items.isEmpty()) {
             String item = items.iterator().next();
-            waitQueue.remove(queueName+WAIT_QUEUE, item);
+            waitQueue.remove(WAIT_QUEUE+queueName, item);
             return item;
         }
         return null;
     }
 
     public void waitRemove(String queueName, String tokenValue) {
-        waitQueue.remove(queueName+WAIT_QUEUE,tokenValue);
+        waitQueue.remove(WAIT_QUEUE+queueName,tokenValue);
     }
 
     public void waitRemoves(String queueName, List<String> tokenList) {
         for(String token : tokenList) {
-            waitRemove(queueName+WAIT_QUEUE,token);
+            waitRemove(WAIT_QUEUE+queueName,token);
         }
     }
 
     public void activeRemove(String queueName, String tokenValue) {
-        activeQueue.remove(queueName+ACTIVE_QUEUE,tokenValue);
+        activeQueue.remove(ACTIVE_QUEUE+queueName,tokenValue);
     }
 
     public List<String> popTokensFromWaitingQueue(String queueName, long pushCnt) {
 
         List<String> tokenList = new ArrayList<>();
 
-        Set<ZSetOperations.TypedTuple<String>> tokenSet = waitQueue.popMin(queueName+WAIT_QUEUE, pushCnt);
+        Set<ZSetOperations.TypedTuple<String>> tokenSet = waitQueue.popMin(WAIT_QUEUE+queueName, pushCnt);
 
         for(ZSetOperations.TypedTuple<String> token : tokenSet) {
             tokenList.add(token.getValue().toString());
@@ -94,15 +94,15 @@ public class RedisRepository {
 
         for(String token : tokenList) {
 
-            activeQueue.add(queueName+ACTIVE_QUEUE, token);
+            activeQueue.add(ACTIVE_QUEUE+queueName, token);
 
         }
-        redisTemplate.expire(queueName+ACTIVE_QUEUE, EXPIRE_TIME, TimeUnit.SECONDS);// TTL을 10분(600초)로 설정
+        redisTemplate.expire(ACTIVE_QUEUE+queueName, EXPIRE_TIME, TimeUnit.SECONDS);// TTL을 10분(600초)로 설정
         return tokenList;
     }
 
     public long waitQueueSize(String queueName) {
-        return waitQueue.zCard(queueName+WAIT_QUEUE);
+        return waitQueue.zCard(WAIT_QUEUE+queueName);
     }
 
     public void flushAll() {
