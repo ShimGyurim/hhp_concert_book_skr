@@ -41,7 +41,7 @@ public class MoneyIntegTests {
     public void testGetBalance_UserExists_WalletExists() throws Exception {
         // Given
         UserEntity user = new UserEntity();
-        user.setUserName("testUser");
+        user.setUserLoginId("testUser");
         userRepository.save(user);
 
         WalletEntity wallet = new WalletEntity();
@@ -62,7 +62,7 @@ public class MoneyIntegTests {
     public void testCharge_UserExists() throws Exception {
         // Given
         UserEntity user = new UserEntity();
-        user.setUserName("testUser");
+        user.setUserLoginId("testUser");
         userRepository.save(user);
 
         WalletEntity wallet = new WalletEntity();

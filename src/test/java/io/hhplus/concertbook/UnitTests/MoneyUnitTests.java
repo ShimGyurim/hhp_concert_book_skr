@@ -35,7 +35,7 @@ public class MoneyUnitTests {
     @Test
     @DisplayName("유저못찾음")
     public void testGetBalance_UserNotFound() {
-        Mockito.when(userRepository.findByUserName("nouser")).thenReturn(null);
+        Mockito.when(userRepository.findByUserLoginId("nouser")).thenReturn(null);
 
         CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
             moneyService.getBalance("nouser");
@@ -49,7 +49,7 @@ public class MoneyUnitTests {
     public void testGetBalance_WalletNotFound() throws Exception {
         UserEntity user = new UserEntity();
         user.setUserId(1L);
-        Mockito.when(userRepository.findByUserName("existingUser")).thenReturn(user);
+        Mockito.when(userRepository.findByUserLoginId("existingUser")).thenReturn(user);
         Mockito.when(walletRepository.findByUser_UserId(1L)).thenReturn(null);
 
         long balance = moneyService.getBalance("existingUser");
@@ -65,7 +65,7 @@ public class MoneyUnitTests {
         user.setUserId(1L);
         WalletEntity wallet = new WalletEntity();
         wallet.setAmount(100L);
-        Mockito.when(userRepository.findByUserName("existingUser")).thenReturn(user);
+        Mockito.when(userRepository.findByUserLoginId("existingUser")).thenReturn(user);
         Mockito.when(walletRepository.findByUser_UserId(1L)).thenReturn(wallet);
 
         long balance = moneyService.getBalance("existingUser");
@@ -85,7 +85,7 @@ public class MoneyUnitTests {
     @Test
     @DisplayName("유저 못찾음")
     public void testCharge_UserNotFound() {
-        Mockito.when(userRepository.findByUserName("nonexistentUser")).thenReturn(null);
+        Mockito.when(userRepository.findByUserLoginId("nonexistentUser")).thenReturn(null);
 
         CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
             moneyService.charge("nonexistentUser", 100L);
@@ -102,7 +102,7 @@ public class MoneyUnitTests {
         WalletEntity wallet = new WalletEntity();
         wallet.setAmount(100L);
 
-        Mockito.when(userRepository.findByUserName("existingUser")).thenReturn(user);
+        Mockito.when(userRepository.findByUserLoginId("existingUser")).thenReturn(user);
         Mockito.when(walletRepository.findByUser_UserIdWithLock(1L)).thenReturn(wallet);
 
         long newBalance = moneyService.charge("existingUser", 50L);

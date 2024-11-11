@@ -7,6 +7,7 @@ import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
+import io.hhplus.concertbook.domain.repository.RedisRepository;
 import io.hhplus.concertbook.domain.repository.UserRepository;
 import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class TokenService {
     @Autowired
     WaitQueueService waitQueueService;
 
+    @Autowired
+    RedisRepository redisRepository;
+
     @Transactional
     public TokenDto getToken(TokenDto tokenInDto) throws Exception {
         // 토큰을 받아 유효한게 있는지 확인
@@ -35,71 +39,82 @@ public class TokenService {
         if(tokenInDto == null) {
             throw new Exception("DTO정보없음");
         }
+        if(tokenInDto.getApiNo() == null) {
+            throw new Exception("ApiNo정보없음");
+        }
 
-        WaitTokenEntity entity = waitTokenRepository.findByUser_UserNameAndServiceCd(tokenInDto.getUserName(),tokenInDto.getApiNo());
+        boolean isWaitTokenExist = false;
+        boolean isActiveTokenExist = false;
 
-        if(entity == null || WaitStatus.EXPIRED.equals(entity.getStatusCd())) {
+        WaitTokenEntity waitTokenEntity = waitTokenRepository.findByUser_UserLoginIdAndServiceCd(tokenInDto.getUserLoginId(),tokenInDto.getApiNo());
+
+        if(waitTokenEntity != null && waitTokenEntity.getToken() != null) {
+            isWaitTokenExist = redisRepository.isValueInWaitQueue(tokenInDto.getApiNo().toString(),waitTokenEntity.getToken());
+            isActiveTokenExist = redisRepository.isValueInActiveQueue(tokenInDto.getApiNo().toString(),waitTokenEntity.getToken());
+        }
+
+
+        if(!isWaitTokenExist && !isActiveTokenExist) {
+
             WaitTokenEntity newEntity = new WaitTokenEntity();
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
             String formDate = sdf.format(timestamp);
 
-            UserEntity user = userRepository.findByUserName(tokenInDto.getUserName());
+            UserEntity user = userRepository.findByUserLoginId(tokenInDto.getUserLoginId());
 
             if(user==null) {
                 throw new CustomException(ErrorCode.USER_ERROR);
             }
             newEntity.setUser(user);
             newEntity.setServiceCd(tokenInDto.getApiNo());
-            newEntity.setStatusCd(WaitStatus.WAIT);
             newEntity.setCreatedAt(new Timestamp(System.currentTimeMillis()));
             newEntity.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-            newEntity.setToken(tokenInDto.getUserName()+formDate);
+            newEntity.setToken(tokenInDto.getUserLoginId()+formDate);
 
-            waitTokenRepository.save(newEntity);
+            redisRepository.waitEnqueue(tokenInDto.getApiNo().toString(), newEntity.getToken());
+            waitTokenRepository.save(newEntity); // token 저장
 
             TokenDto dto = new TokenDto();
             dto.setToken(newEntity.getToken());
-            dto.setUserName(user.getUserName());
+            dto.setUserLoginId(user.getUserLoginId());
             dto.setApiNo(tokenInDto.getApiNo());
 
-            //대기번호 리턴
-            Long count = waitTokenRepository.countPreviousToken(tokenInDto.getApiNo(),newEntity.getUpdatedAt());
-
-
-            if(count == 0) {
-                Long countProcss = waitTokenRepository.countStatusToken(tokenInDto.getApiNo(),WaitStatus.PROCESS);
-                if(countProcss==0) {
-                    newEntity.setStatusCd(WaitStatus.PROCESS);
-                    waitTokenRepository.save(newEntity);
-                }
-            }
-            dto.setWaitNo(count.intValue());
-            dto.setWaitStatus(newEntity.getStatusCd());
+            dto.setWaitNo(redisRepository.getWaitQueueRank(tokenInDto.getApiNo().toString(),newEntity.getToken()));
+            dto.setWaitStatus(WaitStatus.WAIT);
             return dto;
 
-        }else{ //유효한 토큰이 존재하는 경우
+        }else if(isWaitTokenExist){ // 대기열에 유효한 토큰이 존재하는 경우
             TokenDto dto = new TokenDto();
-            dto.setToken(entity.getToken());
-            dto.setUserName(entity.getUser().getUserName());
+
+            WaitTokenEntity entity = waitTokenRepository.findByToken(waitTokenEntity.getToken());
+
+            dto.setToken(waitTokenEntity.getToken());
+            dto.setUserLoginId(entity.getUser().getUserLoginId());
             dto.setApiNo(tokenInDto.getApiNo());
 
             //대기번호 리턴
-            Long count = waitTokenRepository.countPreviousToken(tokenInDto.getApiNo(),entity.getUpdatedAt());
+            dto.setWaitNo(redisRepository.getWaitQueueRank(tokenInDto.getApiNo().toString(),waitTokenEntity.getToken()));
 
-            if(count==0) {
-
-                Long countProcss = waitTokenRepository.countStatusToken(tokenInDto.getApiNo(),WaitStatus.PROCESS);
-                if(countProcss==0) {
-                    entity.setStatusCd(WaitStatus.PROCESS);
-                    waitTokenRepository.save(entity);
-                }
-
-            }
-            dto.setWaitStatus(entity.getStatusCd());
-            //TODO : 엔티티 dto 매퍼 구현
+            dto.setWaitStatus(WaitStatus.WAIT);
             return dto;
+        }else if(isActiveTokenExist){
+            TokenDto dto = new TokenDto();
+
+            WaitTokenEntity entity = waitTokenRepository.findByToken(waitTokenEntity.getToken());
+
+            dto.setToken(waitTokenEntity.getToken());
+            dto.setUserLoginId(entity.getUser().getUserLoginId());
+            dto.setApiNo(tokenInDto.getApiNo());
+
+            //대기번호 리턴
+            dto.setWaitNo(0);
+
+            dto.setWaitStatus(WaitStatus.PROCESS);
+            return dto;
+        }else {
+            throw new Exception("상태이상");
         }
 
     }
@@ -114,10 +129,9 @@ public class TokenService {
             throw new CustomException(ErrorCode.TOKEN_ERROR);
         }
 
-        if (WaitStatus.EXPIRED.equals(waitToken.getStatusCd())) {
-            throw new CustomException(ErrorCode.TOKEN_EXPIRED);
-        } else if (WaitStatus.WAIT.equals(waitToken.getStatusCd())) {
-            throw new CustomException(ErrorCode.TOKEN_WAIT);
+        boolean isActiveTokenExist = redisRepository.isValueInActiveQueue(apiNo.toString(),token);
+        if(!isActiveTokenExist) {
+            throw new CustomException(ErrorCode.TOKEN_ERROR);
         }
 
         if (!apiNo.equals(waitToken.getServiceCd())) {
@@ -128,8 +142,9 @@ public class TokenService {
     }
 
     public void endProcess(WaitTokenEntity waitToken) {
-        waitToken.endProcess();
-        waitTokenRepository.save(waitToken);
+        redisRepository.waitRemove(waitToken.getServiceCd().toString(),waitToken.getToken());
+        redisRepository.activeRemove(waitToken.getServiceCd().toString(),waitToken.getToken());
+        waitTokenRepository.deleteById(waitToken.getTokenId()); //삭제
     }
 
     public UserEntity findUserByToken(String token) throws CustomException {

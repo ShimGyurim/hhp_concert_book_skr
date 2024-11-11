@@ -34,17 +34,17 @@ public class TokenController {
                         TokenReqDto tokenReqDto,
                 @SessionAttribute("user") String sessionUser) throws Exception {
 
-        if(tokenReqDto.getUserName() == null) {
+        if(tokenReqDto.getUserLoginId() == null) {
             throw new CustomException(ErrorCode.NO_USERINFO);
         }
-        if(!tokenReqDto.getUserName().equals(sessionUser))
+        if(!tokenReqDto.getUserLoginId().equals(sessionUser))
             throw new CustomException(ErrorCode.USER_ERROR); //사용자가 세션과 다름
         if(tokenReqDto.getApiServiceName() == null) {
             throw new CustomException(ErrorCode.NO_API_INFO);
         }
 
         TokenDto tokenInDto = new TokenDto();
-        tokenInDto.setUserName(tokenReqDto.getUserName());
+        tokenInDto.setUserLoginId(tokenReqDto.getUserLoginId());
         if ("BOOK".equals(tokenReqDto.getApiServiceName()))
             tokenInDto.setApiNo(ApiNo.BOOK);
         else if("PAYMENT".equals(tokenReqDto.getApiServiceName()))

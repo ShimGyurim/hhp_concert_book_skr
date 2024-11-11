@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class RechargeDto {
-    String userName;
+    String userLoginId;
     String token;
     int chargeAmt;
 }

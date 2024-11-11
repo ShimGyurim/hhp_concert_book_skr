@@ -8,6 +8,7 @@ import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.dto.TokenDto;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
+import io.hhplus.concertbook.domain.repository.RedisRepository;
 import io.hhplus.concertbook.domain.repository.UserRepository;
 import io.hhplus.concertbook.domain.repository.WaitTokenRepository;
 import io.hhplus.concertbook.domain.service.TokenService;
@@ -37,12 +38,15 @@ public class TokenIntegTests {
     @Autowired
     private RepositoryClean repositoryClean;
 
+    @Autowired
+    private RedisRepository redisRepository;
+
     @BeforeEach
     public void setUp() {
         repositoryClean.cleanRepository();
         // 초기 데이터 설정
         UserEntity user = new UserEntity();
-        user.setUserName("testUser");
+        user.setUserLoginId("testUser");
         userRepository.save(user);
     }
 
@@ -52,21 +56,21 @@ public class TokenIntegTests {
     public void testGetToken_NewToken() throws Exception {
 
         TokenDto tokenInDto = new TokenDto();
-        tokenInDto.setUserName("testUser");
+        tokenInDto.setUserLoginId("testUser");
         tokenInDto.setApiNo(ApiNo.BOOK);
 
         TokenDto result = tokenService.getToken(tokenInDto);
 
         Assertions.assertNotNull(result);
-        Assertions.assertEquals("testUser", result.getUserName());
+        Assertions.assertEquals("testUser", result.getUserLoginId());
         Assertions.assertEquals(ApiNo.BOOK, result.getApiNo());
         Assertions.assertNotNull(result.getToken());
         Assertions.assertEquals(0, result.getWaitNo());
-        Assertions.assertEquals(WaitStatus.PROCESS, result.getWaitStatus());
+        Assertions.assertEquals(WaitStatus.WAIT, result.getWaitStatus()); //스케줄러가 돌아야 PROCESS
 
         WaitTokenEntity savedToken = waitTokenRepository.findByToken(result.getToken());
         Assertions.assertNotNull(savedToken);
-        Assertions.assertEquals("testUser", savedToken.getUser().getUserName());
+        Assertions.assertEquals("testUser", savedToken.getUser().getUserLoginId());
         Assertions.assertEquals(ApiNo.BOOK, savedToken.getServiceCd());
     }
 
@@ -74,31 +78,31 @@ public class TokenIntegTests {
     @Transactional
     @DisplayName("토큰: 이미 유효한 토큰 가진 사용자")
     public void testGetToken_ExistingToken() throws Exception {
-        UserEntity user = userRepository.findByUserName("testUser");
+        UserEntity user = userRepository.findByUserLoginId("testUser");
 
         WaitTokenEntity existingToken = new WaitTokenEntity();
         existingToken.setToken("existingToken");
         existingToken.setUser(user);
         existingToken.setServiceCd(ApiNo.PAYMENT);
-        existingToken.setStatusCd(WaitStatus.WAIT);
         existingToken.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         waitTokenRepository.save(existingToken);
 
+        redisRepository.activeEnqueue(ApiNo.PAYMENT.toString(),"existingToken");
+
         TokenDto tokenInDto = new TokenDto();
-        tokenInDto.setUserName("testUser");
+        tokenInDto.setUserLoginId("testUser");
         tokenInDto.setApiNo(ApiNo.PAYMENT);
 
         TokenDto result = tokenService.getToken(tokenInDto);
 
         Assertions.assertNotNull(result);
-        Assertions.assertEquals("testUser", result.getUserName());
+        Assertions.assertEquals("testUser", result.getUserLoginId());
         Assertions.assertEquals(ApiNo.PAYMENT, result.getApiNo());
         Assertions.assertEquals("existingToken", result.getToken());
         Assertions.assertEquals(0, result.getWaitNo());
         Assertions.assertEquals(WaitStatus.PROCESS, result.getWaitStatus());
 
         WaitTokenEntity updatedToken = waitTokenRepository.findByToken("existingToken");
-        Assertions.assertEquals(WaitStatus.PROCESS, updatedToken.getStatusCd());
     }
 
     @Test
@@ -106,7 +110,7 @@ public class TokenIntegTests {
     @DisplayName("토큰: 유효한 유저 못찾음")
     public void testGetToken_UserNotFound() {
         TokenDto tokenInDto = new TokenDto();
-        tokenInDto.setUserName("nonexistentUser");
+        tokenInDto.setUserLoginId("nonexistentUser");
         tokenInDto.setApiNo(ApiNo.BOOK);
 
         CustomException exception = Assertions.assertThrows(CustomException.class, () -> {

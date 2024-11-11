@@ -3,20 +3,18 @@ package io.hhplus.concertbook.IntegrationTests;
 import io.hhplus.concertbook.ConcertBookApp;
 import io.hhplus.concertbook.application.facade.BookFacade;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
-import io.hhplus.concertbook.common.enumerate.WaitStatus;
+import io.hhplus.concertbook.domain.repository.RedisRepository;
 import io.hhplus.concertbook.tool.RepositoryClean;
 import io.hhplus.concertbook.domain.entity.SeatEntity;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
 import io.hhplus.concertbook.domain.repository.*;
-import io.hhplus.concertbook.domain.service.ConcertService;
 import io.hhplus.concertbook.domain.service.MoneyService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -49,22 +47,25 @@ public class BookingConcurrencyTest {
     @Autowired
     private RepositoryClean repositoryClean;
 
+    @Autowired
+    private RedisRepository redisRepository;
+
     @BeforeEach
     public void setUp() {
         repositoryClean.cleanRepository();
 
-        String userName = "testUser";
+        String userLoginId = "testUser";
         UserEntity user = new UserEntity();
-        user.setUserName(userName);
+        user.setUserLoginId(userLoginId);
         userRepository.save(user);
 
         WaitTokenEntity waitToken = new WaitTokenEntity();
         waitToken.setToken("testToken");
         waitToken.setUser(user);
-        waitToken.setStatusCd(WaitStatus.PROCESS);
         waitToken.setServiceCd(ApiNo.BOOK);
         waitTokenRepository.save(waitToken);
 
+        redisRepository.activeEnqueue(ApiNo.BOOK.toString(),"testToken");
 
 
     }

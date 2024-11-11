@@ -26,18 +26,18 @@ public class MoneyController {
     @GetMapping("/charge")
     @Operation(summary = "충전", description = "충전")
     public ResponseEntity<CommonResponse<Object>> chargeBalance(
-            @RequestParam(value = "username") String userName,
+            @RequestParam(value = "username") String userLoginId,
             @RequestParam(value = "chargeamt") Long chargeAmt
             ) throws Exception {
         if(chargeAmt <0) {
             throw new CustomException(ErrorCode.CHARGE_INPUT_ERROR);
         }
 
-        if(userName == null) {
+        if(userLoginId == null) {
             throw new CustomException(ErrorCode.NO_USERINFO);
         }
 
-        long afterAmount = moneyFacade.chargeWithRedisLock(userName,chargeAmt);
+        long afterAmount = moneyFacade.chargeWithRedisLock(userLoginId,chargeAmt);
 
         CommonResponse<Object> response = CommonResponse.builder()
                 .msg("토큰 발급 성공")
@@ -50,13 +50,13 @@ public class MoneyController {
     @GetMapping("/balance")
     @Operation(summary = "잔액조회", description = "잔액조회")
     public ResponseEntity<CommonResponse<Object>> getBalance(
-            @RequestParam(value="username") String userName) throws Exception {
+            @RequestParam(value="username") String userLoginId) throws Exception {
 
-        if(userName==null) {
+        if(userLoginId==null) {
             throw new CustomException(ErrorCode.NO_USERINFO);
         }
 
-        Long balance = moneyService.getBalance(userName);
+        Long balance = moneyService.getBalance(userLoginId);
 
         CommonResponse<Object> response = CommonResponse.builder()
                 .msg("토큰 발급 성공")

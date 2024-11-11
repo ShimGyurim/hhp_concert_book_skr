@@ -16,14 +16,14 @@ public class MoneyFacade {
     @Autowired
     private MoneyService moneyService;
 
-    public long chargeWithRedisLock(String userName,Long chargeAmt) throws Exception {
-        final RLock lock = redissonClient.getLock(userName);
+    public long chargeWithRedisLock(String userLoginId,Long chargeAmt) throws Exception {
+        final RLock lock = redissonClient.getLock(userLoginId);
         boolean available = lock.tryLock(10,2, TimeUnit.SECONDS);
 
         if(!available) {
             throw new Exception("락 잠금상태");
         }
-        Long chargeResult = moneyService.charge(userName,chargeAmt);
+        Long chargeResult = moneyService.charge(userLoginId,chargeAmt);
         lock.unlock();
         return chargeResult;
     }

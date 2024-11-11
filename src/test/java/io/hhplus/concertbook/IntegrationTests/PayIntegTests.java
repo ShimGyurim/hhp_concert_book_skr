@@ -4,11 +4,10 @@ import io.hhplus.concertbook.ConcertBookApp;
 import io.hhplus.concertbook.application.facade.PayFacade;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
-import io.hhplus.concertbook.common.enumerate.WaitStatus;
 import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.*;
-import io.hhplus.concertbook.domain.service.PaymentService;
+import io.hhplus.concertbook.domain.repository.RedisRepository;
 import io.hhplus.concertbook.tool.RepositoryClean;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +48,9 @@ public class PayIntegTests {
     PayFacade payFacade;
 
     @Autowired
+    private RedisRepository redisRepository;
+
+    @Autowired
     private RepositoryClean repositoryClean;
 
     private UserEntity user;
@@ -61,7 +63,7 @@ public class PayIntegTests {
         repositoryClean.cleanRepository();
         // 사용자 생성
         user = new UserEntity();
-        user.setUserName("testUser");
+        user.setUserLoginId("testUser");
         userRepository.save(user);
 
         // 지갑 생성
@@ -94,8 +96,9 @@ public class PayIntegTests {
         waitToken.setToken("testToken");
         waitToken.setUser(user);
         waitToken.setServiceCd(ApiNo.PAYMENT);
-        waitToken.setStatusCd(WaitStatus.PROCESS);
         waitTokenRepository.save(waitToken);
+
+        redisRepository.activeEnqueue(ApiNo.PAYMENT.toString(),"testToken");
     }
 
     @Test
@@ -103,7 +106,6 @@ public class PayIntegTests {
     @DisplayName("결제성공")
     public void testPay_Success() throws Exception {
         // Given
-        waitToken.setStatusCd(WaitStatus.PROCESS);
         waitTokenRepository.save(waitToken);
 
         // When

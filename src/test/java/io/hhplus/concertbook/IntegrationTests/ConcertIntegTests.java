@@ -5,13 +5,13 @@ import io.hhplus.concertbook.ConcertBookApp;
 import io.hhplus.concertbook.application.facade.BookFacade;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
-import io.hhplus.concertbook.common.enumerate.WaitStatus;
 import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.domain.dto.ConcertScheduleDto;
 import io.hhplus.concertbook.domain.dto.SeatDto;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.*;
 import io.hhplus.concertbook.domain.service.ConcertService;
+import io.hhplus.concertbook.domain.repository.RedisRepository;
 import io.hhplus.concertbook.tool.RepositoryClean;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,6 +50,9 @@ public class ConcertIntegTests {
     @Autowired
     private BookFacade bookFacade;
 
+    @Autowired
+    private RedisRepository redisRepository;
+
     private ConcertItemEntity concertItem;
     private SeatEntity seat;
     private WaitTokenEntity waitToken;
@@ -60,7 +63,7 @@ public class ConcertIntegTests {
         repositoryClean.cleanRepository();
 
         user = new UserEntity();
-        user.setUserName("testUser");
+        user.setUserLoginId("testUser");
         userRepository.save(user);
 
         // 콘서트 아이템 생성
@@ -81,8 +84,9 @@ public class ConcertIntegTests {
         waitToken.setToken("testToken");
         waitToken.setUser(user);
         waitToken.setServiceCd(ApiNo.BOOK);
-        waitToken.setStatusCd(WaitStatus.PROCESS);
         waitTokenRepository.save(waitToken);
+
+        redisRepository.activeEnqueue(ApiNo.BOOK.toString(),"testToken");
     }
 
     @Test

@@ -33,9 +33,9 @@ public class MoneyService {
     WaitQueueService waitQueueService;
 
 
-    public long getBalance(String userName) throws Exception {
+    public long getBalance(String userLoginId) throws Exception {
 
-        UserEntity user = userRepository.findByUserName(userName);
+        UserEntity user = userRepository.findByUserLoginId(userLoginId);
 
 
         if(user == null) {
@@ -55,14 +55,14 @@ public class MoneyService {
     }
 
     @Transactional
-    public long charge(String userName,Long chargeAmt) throws Exception {
+    public long charge(String userLoginId,Long chargeAmt) throws Exception {
 
         if(chargeAmt <= 0) {
             throw new CustomException(ErrorCode.CHARGE_INPUT_ERROR);
         }
 
         //금액 충전
-        UserEntity user = userRepository.findByUserName(userName);
+        UserEntity user = userRepository.findByUserLoginId(userLoginId);
 
         if(user == null) {
             throw new CustomException(ErrorCode.USER_ERROR);

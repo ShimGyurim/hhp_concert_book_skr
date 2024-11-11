@@ -4,7 +4,7 @@ import io.hhplus.concertbook.ConcertBookApp;
 import io.hhplus.concertbook.application.facade.PayFacade;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
-import io.hhplus.concertbook.common.enumerate.WaitStatus;
+import io.hhplus.concertbook.domain.repository.RedisRepository;
 import io.hhplus.concertbook.tool.RepositoryClean;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.*;
@@ -65,22 +65,26 @@ public class PayConcurrencyTest {
     @Autowired
     private RepositoryClean repositoryClean;
 
+    @Autowired
+    private RedisRepository redisRepository;
+
     @BeforeEach
     @Transactional
     public void setUp() {
         repositoryClean.cleanRepository();
 
-        String userName = "testUser";
+        String userLoginId = "testUser";
         UserEntity user = new UserEntity();
-        user.setUserName(userName);
+        user.setUserLoginId(userLoginId);
         userRepository.save(user);
 
         WaitTokenEntity waitToken = new WaitTokenEntity();
         waitToken.setToken("testToken");
         waitToken.setUser(user);
-        waitToken.setStatusCd(WaitStatus.PROCESS);
         waitToken.setServiceCd(ApiNo.PAYMENT);
         waitTokenRepository.save(waitToken);
+
+        redisRepository.activeEnqueue(ApiNo.PAYMENT.toString(),"testToken");
 
         SeatEntity seat = new SeatEntity();
         seat.setUse(false);
