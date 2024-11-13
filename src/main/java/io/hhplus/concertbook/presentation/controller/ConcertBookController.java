@@ -65,6 +65,18 @@ public class ConcertBookController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+//    @GetMapping("/dateTest")
+//    public ResponseEntity<CommonResponse<Object>> getAvaliDateTest(
+//            String concertD) {
+//        long elapsedTime = concertService.getAvaliScheduleTest(concertD);
+//        CommonResponse<Object> response = CommonResponse.builder()
+//                .msg("")
+//                .data(elapsedTime)
+//                .build();
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(response);
+//    }
+
     @GetMapping("/seat")
     @Operation(summary = "공연좌석조회", description = "좌석 정보 조회")
     @ApiResponse(responseCode = "200", description = "성공")
