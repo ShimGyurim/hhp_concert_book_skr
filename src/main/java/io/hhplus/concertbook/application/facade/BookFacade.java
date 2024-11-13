@@ -9,9 +9,9 @@ import io.hhplus.concertbook.domain.service.BookService;
 import io.hhplus.concertbook.domain.service.SeatService;
 import io.hhplus.concertbook.domain.service.TokenService;
 import io.hhplus.concertbook.domain.service.UserService;
-import jakarta.persistence.Column;
+import io.hhplus.concertbook.event.Book.BookEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,12 +27,18 @@ public class BookFacade {
     @Autowired
     private BookService bookService;
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
     @Transactional
     public long book(String token, long seatId) throws Exception {
         WaitTokenEntity waitToken = tokenService.validateToken(token, ApiNo.BOOK);
         SeatEntity seat = seatService.findAndLockSeat(seatId);
         UserEntity user = tokenService.findUserByToken(token);
         BookEntity book = bookService.createBooking(user, seat);
+
+        eventPublisher.publishEvent(new BookEvent(book, waitToken));
+
         tokenService.endProcess(waitToken);
         return book.getBookId();
     }
