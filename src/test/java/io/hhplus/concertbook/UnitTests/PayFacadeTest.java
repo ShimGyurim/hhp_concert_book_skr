@@ -81,7 +81,6 @@ public class PayFacadeTest {
         verify(moneyService).deductAmount(wallet, 1000L);
         verify(paymentService).createPayment(book);
         verify(bookService).updateBookStatus(book, BookStatus.PAID);
-//        verify(tokenService).endProcess(waitToken);
     }
 }
 

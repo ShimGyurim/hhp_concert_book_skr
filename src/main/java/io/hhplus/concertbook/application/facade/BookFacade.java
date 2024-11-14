@@ -39,7 +39,6 @@ public class BookFacade {
 
         eventPublisher.publishEvent(new BookEvent(book, waitToken));
 
-        tokenService.endProcess(waitToken);
         return book.getBookId();
     }
 }

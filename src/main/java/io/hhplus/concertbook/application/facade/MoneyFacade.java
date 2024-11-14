@@ -19,14 +19,7 @@ public class MoneyFacade {
 
     @Distributor
     public long chargeWithRedisLock(String userLoginId,Long chargeAmt) throws Exception {
-//        final RLock lock = redissonClient.getLock(userLoginId);
-//        boolean available = lock.tryLock(10,2, TimeUnit.SECONDS);
-
-//        if(!available) {
-//            throw new Exception("락 잠금상태");
-//        }
         Long chargeResult = moneyService.charge(userLoginId,chargeAmt);
-//        lock.unlock();
         return chargeResult;
     }
 }

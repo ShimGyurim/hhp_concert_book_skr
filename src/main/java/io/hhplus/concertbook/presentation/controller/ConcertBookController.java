@@ -48,12 +48,9 @@ public class ConcertBookController {
             @Parameter(required = true, description = "콘서트날짜입력")
             @RequestParam(value ="concertd", required = true) String concertD )  {
 
-//        try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
             LocalDate localDate = LocalDate.parse(concertD, formatter);
-//        }catch (DateTimeException e) {
-//            throw new DateParameterException("날짜 형식 부정확");
-//        }
+
 
         List<ConcertScheduleDto> concertScheduleDtos = concertService.getAvailSchedule(concertD);
 
@@ -64,18 +61,6 @@ public class ConcertBookController {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
-//    @GetMapping("/dateTest")
-//    public ResponseEntity<CommonResponse<Object>> getAvaliDateTest(
-//            String concertD) {
-//        long elapsedTime = concertService.getAvaliScheduleTest(concertD);
-//        CommonResponse<Object> response = CommonResponse.builder()
-//                .msg("")
-//                .data(elapsedTime)
-//                .build();
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(response);
-//    }
 
     @GetMapping("/seat")
     @Operation(summary = "공연좌석조회", description = "좌석 정보 조회")
@@ -104,9 +89,7 @@ public class ConcertBookController {
             @SessionAttribute("user") String sessionUser
             ) throws Exception {
 
-//        if(concertReservReqDto.getConcertScheduleId() == null) {
-//            throw new NoIdException("콘서트 스케줄 정보가 없습니다.");
-//        }
+
         if(concertBookReqDto.getSeatId() == null) {
             throw new CustomException(ErrorCode.SEAT_ERROR);
         }

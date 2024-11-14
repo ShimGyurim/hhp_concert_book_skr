@@ -64,7 +64,6 @@ public class TokenUnitTest {
         Mockito.when(waitTokenRepository.findByUser_UserLoginIdAndServiceCd("testUser", ApiNo.BOOK)).thenReturn(null);
         Mockito.when(userRepository.findByUserLoginId("testUser")).thenReturn(user);
         Mockito.when(waitTokenRepository.save(ArgumentMatchers.any(WaitTokenEntity.class))).thenReturn(entity);
-//        Mockito.when(waitTokenRepository.countStatusToken(ArgumentMatchers.any(ApiNo.class),ArgumentMatchers.any(WaitStatus.class))).thenReturn(0L);
 
         TokenDto result = tokenService.getToken(tokenInDto);
 

@@ -64,14 +64,6 @@ public class ConcertService {
         return concertSchdules;
     }
 
-//    public long getAvaliScheduleTest(String scheduleDate){
-//        long startTime = System.currentTimeMillis();
-//        List<ConcertItemEntity> results = concertItemRepository.findByConcertD("20241003");
-//        long endTime = System.currentTimeMillis();
-//        log.info("Execution time: " + (endTime - startTime) + "ms");
-//        return endTime-startTime;
-//    }
-
     public List<SeatDto> getSeats(long scheduleId){ //출력: 좌석id랑, 좌석 no 리스트
         List<SeatEntity> seatItems = seatRepository.findByConcertItem_ConcertItemId(scheduleId);
 

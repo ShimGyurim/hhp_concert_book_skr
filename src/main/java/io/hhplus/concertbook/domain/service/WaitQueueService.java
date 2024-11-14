@@ -40,17 +40,8 @@ public class WaitQueueService {
     @Scheduled(fixedRate = 10000)
     @Distributor
     public void queueRefreshSchedule() throws Exception {
-//        final RLock lock = redissonClient.getLock("scheduler");
-//        boolean available = lock.tryLock(10,2, TimeUnit.SECONDS);
-
-//        if(!available) {
-//            throw new Exception("락 잠금상태");
-//        }
         queueRefresh(ApiNo.PAYMENT);
         queueRefresh(ApiNo.BOOK);
-
-//        lock.unlock();
-
     }
     public void queueRefresh(ApiNo apiNo) {
 

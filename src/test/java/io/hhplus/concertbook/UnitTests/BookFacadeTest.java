@@ -61,6 +61,5 @@ public class BookFacadeTest {
         Mockito.verify(seatService).findAndLockSeat(seatId);
         Mockito.verify(tokenService).findUserByToken(token);
         Mockito.verify(bookService).createBooking(user, seat);
-//        Mockito.verify(tokenService).endProcess(waitToken);
     }
 }
