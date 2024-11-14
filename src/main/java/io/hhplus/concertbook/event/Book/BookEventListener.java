@@ -27,7 +27,7 @@ public class BookEventListener {
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void bookSuccessApiHandler(BookEvent bookEvent) throws InterruptedException {
-        sendBookInfo(bookEvent.getBook().getBookId()+"건 예약성공"); // mock api 에 정보 전달
+        sendBookInfo("id "+bookEvent.getBook().getBookId()+" 건 예약성공"); // mock api 에 정보 전달
     }
 
     public void sendBookInfo(String message) throws InterruptedException {

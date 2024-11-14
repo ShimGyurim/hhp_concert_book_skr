@@ -27,7 +27,7 @@ public class PayEventListener {
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void PaySuccessApiHandler(PayEvent payEvent) throws InterruptedException {
-        sendPayInfo(payEvent.getPay().getPaymentId()+"건 결제성공"); // mock api 에 정보 전달
+        sendPayInfo("id "+payEvent.getPay().getPaymentId()+" 건 결제성공"); // mock api 에 정보 전달
     }
 
     public void sendPayInfo(String message) throws InterruptedException {
