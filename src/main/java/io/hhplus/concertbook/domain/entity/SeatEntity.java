@@ -6,7 +6,8 @@ import org.hibernate.annotations.ColumnDefault;
 
 @Data
 @Entity
-@Table(name="seat")
+@Table(name="seat"
+        , indexes = @Index(name = "CONCERT_ITEM_ID", columnList = "concertItemId"))
 public class SeatEntity {
 
     @Id
