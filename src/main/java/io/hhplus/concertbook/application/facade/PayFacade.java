@@ -6,7 +6,9 @@ import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.service.*;
+import io.hhplus.concertbook.event.Pay.PayEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,9 @@ public class PayFacade {
     private PaymentService paymentService;
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public boolean pay(String token, Long bookId) throws Exception {
@@ -47,9 +52,10 @@ public class PayFacade {
         WalletEntity wallet = moneyService.findAndLockWallet(userBook.getUserId());
         moneyService.deductAmount(wallet, fee);
 
-        paymentService.createPayment(book);
+        PaymentEntity payment = paymentService.createPayment(book);
         bookService.updateBookStatus(book, BookStatus.PAID);
-        tokenService.endProcess(waitToken);
+
+        eventPublisher.publishEvent(new PayEvent(payment, waitToken));
 
         return true;
     }

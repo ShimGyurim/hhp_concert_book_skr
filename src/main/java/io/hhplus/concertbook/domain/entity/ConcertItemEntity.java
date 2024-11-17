@@ -6,7 +6,8 @@ import lombok.ToString;
 
 @Data
 @Entity
-@Table(name="concertItem")
+@Table(name="concertItem"
+    , indexes = @Index(name = "IDX_DATE", columnList = "concertD"))
 
 public class ConcertItemEntity {
 

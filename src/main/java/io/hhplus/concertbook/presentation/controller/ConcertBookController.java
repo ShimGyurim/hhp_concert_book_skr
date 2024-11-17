@@ -48,12 +48,9 @@ public class ConcertBookController {
             @Parameter(required = true, description = "콘서트날짜입력")
             @RequestParam(value ="concertd", required = true) String concertD )  {
 
-//        try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
             LocalDate localDate = LocalDate.parse(concertD, formatter);
-//        }catch (DateTimeException e) {
-//            throw new DateParameterException("날짜 형식 부정확");
-//        }
+
 
         List<ConcertScheduleDto> concertScheduleDtos = concertService.getAvailSchedule(concertD);
 
@@ -92,9 +89,7 @@ public class ConcertBookController {
             @SessionAttribute("user") String sessionUser
             ) throws Exception {
 
-//        if(concertReservReqDto.getConcertScheduleId() == null) {
-//            throw new NoIdException("콘서트 스케줄 정보가 없습니다.");
-//        }
+
         if(concertBookReqDto.getSeatId() == null) {
             throw new CustomException(ErrorCode.SEAT_ERROR);
         }

@@ -13,10 +13,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
+import org.springframework.context.ApplicationEventPublisher;
+
 
 public class BookFacadeTest {
     @Mock
@@ -27,6 +26,9 @@ public class BookFacadeTest {
 
     @Mock
     private BookService bookService;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private BookFacade bookFacade;
@@ -59,6 +61,5 @@ public class BookFacadeTest {
         Mockito.verify(seatService).findAndLockSeat(seatId);
         Mockito.verify(tokenService).findUserByToken(token);
         Mockito.verify(bookService).createBooking(user, seat);
-        Mockito.verify(tokenService).endProcess(waitToken);
     }
 }
