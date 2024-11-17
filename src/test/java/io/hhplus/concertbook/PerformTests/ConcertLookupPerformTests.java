@@ -56,8 +56,8 @@ public class ConcertLookupPerformTests {
 
             concertItem.setConcertD(concertDate);
             concertItem.setConcertT("000000");
-            concertItem.setAllseats(0);
-            concertItem.setAvailSeats(50);
+//            concertItem.setAllseats(0);
+//            concertItem.setAvailSeats(50);
             concertItemRepository.save(concertItem);
         }
         for (int i =0; i<1000000; i++) {
@@ -65,8 +65,8 @@ public class ConcertLookupPerformTests {
             concertItem.setConcert(concert2);
             concertItem.setConcertD(concertDate);
             concertItem.setConcertT("000000");
-            concertItem.setAllseats(0);
-            concertItem.setAvailSeats(50);
+//            concertItem.setAllseats(0);
+//            concertItem.setAvailSeats(50);
             concertItemRepository.save(concertItem);
         }
         for (int i =0; i<1000000; i++) {
@@ -74,8 +74,8 @@ public class ConcertLookupPerformTests {
             concertItem.setConcert(concert3);
             concertItem.setConcertD(concertDate);
             concertItem.setConcertT("000000");
-            concertItem.setAllseats(0);
-            concertItem.setAvailSeats(50);
+//            concertItem.setAllseats(0);
+//            concertItem.setAvailSeats(50);
             concertItemRepository.save(concertItem);
         }
     }

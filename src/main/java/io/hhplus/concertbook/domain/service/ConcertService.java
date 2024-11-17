@@ -49,7 +49,7 @@ public class ConcertService {
        List<ConcertScheduleDto> concertSchdules = concertItems.stream()
                 .map(item -> {
                     Long id = item.getConcertItemId();
-                    int availSeats = item.getAvailSeats();
+                    int availSeats = concertItemRepository.countAvailSeats(id);
                     //TODO : getConcert 없으면 exception
 
                     ConcertScheduleDto concertScheduleDto = new ConcertScheduleDto();

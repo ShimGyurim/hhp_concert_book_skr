@@ -22,7 +22,7 @@ public class ConcertItemEntity {
 
     String concertD;
     String concertT;
-    int allseats;
-    int availSeats;
+//    int allseats;
+//    int availSeats;
 
 }

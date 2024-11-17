@@ -52,12 +52,12 @@ public class ConcertBookUnitTests {
     public void testGetAvailSchedule_Success() {
         ConcertItemEntity concertItem1 = new ConcertItemEntity();
         concertItem1.setConcertItemId(1L);
-        concertItem1.setAvailSeats(100);
+        //concertItem1.setAvailSeats(100);
         concertItem1.setConcert(new ConcertEntity());
 
         ConcertItemEntity concertItem2 = new ConcertItemEntity();
         concertItem2.setConcertItemId(2L);
-        concertItem2.setAvailSeats(50);
+        //concertItem2.setAvailSeats(50);
         concertItem2.setConcert(new ConcertEntity());
 
         Mockito.when(concertItemRepository.findByConcertD("2024-10-15")).thenReturn(Arrays.asList(concertItem1, concertItem2));

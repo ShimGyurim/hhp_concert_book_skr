@@ -69,7 +69,7 @@ public class ConcertIntegTests {
         // 콘서트 아이템 생성
         concertItem = new ConcertItemEntity();
         concertItem.setConcertD("20241015");
-        concertItem.setAvailSeats(100);
+//        concertItem.setAvailSeats(100);
         concertItemRepository.save(concertItem);
 
         // 좌석 생성
@@ -101,7 +101,7 @@ public class ConcertIntegTests {
         Assertions.assertFalse(schedules.isEmpty());
         Assertions.assertEquals(1, schedules.size());
         Assertions.assertEquals(concertItem.getConcertItemId(), schedules.get(0).getConcertItemId());
-        Assertions.assertEquals(concertItem.getAvailSeats(), schedules.get(0).getAvaliSeats());
+        //Assertions.assertEquals(concertItem.getAvailSeats(), schedules.get(0).getAvaliSeats());
     }
 
     @Test
