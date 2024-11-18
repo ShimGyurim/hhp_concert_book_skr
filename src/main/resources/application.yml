@@ -11,7 +11,7 @@ spring:
   datasource:
     hikari:
       driver-class-name: org.h2.Driver
-      jdbc-url: jdbc:h2:tcp://localhost/~/concert_book
+      jdbc-url: jdbc:h2:tcp://localhost:9099/~/concert_book
       username: sa
       password:
   jpa:
