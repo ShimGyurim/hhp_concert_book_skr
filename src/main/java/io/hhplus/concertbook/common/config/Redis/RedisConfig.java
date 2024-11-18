@@ -1,4 +1,4 @@
-package io.hhplus.concertbook.common.config;
+package io.hhplus.concertbook.common.config.Redis;
 
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import org.springframework.beans.factory.annotation.Value;

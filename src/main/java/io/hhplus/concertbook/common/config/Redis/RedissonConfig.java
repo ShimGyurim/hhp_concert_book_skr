@@ -1,4 +1,4 @@
-package io.hhplus.concertbook.common.config;
+package io.hhplus.concertbook.common.config.Redis;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
