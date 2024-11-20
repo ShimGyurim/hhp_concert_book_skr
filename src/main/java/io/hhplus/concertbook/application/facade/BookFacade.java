@@ -1,19 +1,17 @@
 package io.hhplus.concertbook.application.facade;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
-import io.hhplus.concertbook.domain.entity.BookEntity;
-import io.hhplus.concertbook.domain.entity.SeatEntity;
-import io.hhplus.concertbook.domain.entity.UserEntity;
-import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
-import io.hhplus.concertbook.domain.service.BookService;
-import io.hhplus.concertbook.domain.service.SeatService;
-import io.hhplus.concertbook.domain.service.TokenService;
-import io.hhplus.concertbook.domain.service.UserService;
+import io.hhplus.concertbook.domain.entity.*;
+import io.hhplus.concertbook.domain.repository.OutboxRepository;
+import io.hhplus.concertbook.domain.service.*;
 import io.hhplus.concertbook.event.Book.BookEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Timestamp;
 
 @Service
 public class BookFacade {
@@ -26,6 +24,8 @@ public class BookFacade {
     private UserService userService;
     @Autowired
     private BookService bookService;
+    @Autowired
+    private OutboxService outboxService;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -37,7 +37,8 @@ public class BookFacade {
         UserEntity user = tokenService.findUserByToken(token);
         BookEntity book = bookService.createBooking(user, seat);
 
-        eventPublisher.publishEvent(new BookEvent(book, waitToken));
+        BookEvent bookEvent = outboxService.bookOutboxService(book,seat,waitToken);
+        eventPublisher.publishEvent(bookEvent);
 
         return book.getBookId();
     }

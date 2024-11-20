@@ -1,5 +1,6 @@
 package io.hhplus.concertbook.event.Book;
 
+import io.hhplus.concertbook.Infrastructure.KafkaProducer.BookProducer;
 import io.hhplus.concertbook.domain.service.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +13,12 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Slf4j
 @Component
 public class BookEventListener {
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     TokenService tokenService;
+
+    @Autowired
+    BookProducer bookProducer;
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -24,14 +26,11 @@ public class BookEventListener {
         tokenService.endProcess(bookEvent.getWaitToken()); // 토큰 만료
     }
 
-    @Async
+//    @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void bookSuccessApiHandler(BookEvent bookEvent) throws InterruptedException {
-        sendBookInfo("id "+bookEvent.getBook().getBookId()+" 건 예약성공"); // mock api 에 정보 전달
+        bookProducer.send("BOOK_SAVE",bookEvent.getMessageQueueKey(),bookEvent.getOutboxId());
     }
 
-    public void sendBookInfo(String message) throws InterruptedException {
-        log.info("sendBookInfo: "+message);
-        Thread.sleep(2000);
-    }
+
 }
