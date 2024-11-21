@@ -7,6 +7,7 @@ import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.BookRepository;
 import io.hhplus.concertbook.domain.repository.OutboxRepository;
 import io.hhplus.concertbook.event.Book.BookEvent;
+import io.hhplus.concertbook.event.Pay.PayEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,5 +35,24 @@ public class OutboxService {
         outboxRepository.save(newOutbox);
 
         return bookEvent;
+    }
+
+    public PayEvent payOutboxService (PaymentEntity payment, BookEntity book, WaitTokenEntity waitToken) throws JsonProcessingException {
+        OutboxEntity outboxEntity = new OutboxEntity();
+        outboxEntity.setMqKey("PAY:"+book.getBookId());
+        outboxEntity.setTopic("PAY_SAVE");
+        outboxEntity.setType("PAY");
+        outboxEntity.setStatus("INIT");
+        outboxEntity.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        PayEvent payEvent = new PayEvent(payment,waitToken,-1L,outboxEntity.getMqKey());
+        OutboxEntity newOutbox = outboxRepository.save(outboxEntity);
+        payEvent.setOutboxId(newOutbox.getOutboxId());
+        String payLoad = objectMapper.writeValueAsString(payEvent);
+        newOutbox.setPayLoad(payLoad);
+        outboxRepository.save(newOutbox);
+
+        return payEvent;
     }
 }

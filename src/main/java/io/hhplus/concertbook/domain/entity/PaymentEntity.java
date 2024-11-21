@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 @Data
 @Entity
 @Table(name="payment")
+@ToString
 public class PaymentEntity {
 
     @Id

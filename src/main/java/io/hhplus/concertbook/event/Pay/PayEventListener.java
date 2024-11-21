@@ -1,13 +1,22 @@
 package io.hhplus.concertbook.event.Pay;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.hhplus.concertbook.domain.entity.OutboxEntity;
+import io.hhplus.concertbook.domain.repository.OutboxRepository;
 import io.hhplus.concertbook.domain.service.TokenService;
+import io.hhplus.concertbook.infra.KafkaProducer.PayProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -17,6 +26,11 @@ public class PayEventListener {
 
     @Autowired
     TokenService tokenService;
+    @Autowired
+    PayProducer payProducer;
+
+    @Autowired
+    OutboxRepository outboxRepository;
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -27,11 +41,26 @@ public class PayEventListener {
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void PaySuccessApiHandler(PayEvent payEvent) throws InterruptedException {
-        sendPayInfo("id "+payEvent.getPay().getPaymentId()+" 건 결제성공"); // mock api 에 정보 전달
+//        sendPayInfo("id "+payEvent.getPay().getPaymentId()+" 건 결제성공"); // mock api 에 정보 전달
+        payProducer.send("PAY_SAVE",payEvent.getMessageQueueKey(),payEvent.getOutboxId());
     }
 
-    public void sendPayInfo(String message) throws InterruptedException {
-        log.info("sendPayInfo: "+message);
-        Thread.sleep(2000);
+//    public void sendPayInfo(String message) throws InterruptedException {
+//        log.info("sendPayInfo: "+message);
+//        Thread.sleep(2000);
+//    }
+
+    @Scheduled(fixedRate = 20000) // 5분후 발행 체크
+    public void PayPubSchedule() throws JsonProcessingException {
+        List<OutboxEntity> outboxEntityList = outboxRepository.findAllByTopicAndStatus("PAY_SAVE","INIT");
+
+        for (OutboxEntity outbox : outboxEntityList) {
+            if(outbox.getCreatedAt() == null) continue;
+            LocalDateTime someMinAgo = LocalDateTime.now().minus(10, ChronoUnit.SECONDS);
+            if(outbox.getCreatedAt().toLocalDateTime().isBefore(someMinAgo)) {
+                payProducer.send("PAY_SAVE",outbox.getMqKey(),outbox.getOutboxId());
+            }
+        }
+
     }
 }

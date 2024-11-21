@@ -12,4 +12,6 @@ import org.springframework.stereotype.Component;
 public class PayEvent {
     PaymentEntity pay;
     WaitTokenEntity waitToken;
+    long outboxId;
+    String messageQueueKey;
 }

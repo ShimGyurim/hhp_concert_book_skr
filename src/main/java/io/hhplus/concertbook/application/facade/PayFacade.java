@@ -6,6 +6,7 @@ import io.hhplus.concertbook.common.exception.CustomException;
 import io.hhplus.concertbook.common.exception.ErrorCode;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.service.*;
+import io.hhplus.concertbook.event.Book.BookEvent;
 import io.hhplus.concertbook.event.Pay.PayEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,6 +28,8 @@ public class PayFacade {
     private PaymentService paymentService;
     @Autowired
     private BookService bookService;
+    @Autowired
+    private OutboxService outboxService;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -55,8 +58,10 @@ public class PayFacade {
         PaymentEntity payment = paymentService.createPayment(book);
         bookService.updateBookStatus(book, BookStatus.PAID);
 
-        eventPublisher.publishEvent(new PayEvent(payment, waitToken));
+//        eventPublisher.publishEvent(new PayEvent(payment, waitToken,-1L,""));
 
+        PayEvent payEvent = outboxService.payOutboxService(payment,book,waitToken);
+        eventPublisher.publishEvent(payEvent);
         return true;
     }
 }
