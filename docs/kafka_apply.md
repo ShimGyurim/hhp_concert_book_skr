@@ -102,7 +102,7 @@ public class TestConsumer {
 
 - 결과 로그
 
-![img.png](img.png)![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/374fa334-40a5-4ed7-b09c-7aa6369eb677/80b6a935-1069-4f87-9344-688dd930230e/image.png)
+![img.png](img.png)
 
 - Docker 에서 실행
 
