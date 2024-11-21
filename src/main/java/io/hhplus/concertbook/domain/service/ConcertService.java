@@ -48,7 +48,7 @@ public class ConcertService {
         log.info("CONCERT SCHEDULE NOT CACHED");
        List<ConcertScheduleDto> concertSchdules = concertItems.stream()
                 .map(item -> {
-                    Long id = item.getConcertItemId();
+                    long id = item.getConcertItemId();
                     int availSeats = concertItemRepository.countAvailSeats(id);
                     //TODO : getConcert 없으면 exception
 

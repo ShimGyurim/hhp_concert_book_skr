@@ -27,8 +27,8 @@ delete from userinfo;
 --insert into concert(concert_id,concert_name,fee)
 --select 1,'1',1 from dual;
 --
---insert into concert_item(allseats,avail_seats,concert_id,concert_item_id,concertd,concertt)
---select 50,50,1,1,'20201010','000000' from dual;
+--insert into concert_item (concert_id,concert_item_id,concertd,concertt)
+--select 1,1,'20201010','000000' from dual;
 --
 --insert into seat(seat_id,seat_no,concert_item_id,is_use,version)
 --select 0,0,1,false,0 from dual;

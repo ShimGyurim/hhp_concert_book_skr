@@ -15,6 +15,7 @@ public class LogEntity {
     @Column(name = "log_id")
     long logId;
 
+    @Lob
     String logMessage;
     String type;
 
