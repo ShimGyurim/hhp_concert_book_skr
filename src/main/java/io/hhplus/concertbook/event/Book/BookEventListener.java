@@ -1,7 +1,7 @@
 package io.hhplus.concertbook.event.Book;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.hhplus.concertbook.infra.KafkaProducer.BookProducer;
+import io.hhplus.concertbook.domain.KafkaProducer.BookProducer;
 import io.hhplus.concertbook.domain.entity.OutboxEntity;
 import io.hhplus.concertbook.domain.repository.OutboxRepository;
 import io.hhplus.concertbook.domain.service.TokenService;

@@ -1,10 +1,11 @@
 package io.hhplus.concertbook.event.Pay;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.hhplus.concertbook.domain.KafkaProducer.PayProducer;
 import io.hhplus.concertbook.domain.entity.OutboxEntity;
 import io.hhplus.concertbook.domain.repository.OutboxRepository;
 import io.hhplus.concertbook.domain.service.TokenService;
-import io.hhplus.concertbook.infra.KafkaProducer.PayProducer;
+import io.hhplus.concertbook.infra.KafkaProducer.PayProducerImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;

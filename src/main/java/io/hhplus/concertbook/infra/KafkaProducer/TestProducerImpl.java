@@ -1,12 +1,13 @@
 package io.hhplus.concertbook.infra.KafkaProducer;
 
+import io.hhplus.concertbook.domain.KafkaProducer.TestProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class TestProducer {
+public class TestProducerImpl implements TestProducer {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
