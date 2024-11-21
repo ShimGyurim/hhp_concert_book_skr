@@ -12,9 +12,9 @@ import java.util.List;
 public interface ConcertItemRepository extends JpaRepository<ConcertItemEntity,Long> {
     List<ConcertItemEntity> findByConcertD (String scheduleD);
 
-    @Query("SELECT count(s) FROM SeatEntity s WHERE s.concertItem = :concertItemId")
-    int countAllSeats(@Param("concertItemId") Long concertItemId);
+    @Query("SELECT count(s) FROM SeatEntity s WHERE s.concertItem.concertItemId = :concertItemId")
+    int countAllSeats(@Param("concertItemId") long concertItemId);
 
-    @Query("SELECT count(s) FROM SeatEntity s WHERE s.concertItem = :concertItemId AND isUse = false")
-    int countAvailSeats(@Param("concertItemId") Long concertItemId);
+    @Query("SELECT count(s) FROM SeatEntity s WHERE s.concertItem.concertItemId = :concertItemId AND isUse = false")
+    int countAvailSeats(@Param("concertItemId") long concertItemId);
 }
