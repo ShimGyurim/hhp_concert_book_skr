@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 @Data
 @Entity
 @Table(name="book")
+@ToString
 public class BookEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

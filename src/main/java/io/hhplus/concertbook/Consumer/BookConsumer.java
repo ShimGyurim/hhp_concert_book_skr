@@ -31,7 +31,7 @@ public class BookConsumer {
         outboxRepository.save(outboxEntity);
         ObjectMapper objectMapper = new ObjectMapper();
         BookEvent bookEvent = objectMapper.readValue(outboxEntity.getPayLoad(), BookEvent.class);
-        sendBookInfo("id "+bookEvent.getBook().getBookId()+" 건 예약성공");
+        sendBookInfo("id "+bookEvent.getBook().getBookId()+" 건 예약성공:"+bookEvent.getBook().toString());
         outboxEntity.setStatus("COMPLETE");
         outboxRepository.save(outboxEntity);
     }
