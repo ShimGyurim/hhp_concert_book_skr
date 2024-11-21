@@ -27,9 +27,13 @@ public class BookConsumer {
     @KafkaListener(topics = "BOOK_SAVE", groupId = "group_1")
     public void listen(long outboxId) throws JsonProcessingException, InterruptedException {
         OutboxEntity outboxEntity = outboxRepository.findById(outboxId).get();
+        outboxEntity.setStatus("PUBLISHED");
+        outboxRepository.save(outboxEntity);
         ObjectMapper objectMapper = new ObjectMapper();
         BookEvent bookEvent = objectMapper.readValue(outboxEntity.getPayLoad(), BookEvent.class);
         sendBookInfo("id "+bookEvent.getBook().getBookId()+" 건 예약성공");
+        outboxEntity.setStatus("COMPLETE");
+        outboxRepository.save(outboxEntity);
     }
 
     //예약정보 저장

@@ -1,4 +1,4 @@
-package io.hhplus.concertbook.Infrastructure.KafkaProducer;
+package io.hhplus.concertbook.infra.KafkaProducer;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

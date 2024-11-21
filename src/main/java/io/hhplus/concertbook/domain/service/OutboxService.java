@@ -23,7 +23,7 @@ public class OutboxService {
         outboxEntity.setTopic("BOOK_SAVE");
         outboxEntity.setType("BOOK");
         outboxEntity.setStatus("INIT");
-        outboxEntity.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        outboxEntity.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
         ObjectMapper objectMapper = new ObjectMapper();
         BookEvent bookEvent = new BookEvent(book,waitToken,-1L,outboxEntity.getMqKey());

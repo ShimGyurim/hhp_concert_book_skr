@@ -12,5 +12,5 @@ import java.util.List;
 
 
 public interface OutboxRepository extends JpaRepository<OutboxEntity,Long> {
-
+    List<OutboxEntity> findAllByTopicAndStatus(String topic,String status);
 }
