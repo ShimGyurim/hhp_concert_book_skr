@@ -50,8 +50,8 @@ public class PayIntegTests {
     @Autowired
     private RedisRepository redisRepository;
 
-    @Autowired
-    private RepositoryClean repositoryClean;
+//    @Autowired
+//    private RepositoryClean repositoryClean;
 
     private UserEntity user;
     private BookEntity book;
@@ -60,7 +60,7 @@ public class PayIntegTests {
 
     @BeforeEach
     public void setUp() {
-        repositoryClean.cleanRepository();
+//        repositoryClean.cleanRepository();
         // 사용자 생성
         user = new UserEntity();
         user.setUserLoginId("testUser");

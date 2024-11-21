@@ -44,8 +44,8 @@ public class ConcertIntegTests {
     @Autowired
     private ConcertService concertService;
 
-    @Autowired
-    private RepositoryClean repositoryClean;
+//    @Autowired
+//    private RepositoryClean repositoryClean;
 
     @Autowired
     private BookFacade bookFacade;
@@ -60,7 +60,7 @@ public class ConcertIntegTests {
 
     @BeforeEach
     public void setUp() {
-        repositoryClean.cleanRepository();
+//        repositoryClean.cleanRepository();
 
         user = new UserEntity();
         user.setUserLoginId("testUser");

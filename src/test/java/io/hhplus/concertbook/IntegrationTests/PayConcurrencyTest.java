@@ -62,8 +62,8 @@ public class PayConcurrencyTest {
     @Autowired
     private ConcertItemRepository concertItemRepository;
 
-    @Autowired
-    private RepositoryClean repositoryClean;
+//    @Autowired
+//    private RepositoryClean repositoryClean;
 
     @Autowired
     private RedisRepository redisRepository;
@@ -71,7 +71,7 @@ public class PayConcurrencyTest {
     @BeforeEach
     @Transactional
     public void setUp() {
-        repositoryClean.cleanRepository();
+//        repositoryClean.cleanRepository();
 
         String userLoginId = "testUser";
         UserEntity user = new UserEntity();

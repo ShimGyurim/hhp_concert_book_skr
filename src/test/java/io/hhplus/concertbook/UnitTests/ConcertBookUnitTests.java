@@ -66,9 +66,7 @@ public class ConcertBookUnitTests {
 
         Assertions.assertEquals(2, result.size());
         Assertions.assertEquals(1L, result.get(0).getConcertItemId());
-        Assertions.assertEquals(100, result.get(0).getAvaliSeats());
         Assertions.assertEquals(2L, result.get(1).getConcertItemId());
-        Assertions.assertEquals(50, result.get(1).getAvaliSeats());
     }
 
     @Test

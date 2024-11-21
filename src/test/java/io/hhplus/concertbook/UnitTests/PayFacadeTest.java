@@ -7,12 +7,15 @@ import io.hhplus.concertbook.application.facade.PayFacade;
 import io.hhplus.concertbook.common.enumerate.ApiNo;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
 import io.hhplus.concertbook.domain.entity.*;
+import io.hhplus.concertbook.domain.repository.OutboxRepository;
 import io.hhplus.concertbook.domain.service.*;
+import io.hhplus.concertbook.event.Pay.PayEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -38,6 +41,15 @@ public class PayFacadeTest {
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
+
+    @Mock
+    private OutboxService outboxService;
+
+    @Mock
+    private PaymentEntity payment;
+
+    @Mock
+    private PayEvent payEvent;
 
     @InjectMocks
     private PayFacade payFacade;
@@ -70,6 +82,11 @@ public class PayFacadeTest {
         when(tokenService.validateToken(token, ApiNo.PAYMENT)).thenReturn(waitToken);
         when(concertService.findAndLockBook(bookId)).thenReturn(book);
         when(moneyService.findAndLockWallet(userBook.getUserId())).thenReturn(wallet);
+        when(paymentService.createPayment(book)).thenReturn(payment);
+        when(outboxService.payOutboxService(payment,book,waitToken)).thenReturn(payEvent);
+//        PaymentEntity payment = paymentService.createPayment(book);
+//        PayEvent payEvent = outboxService.payOutboxService(payment,book,waitToken);
+
 
         boolean result = payFacade.pay(token, bookId);
 

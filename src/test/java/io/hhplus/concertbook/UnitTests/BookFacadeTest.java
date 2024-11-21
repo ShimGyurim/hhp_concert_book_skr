@@ -7,8 +7,10 @@ import io.hhplus.concertbook.domain.entity.SeatEntity;
 import io.hhplus.concertbook.domain.entity.UserEntity;
 import io.hhplus.concertbook.domain.entity.WaitTokenEntity;
 import io.hhplus.concertbook.domain.service.BookService;
+import io.hhplus.concertbook.domain.service.OutboxService;
 import io.hhplus.concertbook.domain.service.SeatService;
 import io.hhplus.concertbook.domain.service.TokenService;
+import io.hhplus.concertbook.event.Book.BookEvent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +35,12 @@ public class BookFacadeTest {
     @InjectMocks
     private BookFacade bookFacade;
 
+    @Mock
+    private OutboxService outboxService;
+
+    @Mock
+    private BookEvent bookEvent;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -53,6 +61,7 @@ public class BookFacadeTest {
         Mockito.when(seatService.findAndLockSeat(seatId)).thenReturn(seat);
         Mockito.when(tokenService.findUserByToken(token)).thenReturn(user);
         Mockito.when(bookService.createBooking(user, seat)).thenReturn(book);
+        Mockito.when(outboxService.bookOutboxService(book,seat,waitToken)).thenReturn(bookEvent);
 
         long bookId = bookFacade.book(token, seatId);
 

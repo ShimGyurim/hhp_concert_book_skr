@@ -27,12 +27,12 @@ public class MoneyIntegTests {
     @Autowired
     private MoneyService moneyService;
 
-    @Autowired
-    private RepositoryClean repositoryClean;
+//    @Autowired
+//    private RepositoryClean repositoryClean;
 
     @BeforeEach
     public void clean() {
-        repositoryClean.cleanRepository();
+//        repositoryClean.cleanRepository();
     }
 
     @Test

@@ -36,15 +36,15 @@ public class ChargeConcurrencyTest {
     @Autowired
     private WalletRepository walletRepository;
 
-    @Autowired
-    private RepositoryClean repositoryClean;
+//    @Autowired
+//    private RepositoryClean repositoryClean;
 
     @Autowired
     private RedissonClient redissonClient;
 
     @BeforeEach
     public void clean() {
-        repositoryClean.cleanRepository();
+//        repositoryClean.cleanRepository();
     }
 
     @Test

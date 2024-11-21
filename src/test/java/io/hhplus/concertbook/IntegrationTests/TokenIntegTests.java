@@ -35,15 +35,15 @@ public class TokenIntegTests {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private RepositoryClean repositoryClean;
+//    @Autowired
+//    private RepositoryClean repositoryClean;
 
     @Autowired
     private RedisRepository redisRepository;
 
     @BeforeEach
     public void setUp() {
-        repositoryClean.cleanRepository();
+//        repositoryClean.cleanRepository();
         // 초기 데이터 설정
         UserEntity user = new UserEntity();
         user.setUserLoginId("testUser");

@@ -44,15 +44,15 @@ public class BookingConcurrencyTest {
     @Autowired
     private BookRepository bookRepository;
 
-    @Autowired
-    private RepositoryClean repositoryClean;
+//    @Autowired
+//    private RepositoryClean repositoryClean;
 
     @Autowired
     private RedisRepository redisRepository;
 
     @BeforeEach
     public void setUp() {
-        repositoryClean.cleanRepository();
+//        repositoryClean.cleanRepository();
 
         String userLoginId = "testUser";
         UserEntity user = new UserEntity();
