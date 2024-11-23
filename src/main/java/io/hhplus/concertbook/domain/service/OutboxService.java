@@ -3,6 +3,8 @@ package io.hhplus.concertbook.domain.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.hhplus.concertbook.common.enumerate.BookStatus;
+import io.hhplus.concertbook.common.enumerate.MQTopic;
+import io.hhplus.concertbook.common.enumerate.MQstatus;
 import io.hhplus.concertbook.domain.entity.*;
 import io.hhplus.concertbook.domain.repository.BookRepository;
 import io.hhplus.concertbook.domain.repository.OutboxRepository;
@@ -21,9 +23,9 @@ public class OutboxService {
     public BookEvent bookOutboxService (BookEntity book, SeatEntity seat, WaitTokenEntity waitToken) throws JsonProcessingException {
         OutboxEntity outboxEntity = new OutboxEntity();
         outboxEntity.setMqKey("BOOK:"+seat.getSeatId());
-        outboxEntity.setTopic("BOOK_SAVE");
+        outboxEntity.setTopic(MQTopic.BOOK_SAVE.toString());
         outboxEntity.setType("BOOK");
-        outboxEntity.setStatus("INIT");
+        outboxEntity.setStatus(MQstatus.INIT.toString());
         outboxEntity.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -40,9 +42,9 @@ public class OutboxService {
     public PayEvent payOutboxService (PaymentEntity payment, BookEntity book, WaitTokenEntity waitToken) throws JsonProcessingException {
         OutboxEntity outboxEntity = new OutboxEntity();
         outboxEntity.setMqKey("PAY:"+book.getBookId());
-        outboxEntity.setTopic("PAY_SAVE");
+        outboxEntity.setTopic(MQTopic.PAY_SAVE.toString());
         outboxEntity.setType("PAY");
-        outboxEntity.setStatus("INIT");
+        outboxEntity.setStatus(MQstatus.INIT.toString());
         outboxEntity.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
         ObjectMapper objectMapper = new ObjectMapper();

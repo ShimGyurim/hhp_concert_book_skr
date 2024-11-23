@@ -43,7 +43,7 @@ public class PayEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void PaySuccessApiHandler(PayEvent payEvent) throws InterruptedException {
 //        sendPayInfo("id "+payEvent.getPay().getPaymentId()+" 건 결제성공"); // mock api 에 정보 전달
-        payProducer.send("PAY_SAVE",payEvent.getMessageQueueKey(),payEvent.getOutboxId());
+        payProducer.send(MQTopic.PAY_SAVE.toString(),payEvent.getMessageQueueKey(),payEvent.getOutboxId());
     }
 
 //    public void sendPayInfo(String message) throws InterruptedException {

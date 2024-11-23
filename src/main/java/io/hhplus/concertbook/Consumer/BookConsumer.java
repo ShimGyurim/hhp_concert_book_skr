@@ -2,6 +2,7 @@ package io.hhplus.concertbook.Consumer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.hhplus.concertbook.common.enumerate.MQstatus;
 import io.hhplus.concertbook.domain.entity.LogEntity;
 import io.hhplus.concertbook.domain.entity.OutboxEntity;
 import io.hhplus.concertbook.domain.repository.LogRepository;
@@ -27,12 +28,12 @@ public class BookConsumer {
     @KafkaListener(topics = "BOOK_SAVE", groupId = "group_1")
     public void listen(long outboxId) throws JsonProcessingException, InterruptedException {
         OutboxEntity outboxEntity = outboxRepository.findById(outboxId).get();
-        outboxEntity.setStatus("PUBLISHED");
+        outboxEntity.setStatus(MQstatus.PUBLISHED.toString());
         outboxRepository.save(outboxEntity);
         ObjectMapper objectMapper = new ObjectMapper();
         BookEvent bookEvent = objectMapper.readValue(outboxEntity.getPayLoad(), BookEvent.class);
         sendBookInfo("id "+bookEvent.getBook().getBookId()+" 건 예약성공:"+bookEvent.getBook().toString());
-        outboxEntity.setStatus("COMPLETE");
+        outboxEntity.setStatus(MQstatus.COMPLETE.toString());
         outboxRepository.save(outboxEntity);
     }
 

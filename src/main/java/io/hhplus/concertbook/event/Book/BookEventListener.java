@@ -1,6 +1,8 @@
 package io.hhplus.concertbook.event.Book;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.hhplus.concertbook.common.enumerate.MQTopic;
+import io.hhplus.concertbook.common.enumerate.MQstatus;
 import io.hhplus.concertbook.domain.KafkaProducer.BookProducer;
 import io.hhplus.concertbook.domain.entity.OutboxEntity;
 import io.hhplus.concertbook.domain.repository.OutboxRepository;
@@ -39,7 +41,7 @@ public class BookEventListener {
 //    @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void bookSuccessApiHandler(BookEvent bookEvent) throws InterruptedException {
-        bookProducer.send("BOOK_SAVE",bookEvent.getMessageQueueKey(),bookEvent.getOutboxId());
+        bookProducer.send(MQTopic.BOOK_SAVE.toString(),bookEvent.getMessageQueueKey(),bookEvent.getOutboxId());
     }
 
     @Scheduled(fixedRate = 20000) // 5분후 발행 체크
