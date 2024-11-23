@@ -1,6 +1,8 @@
 package io.hhplus.concertbook.event.Pay;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.hhplus.concertbook.common.enumerate.MQTopic;
+import io.hhplus.concertbook.common.enumerate.MQstatus;
 import io.hhplus.concertbook.domain.KafkaProducer.PayProducer;
 import io.hhplus.concertbook.domain.entity.OutboxEntity;
 import io.hhplus.concertbook.domain.repository.OutboxRepository;
@@ -51,17 +53,4 @@ public class PayEventListener {
 //        Thread.sleep(2000);
 //    }
 
-    @Scheduled(fixedRate = 20000) // 5분후 발행 체크
-    public void PayPubSchedule() throws JsonProcessingException {
-        List<OutboxEntity> outboxEntityList = outboxRepository.findAllByTopicAndStatus("PAY_SAVE","INIT");
-
-        for (OutboxEntity outbox : outboxEntityList) {
-            if(outbox.getCreatedAt() == null) continue;
-            LocalDateTime someMinAgo = LocalDateTime.now().minus(10, ChronoUnit.SECONDS);
-            if(outbox.getCreatedAt().toLocalDateTime().isBefore(someMinAgo)) {
-                payProducer.send("PAY_SAVE",outbox.getMqKey(),outbox.getOutboxId());
-            }
-        }
-
-    }
 }

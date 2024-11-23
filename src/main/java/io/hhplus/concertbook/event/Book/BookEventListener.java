@@ -44,19 +44,7 @@ public class BookEventListener {
         bookProducer.send(MQTopic.BOOK_SAVE.toString(),bookEvent.getMessageQueueKey(),bookEvent.getOutboxId());
     }
 
-    @Scheduled(fixedRate = 20000) // 5분후 발행 체크
-    public void BookPubSchedule() throws JsonProcessingException {
-        List<OutboxEntity> outboxEntityList = outboxRepository.findAllByTopicAndStatus("BOOK_SAVE","INIT");
 
-        for (OutboxEntity outbox : outboxEntityList) {
-            if(outbox.getCreatedAt() == null) continue;
-            LocalDateTime someMinAgo = LocalDateTime.now().minus(10, ChronoUnit.SECONDS);
-            if(outbox.getCreatedAt().toLocalDateTime().isBefore(someMinAgo)) {
-                bookProducer.send("BOOK_SAVE",outbox.getMqKey(),outbox.getOutboxId());
-            }
-        }
-
-    }
 
 
 
