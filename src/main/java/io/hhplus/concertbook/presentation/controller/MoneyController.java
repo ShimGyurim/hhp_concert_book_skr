@@ -40,7 +40,7 @@ public class MoneyController {
         long afterAmount = moneyFacade.chargeWithRedisLock(userLoginId,chargeAmt);
 
         CommonResponse<Object> response = CommonResponse.builder()
-                .msg("토큰 발급 성공")
+                .msg("충전 성공")
                 .data(afterAmount)
                 .build();
 
@@ -59,7 +59,7 @@ public class MoneyController {
         Long balance = moneyService.getBalance(userLoginId);
 
         CommonResponse<Object> response = CommonResponse.builder()
-                .msg("토큰 발급 성공")
+                .msg("잔액 조회 성공")
                 .data(balance)
                 .build();
 
