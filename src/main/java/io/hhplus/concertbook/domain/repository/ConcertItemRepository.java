@@ -15,6 +15,8 @@ public interface ConcertItemRepository extends JpaRepository<ConcertItemEntity,L
     @Query("SELECT count(s) FROM SeatEntity s WHERE s.concertItem.concertItemId = :concertItemId")
     int countAllSeats(@Param("concertItemId") long concertItemId);
 
-    @Query("SELECT count(s) FROM SeatEntity s WHERE s.concertItem.concertItemId = :concertItemId AND isUse = false")
+    @Query("SELECT count(s) FROM SeatEntity s WHERE s.concertItem.concertItemId = :concertItemId AND s.isUse = FALSE")
     int countAvailSeats(@Param("concertItemId") long concertItemId);
+
+    List<ConcertItemEntity> findByConcertDAndConcertT(String concertD, String concertT);
 }
