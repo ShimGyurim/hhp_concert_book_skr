@@ -69,7 +69,13 @@ public class MoneyService {
         }
 
         WalletEntity wallet = walletRepository.findByUser_UserIdWithLock(user.getUserId());
-        wallet.setAmount(wallet.getAmount()+chargeAmt);
+        if(wallet == null) {
+            wallet = new WalletEntity();
+            wallet.setUser(user);
+            wallet.setAmount(chargeAmt);
+        }else {
+            wallet.setAmount(wallet.getAmount()+chargeAmt);
+        }
         walletRepository.save(wallet);
 
         return wallet.getAmount();
